@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="ContactsManager/ContactsManager.csproj" />
+  <Project Path="ContactsManagerTests/ContactsManagerTests.csproj" Id="75a2c3cd-283b-45ef-9bd6-11429bb0cb3c" />
 </Solution>
