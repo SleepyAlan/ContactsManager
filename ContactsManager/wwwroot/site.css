@@ -1,0 +1,890 @@
+/* ==========================================================================
+   General Global CSS
+     Reset, design tokens, base elements,
+     layout primitives, components, and utilities.
+
+   Table of contents
+   1.  Design tokens
+   2.  Dark theme
+   3.  Modern reset
+   4.  Base typography
+   5.  Links & media
+   6.  Forms
+   7.  Buttons
+   8.  Tables
+   9.  Code
+   10. Layout primitives
+   11. Components
+   12. Utilities
+   13. Accessibility & motion
+   14. Print
+   ========================================================================== */
+
+/* 1. Design tokens
+   ========================================================================== */
+:root {
+    /* Color theme for the whole site */
+    --color-bg: #F8FAFC; /* Canvas background color */
+    --color-surface: #F1F5F9; /* Secondary background color for cards, sidebars, or elevated containers */
+    --color-text: #0F172A; /* Primary color for readable body text */
+    --color-muted: #475569; /* Secondary color for subtext, captions, and deactivated UI elements */
+    --color-primary: #2563EB; /* Main brand/accent color for buttons, active states, and key links */
+    /* Derived color roles */
+    --color-primary-contrast: #F1F5F9; /* Text color overlaid on primary-colored elements */
+    --color-border: color-mix(in srgb, var(--color-text) 14%, transparent);
+    --color-primary-soft: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    --color-danger: #DC2626;
+    --color-success: #15803D;
+    /* Typography */
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --font-body: var(--font-sans);
+    --font-heading: var(--font-sans);
+    /* Fluid type scale (≈ 1.25 ratio, scales between 320px and 1280px viewports) */
+    --text-xs: clamp(0.75rem, 0.72rem + 0.1vw, 0.8rem);
+    --text-sm: clamp(0.875rem, 0.85rem + 0.12vw, 0.95rem);
+    --text-base: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+    --text-lg: clamp(1.2rem, 1.12rem + 0.4vw, 1.4rem);
+    --text-xl: clamp(1.44rem, 1.3rem + 0.7vw, 1.75rem);
+    --text-2xl: clamp(1.73rem, 1.5rem + 1.1vw, 2.2rem);
+    --text-3xl: clamp(2.07rem, 1.7rem + 1.8vw, 2.75rem);
+    --text-4xl: clamp(2.49rem, 1.9rem + 2.9vw, 3.5rem);
+    --leading-tight: 1.2;
+    --leading-normal: 1.6;
+    --weight-normal: 400;
+    --weight-medium: 500;
+    --weight-bold: 700;
+    /* Spacing scale (4px base) */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+    --space-9: 6rem;
+    /* Layout */
+    --container-max: 72rem;
+    --container-narrow: 42rem;
+    --container-pad: clamp(1rem, 4vw, 2rem);
+    /* Shape & depth */
+    --radius-sm: 0.25rem;
+    --radius: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06);
+    --shadow: 0 2px 8px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.06);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.12);
+    /* Motion */
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+    --duration: 180ms;
+    /* Stacking */
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-overlay: 300;
+    --z-modal: 400;
+    --z-toast: 500;
+    color-scheme: light;
+}
+
+/* 2. Dark theme
+   Follows the OS by default; force with <html data-theme="light|dark">.
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --color-bg: #0f1216;
+        --color-surface: #181c22;
+        --color-text: #e6e8eb;
+        --color-muted: #9aa3ae;
+        --color-primary: #417ce5;
+        --shadow: 0 2px 8px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme="dark"] {
+    --color-bg: #0f1216;
+    --color-surface: #181c22;
+    --color-text: #e6e8eb;
+    --color-muted: #9aa3ae;
+    --color-primary: #4c8dff;
+    --shadow: 0 2px 8px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+    color-scheme: dark;
+}
+
+/* 3. Modern reset
+   ========================================================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    hanging-punctuation: first last;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+img,
+video {
+    height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
+ul[role="list"],
+ol[role="list"] {
+    list-style: none;
+    padding: 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* 4. Base typography
+   ========================================================================== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    text-wrap: balance;
+}
+
+h1 {
+    font-size: var(--text-4xl);
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: var(--text-3xl);
+    letter-spacing: -0.015em;
+}
+
+h3 {
+    font-size: var(--text-2xl);
+}
+
+h4 {
+    font-size: var(--text-xl);
+}
+
+h5 {
+    font-size: var(--text-lg);
+}
+
+h6 {
+    font-size: var(--text-base);
+}
+
+p,
+li {
+    text-wrap: pretty;
+}
+
+p {
+    max-width: 70ch;
+}
+
+small {
+    font-size: var(--text-sm);
+}
+
+strong,
+b {
+    font-weight: var(--weight-bold);
+}
+
+ul,
+ol {
+    padding-inline-start: 1.25em;
+}
+
+li + li {
+    margin-top: var(--space-1);
+}
+
+blockquote {
+    padding-inline-start: var(--space-4);
+    border-inline-start: 3px solid var(--color-primary);
+    color: var(--color-muted);
+    font-style: italic;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--color-border);
+    margin-block: var(--space-6);
+}
+
+mark {
+    background: var(--color-primary-soft);
+    color: inherit;
+    padding: 0 0.15em;
+    border-radius: var(--radius-sm);
+}
+
+abbr[title] {
+    text-decoration: underline dotted;
+    cursor: help;
+}
+
+/* Vertical rhythm for long-form content: wrap articles in .prose */
+.prose > * + * {
+    margin-top: var(--space-4);
+}
+
+.prose > :is(h2, h3, h4) {
+    margin-top: var(--space-6);
+}
+
+/* 5. Links & media
+   ========================================================================== */
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+    transition: text-decoration var(--duration) var(--ease);
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:not([class]) {
+        text-decoration-skip-ink: auto;
+    }
+}
+
+
+figure {
+    display: grid;
+    gap: var(--space-2);
+}
+
+figcaption {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+}
+
+/* 6. Forms
+   ========================================================================== */
+label {
+    display: inline-block;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    margin-bottom: var(--space-1);
+}
+
+input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"]),
+select,
+textarea {
+    display: block;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    line-height: 1.5;
+    transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
+}
+
+    input:not( [type="checkbox"], [type="radio"], [type="range"], [type="color"] ):focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px var(--color-primary-soft);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: var(--color-muted);
+        opacity: 1;
+    }
+
+textarea {
+    min-height: 7rem;
+    resize: vertical;
+}
+
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+    accent-color: var(--color-primary);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    width: 1.1em;
+    height: 1.1em;
+    vertical-align: middle;
+}
+
+:is(input, select, textarea):disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+:is(input, select, textarea)[aria-invalid="true"] { /* Form Validation Errors */
+    border-color: var(--color-danger);
+}
+
+fieldset {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-4);
+}
+
+legend {
+    padding-inline: var(--space-2);
+    font-weight: var(--weight-medium);
+}
+
+.field {
+    display: grid;
+    gap: var(--space-1);
+}
+
+.field-hint {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+}
+
+.field-error {
+    font-size: var(--text-sm);
+    color: var(--color-danger);
+}
+
+/* 7. Buttons
+   ========================================================================== */
+button,
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    background-color: var(--color-primary);
+    color: var(--color-primary-contrast);
+    font-weight: var(--weight-medium);
+    line-height: 1.5;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--duration) var(--ease),
+                transform var(--duration) var(--ease),
+                box-shadow var(--duration) var(--ease);
+
+    &:hover {
+        background-color: color-mix( in srgb, var(--color-primary) 88%, var(--color-text) );
+    }
+
+    &:active {
+        transform: translateY(1px);
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+        opacity: 0.55;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+}
+
+.btn-secondary {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+
+    &:hover {
+        background-color: color-mix( in srgb, var(--color-surface) 85%, var(--color-text) );
+    }
+}
+
+
+.btn-ghost {
+    background-color: transparent;
+    color: var(--color-text);
+
+    &:hover {
+        background-color: var(--color-surface);
+    }
+}
+
+.btn-sm {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
+}
+
+.btn-lg {
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--text-lg);
+}
+
+/* 8. Tables
+   ========================================================================== */
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+th,
+td {
+    padding: var(--space-3) var(--space-4);
+    text-align: start;
+    border-bottom: 1px solid var(--color-border);
+}
+
+th {
+    background-color: var(--color-surface);
+    font-weight: var(--weight-bold);
+}
+
+tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.even-row-shadow {
+    tbody tr:nth-child(even) {
+        background-color: var(--color-surface);
+    }
+
+    tbody tr:hover {
+        background-color: var(--color-primary-soft);
+    }
+}
+
+tbody tr:hover {
+    background-color: var(--color-primary-soft);
+}
+
+/* 9. Code
+   ========================================================================== */
+code,
+kbd,
+samp,
+pre {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
+
+:not(pre) > code {
+    padding: 0.15em 0.35em;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-sm);
+}
+
+pre {
+    padding: var(--space-4);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+    line-height: 1.5;
+    tab-size: 2;
+}
+
+kbd {
+    padding: 0.1em 0.4em;
+    border: 1px solid var(--color-border);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg);
+}
+
+/* 10. Layout primitives
+   ========================================================================== */
+
+/* Centered, padded content column */
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-pad);
+}
+
+.container-narrow {
+    max-width: var(--container-narrow);
+}
+
+/* Vertical page sections */
+.section {
+    padding-block: var(--space-8);
+}
+
+/* Vertical stack with consistent gap — set --stack-gap to override */
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stack-gap, var(--space-4));
+}
+
+/* Horizontal wrapping group — nav links, tags, button rows */
+.cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--cluster-gap, var(--space-3));
+}
+
+/* Push first and last children apart */
+.split {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+}
+
+/* Responsive auto-fit grid — set --grid-min to change the column breakpoint */
+.grid {
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(min(var(--grid-min, 16rem), 100%), 1fr) );
+    gap: var(--grid-gap, var(--space-5));
+}
+
+/* Sidebar + main that stacks when narrow */
+.with-sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+
+    & > :first-child {
+        flex-basis: var(--sidebar-width, 16rem);
+        flex-grow: 1;
+    }
+
+    & > :last-child {
+        flex-basis: 0;
+        flex-grow: 999;
+        min-width: 55%;
+    }
+}
+
+
+/* Perfectly center anything */
+.center {
+    display: grid;
+    place-items: center;
+}
+
+/* 11. Components
+   ========================================================================== */
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.card-interactive {
+    transition: box-shadow var(--duration) var(--ease),
+                transform var(--duration) var(--ease);
+
+    &:hover {
+        box-shadow: var(--shadow);
+        transform: translateY(-2px);
+    }
+}
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    fill: var(--color-text);
+    stroke: var(--color-text);
+    width: var(--space-5);
+    height: var(--space-5);
+
+    &.muted {
+        fill: var(--color-muted);
+        stroke: var(--color-muted);
+    }
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem var(--space-2);
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    line-height: 1.6;
+}
+
+.alert {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-surface);
+}
+
+.alert-success {
+    border-color: color-mix(in srgb, var(--color-success) 40%, transparent);
+    background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+}
+
+.alert-danger {
+    border-color: color-mix(in srgb, var(--color-danger) 40%, transparent);
+    background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
+}
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background-color: color-mix(in srgb, var(--color-bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.site-footer {
+    padding-block: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}
+
+/* 12. Utilities
+   ========================================================================== */
+.text-muted {
+    color: var(--color-muted);
+}
+
+.text-primary {
+    color: var(--color-primary);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-start {
+    text-align: start;
+}
+
+.text-end {
+    text-align: end;
+}
+
+.text-xs {
+    font-size: var(--text-xs);
+}
+
+.text-sm {
+    font-size: var(--text-sm);
+}
+
+.text-lg {
+    font-size: var(--text-lg);
+}
+
+.text-xl {
+    font-size: var(--text-xl);
+}
+
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+.font-serif {
+    font-family: var(--font-serif);
+}
+
+.font-bold {
+    font-weight: var(--weight-bold);
+}
+
+.bg-surface {
+    background-color: var(--color-surface);
+}
+
+.rounded {
+    border-radius: var(--radius);
+}
+
+.shadow {
+    box-shadow: var(--shadow);
+}
+
+.mx-auto {
+    margin-inline: auto;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.aspect-video {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.aspect-square {
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+/* 13. Accessibility & motion
+   ========================================================================== */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.visually-hidden:not(:focus, :active) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Add as the first element in <body>: <a class="skip-link" href="#main">Skip to content</a> */
+.skip-link {
+    position: absolute;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: var(--z-toast);
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--color-primary);
+    color: var(--color-primary-contrast);
+    border-radius: var(--radius);
+    transform: translateY(-200%);
+
+    &:focus {
+        transform: none;
+    }
+}
+
+::selection {
+    background-color: var(--color-primary);
+    color: var(--color-primary-contrast);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 14. Print
+   ========================================================================== */
+@media print {
+    *,
+    *::before,
+    *::after {
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+    }
+
+    a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.85em;
+    }
+
+    pre,
+    blockquote,
+    img,
+    tr {
+        break-inside: avoid;
+    }
+
+    h1,
+    h2,
+    h3 {
+        break-after: avoid;
+    }
+
+    .site-header,
+    .skip-link,
+    nav {
+        display: none !important;
+    }
+}
