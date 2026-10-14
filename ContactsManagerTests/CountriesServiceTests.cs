@@ -124,8 +124,7 @@ public class CountriesServiceTests
         List<CountryResponse> countries = _sut.GetAllCountries();
 
         // Assert
-        Assert.Contains(countries, country =>
-            country.CountryName == countryResponse.CountryName);
+        Assert.Contains(countryResponse, countries);
     }
     #endregion
 
@@ -165,8 +164,7 @@ public class CountriesServiceTests
         Assert.Equal(2, actualCountries.Count);
         foreach(CountryResponse expectedCountry in expectedCountries)
         {
-            Assert.Contains(actualCountries, country => country.CountryName == expectedCountry.CountryName);
-            Assert.Contains(actualCountries, country => country.CountryId == expectedCountry.CountryId);
+            Assert.Contains(expectedCountry, actualCountries);
         }
     }
     #endregion
