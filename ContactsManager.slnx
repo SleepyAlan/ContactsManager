@@ -3,4 +3,5 @@
   <Project Path="ContactsManagerTests/ContactsManagerTests.csproj" Id="75a2c3cd-283b-45ef-9bd6-11429bb0cb3c" />
   <Project Path="Entities/Entities.csproj" Id="876b4a01-8832-4218-9c28-27f18ed37ba4" />
   <Project Path="ServiceContracts/ServiceContracts.csproj" Id="1de2a61f-5c6a-47a8-b44d-29d815bfc78c" />
+  <Project Path="Services/Services.csproj" Id="8e32917d-e5bb-4fba-88fd-2688de3a7fe9" />
 </Solution>

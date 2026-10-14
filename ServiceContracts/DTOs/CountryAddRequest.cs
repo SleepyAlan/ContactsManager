@@ -5,13 +5,16 @@ namespace ServiceContracts.DTOs;
 public class CountryAddRequest
 {
     public string? CountryName { get; set; }
+}
 
-    public Country ToCountry()
+public static class CountryAddRequestExtensions
+{
+    public static Country ToCountry(this CountryAddRequest countryAddRequest)
     {
         return new Country
         {
             //CountryId = Guid.NewGuid(),
-            CountryName = this.CountryName
+            CountryName = countryAddRequest.CountryName
         };
     }
 }
