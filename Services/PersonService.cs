@@ -2,6 +2,8 @@
 using ServiceContracts.DTOs;
 using Entities;
 using ServiceContracts.Extensions;
+using System.ComponentModel.DataAnnotations;
+using Services.Helpers;
 
 namespace Services;
 
@@ -32,12 +34,7 @@ public class PersonService : IPersonService
     {
         ArgumentNullException.ThrowIfNull(personAddRequest, nameof(personAddRequest));
 
-        if (string.IsNullOrWhiteSpace(personAddRequest.PersonName))
-        {
-            throw new ArgumentException(
-                "PersonName cannot be null, empty, or whitespace.",
-                nameof(personAddRequest.PersonName));
-        }
+        ModelValidationHelper.Validate(personAddRequest);
 
         Person person = personAddRequest.ToPerson();
         person.PersonId = Guid.NewGuid();
