@@ -48,4 +48,12 @@ public class PersonService : IPersonService
     {
         return _persons.Select(ConvertToPersonResponse).ToList();
     }
+
+    public PersonResponse? GetPersonById(Guid? personId)
+    {
+        if (personId == null) return null;
+        Person? person = _persons.FirstOrDefault(
+            person => person.PersonId == personId);
+        return person is null ? null : ConvertToPersonResponse(person);
+    }
 }

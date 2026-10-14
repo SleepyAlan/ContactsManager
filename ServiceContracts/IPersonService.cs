@@ -19,4 +19,11 @@ public interface IPersonService
     /// </summary>
     /// <returns>A list of PersonResponse dto containing the details of all persons.</returns>
     List<PersonResponse> GetAllPersons();
+
+    /// <summary>
+    /// Retrieves a person by their unique identifier.
+    /// </summary>
+    /// <param name="personId">The unique identifier of the person.</param>
+    /// <returns>A PersonResponse dto containing the details of the person, or null if not found.</returns>
+    PersonResponse? GetPersonById(Guid? personId);
 }
