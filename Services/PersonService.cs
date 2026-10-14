@@ -20,6 +20,14 @@ public class PersonService : IPersonService
         _persons = new List<Person>();
     }
 
+    private PersonResponse ConvertToPersonResponse(Person person)
+    {
+        PersonResponse personResponse = person.ToPersonResponse();
+        personResponse.CountryName = _countryService
+            .GetCountryByCountryId(person.CountryId)?.CountryName;
+        return personResponse;
+    }
+
     public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
     {
         ArgumentNullException.ThrowIfNull(personAddRequest, nameof(personAddRequest));
@@ -36,19 +44,11 @@ public class PersonService : IPersonService
 
         _persons.Add(person);
 
-        return GeneratePersonResponse(person);
+        return ConvertToPersonResponse(person);
     }
 
     public List<PersonResponse> GetAllPersons()
     {
-        return _persons.Select(GeneratePersonResponse).ToList();
-    }
-
-    private PersonResponse GeneratePersonResponse(Person person)
-    {
-        PersonResponse personResponse = person.ToPersonResponse();
-        personResponse.CountryName = _countryService
-            .GetCountryByCountryId(person.CountryId)?.CountryName;
-        return personResponse;
+        return _persons.Select(ConvertToPersonResponse).ToList();
     }
 }
