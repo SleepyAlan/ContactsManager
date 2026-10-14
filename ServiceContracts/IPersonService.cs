@@ -1,4 +1,5 @@
 ﻿using ServiceContracts.DTOs;
+using ServiceContracts.Enums;
 
 namespace ServiceContracts;
 
@@ -26,4 +27,6 @@ public interface IPersonService
     /// <param name="personId">The unique identifier of the person.</param>
     /// <returns>A PersonResponse dto containing the details of the person, or null if not found.</returns>
     PersonResponse? GetPersonById(Guid? personId);
+
+    List<PersonResponse> GetFilteredPersons(string? searchString, SearchOptions option);
 }
