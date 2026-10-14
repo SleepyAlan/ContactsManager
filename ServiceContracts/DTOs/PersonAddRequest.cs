@@ -10,10 +10,10 @@ public class PersonAddRequest
 {
 
     // PersonName cannot be null, empty, or whitespace. It must not exceed 100 characters in length.
-    [Required(ErrorMessage = "PersonName cannot be null.")]
+    [Required(ErrorMessage = "PersonName cannot be null, empty, or whitespace.")]
     [MaxLength(100, ErrorMessage = "PersonName cannot exceed 100 characters.")]
     public string? PersonName { get; set; }
-    [Required(ErrorMessage = "Email cannot be null.")]
+    [Required(ErrorMessage = "Email cannot be null, empty, or whitespace.")]
     [EmailAddress(ErrorMessage = "Invalid Email Address.")]
     public string? Email { get; set; }
     public DateTime? DateOfBirth { get; set; }
