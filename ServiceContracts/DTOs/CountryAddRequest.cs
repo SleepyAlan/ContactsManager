@@ -13,7 +13,6 @@ public static class CountryAddRequestExtensions
     {
         return new Country
         {
-            //CountryId = Guid.NewGuid(),
             CountryName = countryAddRequest.CountryName
         };
     }
