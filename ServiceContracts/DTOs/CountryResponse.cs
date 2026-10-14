@@ -1,6 +1,4 @@
-﻿using Entities;
-
-namespace ServiceContracts.DTOs;
+﻿namespace ServiceContracts.DTOs;
 
 /// <summary>
 /// Represents the response DTO for Country entity.
@@ -21,17 +19,5 @@ public class CountryResponse
     public override int GetHashCode()
     {
         return HashCode.Combine(CountryId, CountryName);
-    }
-}
-
-public static class CountryResponseExtensions
-{
-    public static CountryResponse ToCountryResponse(this Country country)
-    {
-        return new CountryResponse
-        {
-            CountryId = country.CountryId,
-            CountryName = country.CountryName
-        };
     }
 }

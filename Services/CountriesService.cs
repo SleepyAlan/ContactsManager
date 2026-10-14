@@ -1,6 +1,7 @@
 ﻿using ServiceContracts;
 using ServiceContracts.DTOs;
 using Entities;
+using ServiceContracts.Extensions;
 
 namespace Services;
 
