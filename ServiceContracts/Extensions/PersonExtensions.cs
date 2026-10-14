@@ -3,12 +3,12 @@ using Entities;
 
 namespace ServiceContracts.Extensions;
 
-public static class PersonResponseExtensions
+public static class PersonExtensions
 {
     /// <summary>
-    /// Maps a Person entity to a PersonResponse DTO.
+    /// Converts a Person entity to a PersonResponse DTO.
     /// </summary>
-    /// <param name="person">The Person entity to map.</param>
+    /// <param name="person">The Person entity to convert.</param>
     /// <returns>A PersonResponse DTO.</returns>
     public static PersonResponse ToPersonResponse(this Person person)
     {
