@@ -24,13 +24,12 @@ public class PersonResponse : IEquatable<PersonResponse?>
     public bool Equals(PersonResponse? other)
     {
         return other is not null &&
-               PersonId.Equals(other.PersonId) &&
+               PersonId == other.PersonId &&
                PersonName == other.PersonName &&
                Email == other.Email &&
                DateOfBirth == other.DateOfBirth &&
-               Age == other.Age &&
                Gender == other.Gender &&
-               EqualityComparer<Guid?>.Default.Equals(CountryId, other.CountryId) &&
+               CountryId == other.CountryId &&
                CountryName == other.CountryName &&
                Address == other.Address &&
                ReceiveNewsLetters == other.ReceiveNewsLetters;
