@@ -151,7 +151,7 @@ public class CountriesServiceTests
         {
             CountryName = "USA"
         };
-        List<CountryResponse> expectedCountries = new ()
+        List<CountryResponse> expectedCountries = new()
         {
             _sut.AddCountry(request1),
             _sut.AddCountry(request2)
@@ -162,10 +162,57 @@ public class CountriesServiceTests
 
         // Assert
         Assert.Equal(2, actualCountries.Count);
-        foreach(CountryResponse expectedCountry in expectedCountries)
+        foreach (CountryResponse expectedCountry in expectedCountries)
         {
             Assert.Contains(expectedCountry, actualCountries);
         }
+    }
+    #endregion
+
+    #region GetCountryByCountryId Tests
+    [Fact]
+    public void GetCountryByCountryId_WhenNullCountryIdIsPassed_ReturnsNull()
+    {
+        // Arrange
+        Guid? countryId = null;
+
+        // Act
+        CountryResponse? countryResponse = _sut.GetCountryByCountryId(countryId);
+
+        // Assert
+        Assert.Null(countryResponse);
+    }
+
+    [Fact]
+    public void GetCountryByCountryId_WhenInvalidCountryIdIsPassed_ReturnsNull()
+    {
+        // Arrange
+        Guid? countryId = null;
+
+        // Act
+        CountryResponse? countryResponse = _sut.GetCountryByCountryId(countryId);
+
+        // Assert
+        Assert.Null(countryResponse);
+    }
+
+    [Fact]
+    public void GetCountryByCountryId_ValidCountryId_ReturnsCountryResponse()
+    {
+        // Arrange
+        var countryAddRequest = new CountryAddRequest()
+        {
+            CountryName = "Test",
+        };
+        CountryResponse expectedCountryResponse = _sut.AddCountry(countryAddRequest);
+        Guid countryId = expectedCountryResponse.CountryId;
+
+        // Act
+        CountryResponse? actualCountryResponse = _sut.GetCountryByCountryId(countryId);
+
+        // Assert
+        Assert.NotNull(actualCountryResponse);
+        Assert.Equal(expectedCountryResponse, actualCountryResponse);
     }
     #endregion
 }

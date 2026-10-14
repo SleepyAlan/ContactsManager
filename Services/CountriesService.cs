@@ -16,6 +16,13 @@ public class CountriesService : ICountriesService
         _countries = new List<Country>();
     }
 
+    /// <summary>
+    /// Adds a new country to the collection of countries.
+    /// </summary>
+    /// <param name="countryAddRequest">The request object containing the details of the country to add.</param>
+    /// <returns>The response object representing the added country.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the countryAddRequest is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the country name is null, empty, or already exists. Also thrown when countryAddRequest.CountryName is already exists in the collection.</exception>
     public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
     {
         ArgumentNullException.ThrowIfNull(
@@ -54,5 +61,10 @@ public class CountriesService : ICountriesService
         return _countries
             .Select(country => country.ToCountryResponse())
             .ToList();
+    }
+
+    public CountryResponse? GetCountryByCountryId(Guid? countryId)
+    {
+        throw new NotImplementedException();
     }
 }
