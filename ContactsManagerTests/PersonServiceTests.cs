@@ -37,6 +37,32 @@ public class PersonServiceTests
     }
 
     [Fact]
+    public void AddPerson_PersonNameIsEmpty_ThrowsArgumentException()
+    {
+        // Arrange
+        PersonAddRequest personAddRequest = new PersonAddRequest()
+        {
+            PersonName = ""
+        };
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => _sut.AddPerson(personAddRequest));
+    }
+
+    [Fact]
+    public void AddPerson_PersonNameIsWhitespace_ThrowsArgumentException()
+    {
+        // Arrange
+        PersonAddRequest personAddRequest = new PersonAddRequest()
+        {
+            PersonName = " "
+        };
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => _sut.AddPerson(personAddRequest));
+    }
+
+    [Fact]
     public void AddPerson_ValidPersonAddRequest_ReturnsPersonResponse()
     {
         // Arrange
@@ -46,12 +72,41 @@ public class PersonServiceTests
             Email = "test@example.com",
             Address = "sample address",
             CountryId = Guid.NewGuid(),
-            Ser
+            Gender = GenderOptions.Male,
+            DateOfBirth = DateTime.UtcNow,
+            ReceiveNewsLetters = true,
         };
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() => _sut.AddPerson(personAddRequest));
+        // Act
+        PersonResponse actualPersonResponse = _sut.AddPerson(personAddRequest);
+
+        // Assert
+        Assert.True(actualPersonResponse.PersonId != Guid.Empty);
+
     }
 
+    [Fact]
+    public void AddPerson_ValidPersonAddRequest_VerifyItPersistsViaGetAllPersons()
+    {
+        // Arrange
+        PersonAddRequest personAddRequest = new PersonAddRequest()
+        {
+            PersonName = "test",
+            Email = "test@example.com",
+            Address = "sample address",
+            CountryId = Guid.NewGuid(),
+            Gender = GenderOptions.Male,
+            DateOfBirth = DateTime.UtcNow,
+            ReceiveNewsLetters = true,
+        };
+
+        // Act
+        PersonResponse expectedPersonResponse = _sut.AddPerson(personAddRequest);
+        List<PersonResponse> actualPersonResponses = _sut.GetAllPersons();
+        
+
+        // Assert
+        Assert.Contains(expectedPersonResponse, actualPersonResponses);
+    }
 
     #endregion
 
