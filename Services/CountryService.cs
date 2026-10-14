@@ -5,14 +5,14 @@ using ServiceContracts.Extensions;
 
 namespace Services;
 
-public class CountriesService : ICountriesService
+public class CountryService : ICountryService
 {
     /// <summary>
     /// In-memory list to store Country entities.
     /// </summary>
     private readonly List<Country> _countries;
 
-    public CountriesService()
+    public CountryService()
     {
         _countries = new List<Country>();
     }

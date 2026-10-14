@@ -5,7 +5,7 @@ namespace ServiceContracts;
 /// <summary>
 /// Represents the service contract for Country entities.
 /// </summary>
-public interface ICountriesService
+public interface ICountryService
 {
     /// <summary>
     /// Adds a new country based on the provided request.

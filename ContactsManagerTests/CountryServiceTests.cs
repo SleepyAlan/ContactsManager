@@ -5,16 +5,16 @@ using Services;
 
 namespace ContactsManagerTests;
 
-public class CountriesServiceTests
+public class CountryServiceTests
 {
     /// <summary>
     /// The System Under Test (SUT) for the CountriesService.
     /// </summary>
-    private readonly ICountriesService _sut;
+    private readonly ICountryService _sut;
 
-    public CountriesServiceTests()
+    public CountryServiceTests()
     {
-        _sut = new CountriesService();
+        _sut = new CountryService();
     }
 
     #region AddCountry Tests
