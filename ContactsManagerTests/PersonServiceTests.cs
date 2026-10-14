@@ -129,44 +129,12 @@ public class PersonServiceTests
     public void GetAllPersons_IfFewPersons_ReturnsListOfPersons()
     {
         // Arrange
-        PersonAddRequest personAddRequest1 = new PersonAddRequest()
-        {
-            PersonName = "test1",
-            Email = "test1@example.com",
-            Address = "sample address 1",
-            CountryId = Guid.NewGuid(),
-            Gender = GenderOptions.Male,
-            DateOfBirth = DateTime.Now,
-            ReceiveNewsLetters = true,
-        };
-        PersonAddRequest personAddRequest2 = new PersonAddRequest()
-        {
-            PersonName = "test2",
-            Email = "test2@example.com",
-            Address = "sample address 2",
-            CountryId = Guid.NewGuid(),
-            Gender = GenderOptions.Female,
-            DateOfBirth = DateTime.Now,
-            ReceiveNewsLetters = false,
-        };
-        List<PersonResponse> expectedPersonResponses = new List<PersonResponse>
-        {
-            _sut.AddPerson(personAddRequest1),
-            _sut.AddPerson(personAddRequest2)
-        };
-        _testOutputHelper.WriteLine("Expected:");
-        foreach(var expectedPersonResponse in expectedPersonResponses)
-        {
-            _testOutputHelper.WriteLine(expectedPersonResponse.ToString());
-        }
+        List<PersonResponse> expectedPersonResponses = AddSamplePersons();
+        PrintPersonResponses(expectedPersonResponses, "Expected:");
 
         // Act
         List<PersonResponse> actualPersonResponses = _sut.GetAllPersons();
-        _testOutputHelper.WriteLine("Actual:");
-        foreach (var actualPersonResponse in actualPersonResponses)
-        {
-            _testOutputHelper.WriteLine(actualPersonResponse.ToString());
-        }
+        PrintPersonResponses(actualPersonResponses, "Actual:");
 
         // Assert
         foreach (var expectedPersonResponse in expectedPersonResponses)
@@ -242,4 +210,97 @@ public class PersonServiceTests
         Assert.Equal(expectedPersonResponse, actualPersonResponse);
     }
     #endregion
+
+    #region GetFilteredPersons() Tests
+    [Fact]
+    public void GetFilteredPersons_IfNoPersons_ReturnsEmptyList()
+    {
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(null, SearchOptions.None);
+
+        // Assert
+        Assert.Empty(actualPersonResponses);
+    }
+
+    [Fact]
+    public void GetFilteredPersons_FewPersonsAdded_NoFilter_ReturnsAllPersonResponses()
+    {
+        // Arrange
+        List<PersonResponse> expectedPersonResponses = AddSamplePersons();
+        PrintPersonResponses(expectedPersonResponses, "Expected:");
+
+        // Act
+        List<PersonResponse> actualPersonResponses =
+               _sut.GetFilteredPersons(null, SearchOptions.None);
+        PrintPersonResponses(actualPersonResponses, "Actual:");
+
+        // Assert
+        foreach (var expectedPersonResponse in expectedPersonResponses)
+        {
+            Assert.Contains(expectedPersonResponse, actualPersonResponses);
+
+        }
+    }
+    #endregion
+
+    private void PrintPersonResponses(List<PersonResponse> personResponses, string title)
+    {
+        _testOutputHelper.WriteLine(title);
+        foreach (var personResponse in personResponses)
+        {
+            _testOutputHelper.WriteLine(personResponse.ToString());
+        }
+    }
+
+    private List<PersonResponse> AddSamplePersons()
+    {
+        PersonAddRequest personAddRequest1 = new PersonAddRequest()
+        {
+            PersonName = "Alan",
+            Email = "alan@example.com",
+            Address = "sample address 1",
+            CountryId = Guid.NewGuid(),
+            Gender = GenderOptions.Male,
+            DateOfBirth = new DateTime(2007, 1, 1),
+            ReceiveNewsLetters = true,
+        };
+        PersonAddRequest personAddRequest2 = new PersonAddRequest()
+        {
+            PersonName = "Alania",
+            Email = "alania@example.com",
+            Address = "sample address 2",
+            CountryId = Guid.NewGuid(),
+            Gender = GenderOptions.Female,
+            DateOfBirth = new DateTime(2011, 5, 1),
+            ReceiveNewsLetters = false,
+        };
+        PersonAddRequest personAddRequest3 = new PersonAddRequest()
+        {
+            PersonName = "test3",
+            Email = "test3@example.com",
+            Address = "sample address 3",
+            CountryId = Guid.NewGuid(),
+            Gender = GenderOptions.Male,
+            DateOfBirth = new DateTime(1980, 1, 1),
+            ReceiveNewsLetters = true,
+        };
+        PersonAddRequest personAddRequest4 = new PersonAddRequest()
+        {
+            PersonName = "test4",
+            Email = "test4@example.com",
+            Address = "sample address 4",
+            CountryId = Guid.NewGuid(),
+            Gender = GenderOptions.Other,
+            DateOfBirth = new DateTime(2000, 1, 1),
+            ReceiveNewsLetters = false,
+        };
+        List<PersonResponse> expectedPersonResponses = new List<PersonResponse>
+        {
+            _sut.AddPerson(personAddRequest1),
+            _sut.AddPerson(personAddRequest2),
+            _sut.AddPerson(personAddRequest3),
+            _sut.AddPerson(personAddRequest4)
+        };
+        return expectedPersonResponses;
+    }
 }
