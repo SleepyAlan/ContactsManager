@@ -1,4 +1,4 @@
-﻿using ServiceContracts.enums;
+﻿using ServiceContracts.Enums;
 
 namespace ServiceContracts.DTOs;
 

@@ -3,7 +3,7 @@ using Entities;
 using ServiceContracts.DTOs;
 using Services;
 
-namespace ContactsManagerTests;
+namespace CRUDTests;
 
 public class CountryServiceTests
 {

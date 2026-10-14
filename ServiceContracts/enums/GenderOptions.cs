@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ServiceContracts.enums;
+namespace ServiceContracts.Enums;
 
 public enum GenderOptions
 {
