@@ -26,7 +26,7 @@ public class PersonService : IPersonService
     {
         PersonResponse personResponse = person.ToPersonResponse();
         personResponse.CountryName = _countryService
-            .GetCountryByCountryId(person.CountryId)?.CountryName;
+            .GetCountryById(person.CountryId)?.CountryName;
         return personResponse;
     }
 

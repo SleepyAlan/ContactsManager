@@ -64,7 +64,7 @@ public class CountryService : ICountryService
             .ToList();
     }
 
-    public CountryResponse? GetCountryByCountryId(Guid? countryId)
+    public CountryResponse? GetCountryById(Guid? countryId)
     {
         if (countryId is null) return null;
 

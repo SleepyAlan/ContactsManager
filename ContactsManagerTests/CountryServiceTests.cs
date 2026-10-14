@@ -169,35 +169,35 @@ public class CountryServiceTests
     }
     #endregion
 
-    #region GetCountryByCountryId Tests
+    #region GetCountryById Tests
     [Fact]
-    public void GetCountryByCountryId_NullCountryId_ReturnsNull()
+    public void GetCountryById_NullCountryId_ReturnsNull()
     {
         // Arrange
         Guid? countryId = null;
 
         // Act
-        CountryResponse? countryResponse = _sut.GetCountryByCountryId(countryId);
+        CountryResponse? countryResponse = _sut.GetCountryById(countryId);
 
         // Assert
         Assert.Null(countryResponse);
     }
 
     [Fact]
-    public void GetCountryByCountryId_InvalidCountryId_ReturnsNull()
+    public void GetCountryById_InvalidCountryId_ReturnsNull()
     {
         // Arrange
         Guid? countryId = null;
 
         // Act
-        CountryResponse? countryResponse = _sut.GetCountryByCountryId(countryId);
+        CountryResponse? countryResponse = _sut.GetCountryById(countryId);
 
         // Assert
         Assert.Null(countryResponse);
     }
 
     [Fact]
-    public void GetCountryByCountryId_ValidCountryId_ReturnsCountryResponse()
+    public void GetCountryById_ValidCountryId_ReturnsCountryResponse()
     {
         // Arrange
         var countryAddRequest = new CountryAddRequest()
@@ -208,7 +208,7 @@ public class CountryServiceTests
         Guid countryId = expectedCountryResponse.CountryId;
 
         // Act
-        CountryResponse? actualCountryResponse = _sut.GetCountryByCountryId(countryId);
+        CountryResponse? actualCountryResponse = _sut.GetCountryById(countryId);
 
         // Assert
         Assert.NotNull(actualCountryResponse);

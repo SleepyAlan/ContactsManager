@@ -25,5 +25,5 @@ public interface ICountryService
     /// </summary>
     /// <param name="countryId">The unique identifier of the country.</param>
     /// <returns>The response object representing the country. Returns null if the country is not found.</returns>
-    CountryResponse? GetCountryByCountryId(Guid? countryId);
+    CountryResponse? GetCountryById(Guid? countryId);
 }
