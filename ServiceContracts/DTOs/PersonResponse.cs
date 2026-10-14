@@ -50,4 +50,9 @@ public class PersonResponse : IEquatable<PersonResponse?>
         hash.Add(ReceiveNewsLetters);
         return hash.ToHashCode();
     }
+
+    public override string ToString()
+    {
+        return $"PersonResponse {{ PersonId = {PersonId}, PersonName = {PersonName}, Email = {Email}, DateOfBirth = {DateOfBirth}, Age = {Age}, Gender = {Gender}, CountryId = {CountryId}, CountryName = {CountryName}, Address = {Address}, ReceiveNewsLetters = {ReceiveNewsLetters} }}";
+    }
 }
