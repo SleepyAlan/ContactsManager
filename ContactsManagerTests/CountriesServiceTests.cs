@@ -19,7 +19,7 @@ public class CountriesServiceTests
 
     #region AddCountry Tests
     [Fact]
-    public void AddCountry_WhenCountryAddRequestIsNull_ThrowsArgumentNullException()
+    public void AddCountry_NullCountryAddRequest_ThrowsArgumentNullException()
     {
         // Arrange
         CountryAddRequest? request = null;
@@ -30,7 +30,7 @@ public class CountriesServiceTests
     }
 
     [Fact]
-    public void AddCountry_WhenCountryNameIsNull_ThrowsArgumentException()
+    public void AddCountry_NullCountryName_ThrowsArgumentException()
     {
         // Arrange
         CountryAddRequest request = new CountryAddRequest()
@@ -44,7 +44,7 @@ public class CountriesServiceTests
     }
 
     [Fact]
-    public void AddCountry_WhenCountryNameIsEmpty_ThrowsArgumentException()
+    public void AddCountry_CountryNameIsEmpty_ThrowsArgumentException()
     {
         // Arrange
         CountryAddRequest request = new CountryAddRequest()
@@ -58,7 +58,7 @@ public class CountriesServiceTests
     }
 
     [Fact]
-    public void AddCountry_WhenCountryNameIsWhiteSpace_ThrowsArgumentException()
+    public void AddCountry_CountryNameIsWhiteSpace_ThrowsArgumentException()
     {
         // Arrange
         CountryAddRequest request = new CountryAddRequest()
@@ -72,7 +72,7 @@ public class CountriesServiceTests
     }
 
     [Fact]
-    public void AddCountry_WhenCountryNameIsDuplicate_ThrowsArgumentException()
+    public void AddCountry_CountryNameIsDuplicate_ThrowsArgumentException()
     {
         // Arrange
         CountryAddRequest request1 = new CountryAddRequest()
@@ -93,7 +93,7 @@ public class CountriesServiceTests
     }
 
     [Fact]
-    public void AddCountry_WhenProperCountryAddRequest_ValueShouldBeInserted()
+    public void AddCountry_ValidCountryAddRequest_ReturnsCountryResponse()
     {
         // Arrange
         CountryAddRequest request1 = new CountryAddRequest()
@@ -111,7 +111,7 @@ public class CountriesServiceTests
     }
 
     [Fact]
-    public void AddCountry_WhenProperCountryAddRequest_VerifyIfValuePersisted()
+    public void AddCountry_ValidCountryAddRequest_VerifyIfValuePersistedViaGetAllCountries()
     {
         // Arrange
         CountryAddRequest request1 = new CountryAddRequest()
@@ -130,7 +130,7 @@ public class CountriesServiceTests
 
     #region GetAllCountries Tests
     [Fact]
-    public void GetAllCountries_WhenNoCountriesAdded_ReturnsEmptyList()
+    public void GetAllCountries_NoCountriesAvailable_ReturnsEmptyList()
     {
         // Act
         List<CountryResponse> countries = _sut.GetAllCountries();
@@ -140,7 +140,7 @@ public class CountriesServiceTests
     }
 
     [Fact]
-    public void GetAllCountries_WhenFewCountriesAdded_ReturnsAllCountriesAdded()
+    public void GetAllCountries_FewCountriesAdded_ReturnsAllCountriesAdded()
     {
         // Arrange
         CountryAddRequest request1 = new CountryAddRequest()
@@ -171,7 +171,7 @@ public class CountriesServiceTests
 
     #region GetCountryByCountryId Tests
     [Fact]
-    public void GetCountryByCountryId_WhenNullCountryIdIsPassed_ReturnsNull()
+    public void GetCountryByCountryId_NullCountryId_ReturnsNull()
     {
         // Arrange
         Guid? countryId = null;
@@ -184,7 +184,7 @@ public class CountriesServiceTests
     }
 
     [Fact]
-    public void GetCountryByCountryId_WhenInvalidCountryIdIsPassed_ReturnsNull()
+    public void GetCountryByCountryId_InvalidCountryId_ReturnsNull()
     {
         // Arrange
         Guid? countryId = null;
