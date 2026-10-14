@@ -34,6 +34,4 @@ public static class CountryResponseExtensions
             CountryName = country.CountryName
         };
     }
-
-
 }
