@@ -4,6 +4,7 @@ using Entities;
 using ServiceContracts.Extensions;
 using System.ComponentModel.DataAnnotations;
 using Services.Helpers;
+using ServiceContracts.Enums;
 
 namespace Services;
 
@@ -55,5 +56,10 @@ public class PersonService : IPersonService
         Person? person = _persons.FirstOrDefault(
             person => person.PersonId == personId);
         return person is null ? null : ConvertToPersonResponse(person);
+    }
+
+    public List<PersonResponse> GetFilteredPersons(string? searchString, SearchOptions option)
+    {
+        throw new NotImplementedException();
     }
 }
