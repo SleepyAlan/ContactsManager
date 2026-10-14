@@ -73,7 +73,7 @@ public class PersonServiceTests
             Address = "sample address",
             CountryId = Guid.NewGuid(),
             Gender = GenderOptions.Male,
-            DateOfBirth = DateTime.UtcNow,
+            DateOfBirth = DateTime.Now,
             ReceiveNewsLetters = true,
         };
         // Act
