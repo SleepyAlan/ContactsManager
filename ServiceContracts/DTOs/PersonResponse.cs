@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents response DTO for person and is the return type of most methods of the service.
 /// </summary>
-public class PersonResponse
+public class PersonResponse : IEquatable<PersonResponse?>
 {
     public Guid PersonId { get; set; }
     public string? PersonName { get; set; }
@@ -18,17 +18,22 @@ public class PersonResponse
 
     public override bool Equals(object? obj)
     {
-        return obj is PersonResponse response &&
-               PersonId == response.PersonId &&
-               PersonName == response.PersonName &&
-               Email == response.Email &&
-               DateOfBirth == response.DateOfBirth &&
-               Age == response.Age &&
-               Gender == response.Gender &&
-               CountryId == response.CountryId &&
-               CountryName == response.CountryName &&
-               Address == response.Address &&
-               ReceiveNewsLetters == response.ReceiveNewsLetters;
+        return Equals(obj as PersonResponse);
+    }
+
+    public bool Equals(PersonResponse? other)
+    {
+        return other is not null &&
+               PersonId.Equals(other.PersonId) &&
+               PersonName == other.PersonName &&
+               Email == other.Email &&
+               DateOfBirth == other.DateOfBirth &&
+               Age == other.Age &&
+               Gender == other.Gender &&
+               EqualityComparer<Guid?>.Default.Equals(CountryId, other.CountryId) &&
+               CountryName == other.CountryName &&
+               Address == other.Address &&
+               ReceiveNewsLetters == other.ReceiveNewsLetters;
     }
 
     public override int GetHashCode()
