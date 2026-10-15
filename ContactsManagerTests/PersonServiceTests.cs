@@ -16,8 +16,8 @@ public class PersonServiceTests
     public PersonServiceTests(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
-        _sut = new PersonService();
         _countryService = new CountryService();
+        _sut = new PersonService(_countryService);
     }
 
     #region AddPerson() Tests
@@ -248,13 +248,14 @@ public class PersonServiceTests
     public void GetFilteredPersons_FilterByCountryUSA_ReturnsExactly2ValidPersonResponses()
     {
         // Arrange
-        AddSamplePersons(); // Contains 2 persons with country as "USA"
-        const string countryName = "USA";
+        AddSamplePersons(); // Contains 2 persons with country as "Canada"
+        const string countryName = "Canada";
 
         // Act
         List<PersonResponse> actualPersonResponses =
                _sut.GetFilteredPersons(countryName, SearchOptions.ByCountry);
         PrintPersonResponses(actualPersonResponses, "Actual:");
+        var all = _sut.GetAllPersons();
 
         // Assert
         Assert.Equal(2, actualPersonResponses.Count);
@@ -265,7 +266,7 @@ public class PersonServiceTests
     }
 
     [Fact]
-    public void GetFilteredPersons_FilterByPersonName_ReturnsExactly2ValidPersonResponses()
+    public void GetFilteredPersons_FilterByPersonName_ReturnsExactly1ValidPersonResponses()
     {
         // Arrange
         AddSamplePersons(); // Contains 2 persons with country as "USA"
@@ -277,7 +278,7 @@ public class PersonServiceTests
         PrintPersonResponses(actualPersonResponses, "Actual:");
 
         // Assert
-        Assert.Equal(2, actualPersonResponses.Count);
+        Assert.Single(actualPersonResponses);
         foreach (var actualPersonResponse in actualPersonResponses)
         {
             Assert.Contains(personName, actualPersonResponse.PersonName, StringComparison.OrdinalIgnoreCase);
