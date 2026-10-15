@@ -269,7 +269,7 @@ public class PersonServiceTests
     public void GetFilteredPersons_FilterByPersonName_ReturnsExactly1ValidPersonResponses()
     {
         // Arrange
-        AddSamplePersons(); // Contains 2 persons with country as "USA"
+        AddSamplePersons(); // Contains 1 person with name that has substring "Alan"
         const string personName = "Alan";
 
         // Act
