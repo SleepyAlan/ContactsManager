@@ -28,5 +28,11 @@ public interface IPersonService
     /// <returns>A PersonResponse dto containing the details of the person, or null if not found.</returns>
     PersonResponse? GetPersonById(Guid? personId);
 
+    /// <summary>
+    /// Retrieves a list of persons based on the provided search string and search option.
+    /// </summary>
+    /// <param name="searchString">The search string to filter persons.</param>
+    /// <param name="option">The search option to determine the filtering criteria.</param>
+    /// <returns>A list of PersonResponse dto containing the details of the filtered persons.</returns>
     List<PersonResponse> GetFilteredPersons(string? searchString, SearchOptions option);
 }

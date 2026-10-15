@@ -17,9 +17,9 @@ public class PersonService : IPersonService
     private readonly List<Person> _persons;
     private readonly ICountryService _countryService;
 
-    public PersonService()
+    public PersonService(ICountryService? service = null)
     {
-        _countryService = new CountryService();
+        _countryService = service ?? new CountryService();
         _persons = new List<Person>();
     }
 
@@ -58,8 +58,78 @@ public class PersonService : IPersonService
         return person is null ? null : ConvertToPersonResponse(person);
     }
 
-    public List<PersonResponse> GetFilteredPersons(string? searchString, SearchOptions option)
+    public List<PersonResponse> GetFilteredPersons(
+        string? searchString,
+        SearchOptions option)
     {
-        throw new NotImplementedException();
+        var allPersons = GetAllPersons();
+        if (string.IsNullOrEmpty(searchString) || option == SearchOptions.None)
+        {
+            return allPersons;
+        }
+
+        double age = 0;
+        if (option == SearchOptions.GreaterThanAge ||
+            option == SearchOptions.LessThanAge ||
+            option == SearchOptions.EqualToAge)
+        {
+            if (!double.TryParse(searchString, out age))
+            {
+                throw new ArgumentException("Search string must be a valid number for age comparison.");
+            }
+        }
+
+        switch (option)
+        {
+            case SearchOptions.ByName:
+                return allPersons
+                    .Where(p => ContainsSubstring(p.PersonName, searchString))
+                    .ToList();
+            case SearchOptions.ByCountry:
+                return allPersons
+                    .Where(p => ContainsSubstring(p.CountryName, searchString))
+                    .ToList();
+            case SearchOptions.ByEmail:
+                return allPersons
+                    .Where(p => ContainsSubstring(p.Email, searchString))
+                    .ToList();
+            case SearchOptions.ByAddress:
+                return allPersons
+                    .Where(p => ContainsSubstring(p.Address, searchString))
+                    .ToList();
+            case SearchOptions.ByGender:
+                return allPersons
+                    .Where(p => ContainsSubstring(p.Gender, searchString))
+                    .ToList();
+            case SearchOptions.GreaterThanAge:
+                return allPersons
+                    .Where(p => p.Age.HasValue && p.Age.Value > age)
+                    .ToList();
+            case SearchOptions.LessThanAge:
+                return allPersons
+                    .Where(p => p.Age.HasValue && p.Age.Value < age)
+                    .ToList();
+            case SearchOptions.EqualToAge:
+                return allPersons
+                    .Where(p => p.Age.HasValue && p.Age.Value == age)
+                    .ToList();
+            case SearchOptions.ByDateOfBirth:
+                return allPersons
+                    .Where(p => ContainsSubstring(p.DateOfBirth?.ToString("yyyy-MM-dd"), searchString))
+                    .ToList();
+            case SearchOptions.ByReceiveNewsLetters:
+                bool receiveNewsLetters = searchString.Equals("true", StringComparison.OrdinalIgnoreCase);
+                return allPersons
+                    .Where(p => p.ReceiveNewsLetters == receiveNewsLetters)
+                    .ToList();
+            default: // This case should not occur due to the earlier check.
+                return new List<PersonResponse>();
+        }
+    }
+
+    private bool ContainsSubstring(string? toCheck, string substring)
+    {
+        return toCheck is not null && 
+            toCheck.Contains(substring, StringComparison.OrdinalIgnoreCase);
     }
 }
