@@ -11,11 +11,13 @@ public class PersonServiceTests
 {
     private readonly IPersonService _sut;
     private readonly ITestOutputHelper _testOutputHelper;
+    private readonly ICountryService _countryService;
 
     public PersonServiceTests(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
         _sut = new PersonService();
+        _countryService = new CountryService();
     }
 
     #region AddPerson() Tests
@@ -241,8 +243,49 @@ public class PersonServiceTests
 
         }
     }
+
+    [Fact]
+    public void GetFilteredPersons_FilterByCountryUSA_ReturnsExactly2ValidPersonResponses()
+    {
+        // Arrange
+        AddSamplePersons(); // Contains 2 persons with country as "USA"
+        const string countryName = "USA";
+
+        // Act
+        List<PersonResponse> actualPersonResponses =
+               _sut.GetFilteredPersons(countryName, SearchOptions.ByCountry);
+        PrintPersonResponses(actualPersonResponses, "Actual:");
+
+        // Assert
+        Assert.Equal(2, actualPersonResponses.Count);
+        foreach (var actualPersonResponse in actualPersonResponses)
+        {
+            Assert.Contains(countryName, actualPersonResponse.CountryName, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    [Fact]
+    public void GetFilteredPersons_FilterByPersonName_ReturnsExactly2ValidPersonResponses()
+    {
+        // Arrange
+        AddSamplePersons(); // Contains 2 persons with country as "USA"
+        const string personName = "Alan";
+
+        // Act
+        List<PersonResponse> actualPersonResponses =
+               _sut.GetFilteredPersons(personName, SearchOptions.ByName);
+        PrintPersonResponses(actualPersonResponses, "Actual:");
+
+        // Assert
+        Assert.Equal(2, actualPersonResponses.Count);
+        foreach (var actualPersonResponse in actualPersonResponses)
+        {
+            Assert.Contains(personName, actualPersonResponse.PersonName, StringComparison.OrdinalIgnoreCase);
+        }
+    }
     #endregion
 
+    #region Helper Methods
     private void PrintPersonResponses(List<PersonResponse> personResponses, string title)
     {
         _testOutputHelper.WriteLine(title);
@@ -254,22 +297,25 @@ public class PersonServiceTests
 
     private List<PersonResponse> AddSamplePersons()
     {
+        CountryResponse countryUSA = _countryService.AddCountry(new CountryAddRequest() { CountryName = "USA" });
+        CountryResponse countryCanada = _countryService.AddCountry(new CountryAddRequest() { CountryName = "Canada" });
+
         PersonAddRequest personAddRequest1 = new PersonAddRequest()
         {
             PersonName = "Alan",
             Email = "alan@example.com",
             Address = "sample address 1",
-            CountryId = Guid.NewGuid(),
+            CountryId = countryUSA.CountryId,
             Gender = GenderOptions.Male,
             DateOfBirth = new DateTime(2007, 1, 1),
             ReceiveNewsLetters = true,
         };
         PersonAddRequest personAddRequest2 = new PersonAddRequest()
         {
-            PersonName = "Alania",
-            Email = "alania@example.com",
+            PersonName = "Adam",
+            Email = "adam@example.com",
             Address = "sample address 2",
-            CountryId = Guid.NewGuid(),
+            CountryId = countryCanada.CountryId,
             Gender = GenderOptions.Female,
             DateOfBirth = new DateTime(2011, 5, 1),
             ReceiveNewsLetters = false,
@@ -279,7 +325,7 @@ public class PersonServiceTests
             PersonName = "test3",
             Email = "test3@example.com",
             Address = "sample address 3",
-            CountryId = Guid.NewGuid(),
+            CountryId = null,
             Gender = GenderOptions.Male,
             DateOfBirth = new DateTime(1980, 1, 1),
             ReceiveNewsLetters = true,
@@ -289,7 +335,7 @@ public class PersonServiceTests
             PersonName = "test4",
             Email = "test4@example.com",
             Address = "sample address 4",
-            CountryId = Guid.NewGuid(),
+            CountryId = countryCanada.CountryId,
             Gender = GenderOptions.Other,
             DateOfBirth = new DateTime(2000, 1, 1),
             ReceiveNewsLetters = false,
@@ -303,4 +349,5 @@ public class PersonServiceTests
         };
         return expectedPersonResponses;
     }
+    #endregion
 }
