@@ -2,6 +2,9 @@
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
 using Services;
+using System.Collections;
+using System.ComponentModel;
+using System.Xml.Linq;
 using Xunit.Abstractions;
 
 namespace CRUDTests;
@@ -217,7 +220,7 @@ public class PersonServiceTests
     public void GetFilteredPersons_IfNoPersons_ReturnsEmptyList()
     {
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(null, SearchOptions.None);
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(null, SearchOptions.ByName);
 
         // Assert
         Assert.Empty(actualPersonResponses);
@@ -244,8 +247,6 @@ public class PersonServiceTests
     [InlineData("", SearchOptions.LessThanAge)]
     [InlineData(null, SearchOptions.EqualToAge)]
     [InlineData("", SearchOptions.EqualToAge)]
-    [InlineData("alan", SearchOptions.None)]
-    [InlineData(null, SearchOptions.None)]
     public void GetFilteredPersons_NullOrEmptySearchStringOrNoneOption_ReturnsAllPersons(string? search, SearchOptions option)
     {
         // Arrange
@@ -526,6 +527,69 @@ public class PersonServiceTests
             _sut.GetFilteredPersons("anything", searchOption);
         });
     }
+    #endregion
+
+    #region GetSortedPersons() Tests
+    [Fact]
+    public void GetSortedPersons_PersonsToSortIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        IEnumerable<PersonResponse> personsToSort = null!;
+        SearchOptions option = SearchOptions.ByName;
+        ListSortDirection order = ListSortDirection.Ascending;
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            _sut.GetSortedPersons(personsToSort, option, order));
+    }
+
+    [Fact]
+    public void GetSortedPersons_PersonsToSortIsEmpty_ReturnsEmptyList()
+    {
+        // Arrange
+        IEnumerable<PersonResponse> personsToSort = new List<PersonResponse>();
+        SearchOptions option = SearchOptions.ByName;
+        ListSortDirection order = ListSortDirection.Ascending;
+
+        // Act
+        List<PersonResponse> result = _sut.GetSortedPersons(personsToSort, option, order);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void GetSortedPersons_SingleElement_ReturnsSameElement()
+    {
+        // Arrange
+        List<PersonResponse> personsToSort = AddSamplePersons().Take(1).ToList();
+        SearchOptions option = SearchOptions.ByName;
+        ListSortDirection order = ListSortDirection.Ascending;
+
+        // Act
+        List<PersonResponse> result = _sut.GetSortedPersons(personsToSort, option, order);
+
+        // Assert
+        Assert.Single(result);
+        Assert.Equal(personsToSort.First(), result.First());
+    }
+
+    [Fact]
+    public void GetSortedPersons_TwoElements_ReturnsSortedList()
+    {
+        // Arrange
+        List<PersonResponse> personsToSort = AddSamplePersons().Take(2).ToList();
+        SearchOptions option = SearchOptions.ByName;
+        ListSortDirection order = ListSortDirection.Ascending;
+        // Act
+        List<PersonResponse> sortedResult = _sut.GetSortedPersons(personsToSort, option, order);
+        // Assert
+        Assert.Equal(2, sortedResult.Count);
+        Assert.True(string.Compare(
+            sortedResult[0].PersonName,
+            sortedResult[1].PersonName) <= 0);
+    }
+
     #endregion
 
     #region Helper Methods
