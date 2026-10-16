@@ -12,7 +12,18 @@ public static class PersonExtensions
     /// <returns>A PersonResponse DTO.</returns>
     public static PersonResponse ToPersonResponse(this Person person)
     {
-        double? age = person.DateOfBirth.HasValue ? (DateTime.Now - person.DateOfBirth.Value).TotalDays / 365.25 : null;
+        int age = -1;
+        bool isAgeCalculated = false;
+        if (person.DateOfBirth is DateTime dateOfBirth)
+        {
+            var today = DateTime.Today;
+            age = today.Year - dateOfBirth.Year;
+            if (dateOfBirth.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+            isAgeCalculated = true;
+        }
         //string? countryName = person.Country?.CountryName;
         return new PersonResponse
         {
@@ -20,7 +31,7 @@ public static class PersonExtensions
             PersonName = person.PersonName,
             Email = person.Email,
             DateOfBirth = person.DateOfBirth,
-            Age = age,
+            Age = isAgeCalculated ? age : null,
             Gender = person.Gender,
             CountryId = person.CountryId,
             //CountryName = person.Country?.CountryName,

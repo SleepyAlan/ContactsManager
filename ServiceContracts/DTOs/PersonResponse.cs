@@ -9,7 +9,7 @@ public class PersonResponse : IEquatable<PersonResponse?>
     public string? PersonName { get; set; }
     public string? Email { get; set; }
     public DateTime? DateOfBirth { get; set; }
-    public double? Age { get; set; }   
+    public int? Age { get; set; }   
     public string? Gender { get; set; }
     public Guid? CountryId { get; set; }
     public string? CountryName { get; set; }
