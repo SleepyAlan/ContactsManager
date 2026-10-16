@@ -5,6 +5,7 @@ using ServiceContracts.Extensions;
 using System.ComponentModel.DataAnnotations;
 using Services.Helpers;
 using ServiceContracts.Enums;
+using System.ComponentModel;
 
 namespace Services;
 
@@ -62,7 +63,7 @@ public class PersonService : IPersonService
     {
         var allPersons = GetAllPersons();
 
-        if (string.IsNullOrEmpty(searchString) || option == SearchOptions.None)
+        if (string.IsNullOrEmpty(searchString))
         {
             return allPersons;
         }
@@ -70,6 +71,11 @@ public class PersonService : IPersonService
         Func<PersonResponse, bool> predicate = BuildPredicate(searchString, option);
 
         return allPersons.Where(predicate).ToList();
+    }
+
+    public List<PersonResponse> GetSortedPersons(IEnumerable<PersonResponse> personsToSort, SearchOptions option, ListSortDirection order = ListSortDirection.Ascending)
+    {
+        throw new NotImplementedException();
     }
 
     private static Func<PersonResponse, bool> BuildPredicate(
@@ -92,6 +98,8 @@ public class PersonService : IPersonService
                     nameof(option), option, "Unsupported search option.")
         };
     }
+
+    // Below are the helper methods for building predicates based on different search options.
 
     private static bool ContainsSubstring(string? toCheck, string substring)
     {
