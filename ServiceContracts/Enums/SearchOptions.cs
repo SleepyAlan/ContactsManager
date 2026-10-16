@@ -11,6 +11,5 @@ public enum SearchOptions
     ByGender,
     ByCountry,
     ByAddress,
-    ByReceiveNewsLetters,
-    None
+    ByReceiveNewsLetters
 }
