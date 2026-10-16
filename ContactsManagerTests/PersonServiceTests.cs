@@ -3,7 +3,6 @@ using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
 using Services;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace CRUDTests;
 
@@ -224,85 +223,308 @@ public class PersonServiceTests
         Assert.Empty(actualPersonResponses);
     }
 
+    [Theory]
+    [InlineData(null, SearchOptions.ByName)]
+    [InlineData("", SearchOptions.ByName)]
+    [InlineData(null, SearchOptions.ByEmail)]
+    [InlineData("", SearchOptions.ByEmail)]
+    [InlineData(null, SearchOptions.ByAddress)]
+    [InlineData("", SearchOptions.ByAddress)]
+    [InlineData(null, SearchOptions.ByGender)]
+    [InlineData("", SearchOptions.ByGender)]
+    [InlineData(null, SearchOptions.ByDateOfBirth)]
+    [InlineData("", SearchOptions.ByDateOfBirth)]
+    [InlineData(null, SearchOptions.ByCountry)]
+    [InlineData("", SearchOptions.ByCountry)]
+    [InlineData(null, SearchOptions.ByReceiveNewsLetters)]
+    [InlineData("", SearchOptions.ByReceiveNewsLetters)]
+    [InlineData(null, SearchOptions.GreaterThanAge)]
+    [InlineData("", SearchOptions.GreaterThanAge)]
+    [InlineData(null, SearchOptions.LessThanAge)]
+    [InlineData("", SearchOptions.LessThanAge)]
+    [InlineData(null, SearchOptions.EqualToAge)]
+    [InlineData("", SearchOptions.EqualToAge)]
+    [InlineData("alan", SearchOptions.None)]
+    [InlineData(null, SearchOptions.None)]
+    public void GetFilteredPersons_NullOrEmptySearchStringOrNoneOption_ReturnsAllPersons(string? search, SearchOptions option)
+    {
+        // Arrange
+        List<PersonResponse> allPersonResponses = AddSamplePersons();
+
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, option);
+
+        // Assert
+        allPersonResponses.ForEach(expectedPerson =>
+            Assert.Contains(expectedPerson, actualPersonResponses));
+
+
+    }
+
+    [Theory]
+    [InlineData("tes", "test3", "test4")]
+    [InlineData("ALAN", "Alan S")]
+    [InlineData("zzz")]
+    public void GetFilteredPersons_ByName_ReturnsMatchedCaseInsensitiveSubstring(
+        string search, params string[] expected)
+    {
+        // Arrange
+        AddSamplePersons();
+
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByName);
+
+        // Assert
+        Assert.Equal(
+            expected.OrderBy(e => e),
+            actualPersonResponses.Select(p => p.PersonName).OrderBy(n => n));
+    }
+
+    [Theory]
+    [InlineData("canada", "Adam W", "test4")]
+    [InlineData("USA", "Alan S")]
+    [InlineData("zzz")]
+    public void GetFilteredPersons_ByCountry_ReturnsMatchedCaseInsensitiveSubstring(
+        string search, params string[] expected)
+    {
+        // Arrange
+        AddSamplePersons();
+
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByCountry);
+
+        // Assert
+        Assert.Equal(
+            expected.OrderBy(e => e),
+            actualPersonResponses.Select(p => p.PersonName).OrderBy(n => n));
+    }
+
+    [Theory]
+    [InlineData("example.com", "Adam W", "test3", "test4")]
+    [InlineData("gmail", "Alan S")]
+    [InlineData("zzz")]
+    public void GetFilteredPersons_ByEmail_ReturnsMatchedCaseInsensitiveSubstring(
+        string search, params string[] expected)
+    {
+        // Arrange
+        AddSamplePersons();
+
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByEmail);
+
+        // Assert
+        Assert.Equal(
+            expected.OrderBy(e => e),
+            actualPersonResponses.Select(p => p.PersonName).OrderBy(n => n));
+    }
+
+    [Theory]
+    [InlineData("sam", "test3", "test4")]
+    [InlineData("ROAD", "Alan S")]
+    [InlineData("StreeT", "Adam W")]
+    [InlineData("zzz")]
+    public void GetFilteredPersons_ByAddress_ReturnsMatchedCaseInsensitiveSubstring(
+        string search, params string[] expected)
+    {
+        // Arrange
+        AddSamplePersons();
+
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByAddress);
+
+        // Assert
+        Assert.Equal(
+            expected.OrderBy(e => e),
+            actualPersonResponses.Select(p => p.PersonName).OrderBy(n => n));
+    }
+
+    [Theory]
+    [InlineData("2007", "test3", "Alan S")]
+    [InlineData("-01-", "test3", "Alan S", "test4")]
+    [InlineData("2007-01-01", "test3")]
+    [InlineData("2000-01-02")]
+    [InlineData("1900")]
+    public void GetFilteredPersons_ByDateOfBirth_MatchesSubstringOfIsoDate(
+        string search, params string[] expected)
+    {
+        // Arrange
+        AddSamplePersons();
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByDateOfBirth);
+        // Assert
+        Assert.Equal(
+            expected.OrderBy(e => e),
+            actualPersonResponses.Select(p => p.PersonName).OrderBy(n => n));
+    }
+
+    [Theory]
+    [InlineData("5")]
+    [InlineData("10")]
+    [InlineData("15")]
+    [InlineData("20")]
+    [InlineData("25")]
+    [InlineData("30")]
+    [InlineData("40")]
+    [InlineData("50")]
+    [InlineData("100")]
+    [InlineData("500")]
+    public void GetFilteredPersons_GreaterThanAge_ReturnsPersonsWhoseAgeIsGreaterThan(
+        string search)
+    {
+        // Arrange
+        AddSamplePersons();
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.GreaterThanAge);
+        // Assert
+        Assert.All(actualPersonResponses, p => Assert.True(p.Age > int.Parse(search)));
+    }
+
+    [Theory]
+    [InlineData("5")]
+    [InlineData("10")]
+    [InlineData("15")]
+    [InlineData("20")]
+    [InlineData("25")]
+    [InlineData("30")]
+    [InlineData("40")]
+    [InlineData("50")]
+    [InlineData("100")]
+    [InlineData("500")]
+    public void GetFilteredPersons_LessThanAge_ReturnsPersonsWhoseAgeIsLessThan(
+        string search)
+    {
+        // Arrange
+        AddSamplePersons();
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.LessThanAge);
+        // Assert
+        Assert.All(actualPersonResponses, p => Assert.True(p.Age < int.Parse(search)));
+    }
+
     [Fact]
-    public void GetFilteredPersons_FewPersonsAdded_NoFilter_ReturnsAllPersonResponses()
+    public void GetFilteredPersons_EqualToAge_ReturnsPersonsWhoseAgeMatchesExactly()
     {
         // Arrange
         List<PersonResponse> expectedPersonResponses = AddSamplePersons();
-        PrintPersonResponses(expectedPersonResponses, "Expected:");
+        // This and one other person have this age
+        var age1 = expectedPersonResponses.First(p => p.PersonName == "Alan S").Age;
+        // Only one with this age
+        var age2 = expectedPersonResponses.First(p => p.PersonName == "Adam W").Age;
 
         // Act
-        List<PersonResponse> actualPersonResponses =
-               _sut.GetFilteredPersons(null, SearchOptions.None);
-        PrintPersonResponses(actualPersonResponses, "Actual:");
+        List<PersonResponse> actualPersonResponsesAge1 = _sut.GetFilteredPersons(age1.ToString(), SearchOptions.EqualToAge);
+        List<PersonResponse> actualPersonResponsesAge2 = _sut.GetFilteredPersons(age2.ToString(), SearchOptions.EqualToAge);
 
         // Assert
-        foreach (var expectedPersonResponse in expectedPersonResponses)
-        {
-            Assert.Contains(expectedPersonResponse, actualPersonResponses);
+        Assert.All(actualPersonResponsesAge1, p => Assert.Equal(age1, p.Age));
+        Assert.All(actualPersonResponsesAge2, p => Assert.Equal(age2, p.Age));
+    }
 
+    [Theory]
+    [InlineData("abc")]
+    [InlineData("26x")]
+    [InlineData(" ")]
+    [InlineData("12 34")]
+    public void GetFilteredPersons_AgeOptions_WithNonNumericSearch_ThrowsArgumentException(string search)
+    {
+        var options = new[]
+        {
+            SearchOptions.GreaterThanAge,
+            SearchOptions.LessThanAge,
+            SearchOptions.EqualToAge
+        };
+        foreach (var option in options)
+        {
+            var ex = Assert.Throws<ArgumentException>(
+                () => _sut.GetFilteredPersons(search, option));
+            Assert.Contains("valid number", ex.Message);
         }
     }
 
-    [Fact]
-    public void GetFilteredPersons_FilterByCountryUSA_ReturnsExactly2ValidPersonResponses()
+    [Theory]
+    [InlineData("male", "test3", "Alan S")]
+    [InlineData("MALE", "test3", "Alan S")]
+    [InlineData("female", "Adam W")]
+    [InlineData("Other", "test4")]
+    public void GetFilteredPersons_ByGender_WhenSearchIsEnumName_MatchesExactly(
+        string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons(); // Contains 2 persons with country as "Canada"
-        const string countryName = "Canada";
-
+        AddSamplePersons();
         // Act
-        List<PersonResponse> actualPersonResponses =
-               _sut.GetFilteredPersons(countryName, SearchOptions.ByCountry);
-        PrintPersonResponses(actualPersonResponses, "Actual:");
-        var all = _sut.GetAllPersons();
-
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByGender);
         // Assert
-        Assert.Equal(2, actualPersonResponses.Count);
-        foreach (var actualPersonResponse in actualPersonResponses)
-        {
-            Assert.Contains(countryName, actualPersonResponse.CountryName, StringComparison.OrdinalIgnoreCase);
-        }
+        Assert.Equal(
+            expected.OrderBy(e => e),
+            actualPersonResponses.Select(p => p.PersonName).OrderBy(n => n));
     }
 
-    [Fact]
-    public void GetFilteredPersons_FilterByPersonName_ReturnsExactly1ValidPersonResponses()
+    [Theory]
+    [InlineData("ale", "test3", "Alan S", "Adam W")]
+    [InlineData("emal", "Adam W")]
+    [InlineData("zzz")]
+    public void GetFilteredPersons_ByGender_WhenSearchIsNotEnumName_FallsBackToSubstring(string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons(); // Contains 1 person with name that has substring "Alan"
-        const string personName = "Alan";
-
+        AddSamplePersons();
         // Act
-        List<PersonResponse> actualPersonResponses =
-               _sut.GetFilteredPersons(personName, SearchOptions.ByName);
-        PrintPersonResponses(actualPersonResponses, "Actual:");
-
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByGender);
         // Assert
-        Assert.Single(actualPersonResponses);
-        foreach (var actualPersonResponse in actualPersonResponses)
-        {
-            Assert.Contains(personName, actualPersonResponse.PersonName, StringComparison.OrdinalIgnoreCase);
-        }
+        Assert.Equal(
+            expected.OrderBy(e => e),
+            actualPersonResponses.Select(p => p.PersonName).OrderBy(n => n));
     }
 
-    [Fact]
-    public void GetFilteredPersons_FilterByGender_ReturnsExactly2ValidPersonResponses()
+    [Theory]
+    [InlineData("true", "Alan S", "test3")]
+    [InlineData("TRUE", "Alan S", "test3")]
+    [InlineData("false", "Adam W", "test4")]
+    [InlineData("FaLSe", "Adam W", "test4")]
+    public void GetFilteredPersons_ByReceiveNewsLetters_FiltersOnBoolean(string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons(); // Contains 2 persons with gender as "Male"
-        const string gender = "Male";
+        AddSamplePersons();
+        // Act
+        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByReceiveNewsLetters);
+        // Assert
+        Assert.Equal(
+            expected.OrderBy(e => e),
+            actualPersonResponses.Select(p => p.PersonName).OrderBy(n => n));
+    }
+
+    [Theory]
+    [InlineData("yes")]
+    [InlineData("1")]
+    [InlineData("abc")]
+    public void GetFilteredPersons_ByReceiveNewsLetters_AnythingOtherThanTrueIsTreatedAsFalse(string search)
+    {
+        // Arrange
+        AddSamplePersons();
 
         // Act
-        List<PersonResponse> actualPersonResponses =
-               _sut.GetFilteredPersons(gender, SearchOptions.ByGender);
-        PrintPersonResponses(actualPersonResponses, "Actual:");
+        var responses = _sut.GetFilteredPersons(search, SearchOptions.ByReceiveNewsLetters);
 
         // Assert
-        Assert.Equal(2, actualPersonResponses.Count);
-        foreach (var actualPersonResponse in actualPersonResponses)
+        Assert.All(responses, p => Assert.False(p.ReceiveNewsLetters));
+    }
+
+    // ---------- Unsupported option ----------
+
+    [Theory]
+    [InlineData((SearchOptions)999)]
+    [InlineData((SearchOptions)30)]
+    [InlineData((SearchOptions)(-1))]
+    [InlineData((SearchOptions)(-10))]
+    public void GetFilteredPersons_UnknownEnumValue_ThrowsArgumentOutOfRangeException(SearchOptions searchOption)
+    {
+        // Arrange
+        AddSamplePersons();
+
+        // Act & Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
         {
-            Assert.Contains(gender, actualPersonResponse.Gender, StringComparison.OrdinalIgnoreCase);
-        }
+            _sut.GetFilteredPersons("anything", searchOption);
+        });
     }
     #endregion
 
@@ -323,9 +545,9 @@ public class PersonServiceTests
 
         PersonAddRequest personAddRequest1 = new PersonAddRequest()
         {
-            PersonName = "Alan",
-            Email = "alan@example.com",
-            Address = "sample address 1",
+            PersonName = "Alan S",
+            Email = "alan@gmail.com",
+            Address = "4 oiler road",
             CountryId = countryUSA.CountryId,
             Gender = GenderOptions.Male,
             DateOfBirth = new DateTime(2007, 1, 1),
@@ -333,9 +555,9 @@ public class PersonServiceTests
         };
         PersonAddRequest personAddRequest2 = new PersonAddRequest()
         {
-            PersonName = "Adam",
+            PersonName = "Adam W",
             Email = "adam@example.com",
-            Address = "sample address 2",
+            Address = "3 main street",
             CountryId = countryCanada.CountryId,
             Gender = GenderOptions.Female,
             DateOfBirth = new DateTime(2011, 5, 1),
@@ -348,7 +570,7 @@ public class PersonServiceTests
             Address = "sample address 3",
             CountryId = null,
             Gender = GenderOptions.Male,
-            DateOfBirth = new DateTime(1980, 1, 1),
+            DateOfBirth = new DateTime(2007, 1, 1),
             ReceiveNewsLetters = true,
         };
         PersonAddRequest personAddRequest4 = new PersonAddRequest()
