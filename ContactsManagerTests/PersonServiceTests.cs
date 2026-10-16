@@ -284,6 +284,26 @@ public class PersonServiceTests
             Assert.Contains(personName, actualPersonResponse.PersonName, StringComparison.OrdinalIgnoreCase);
         }
     }
+
+    [Fact]
+    public void GetFilteredPersons_FilterByGender_ReturnsExactly2ValidPersonResponses()
+    {
+        // Arrange
+        AddSamplePersons(); // Contains 2 persons with gender as "Male"
+        const string gender = "Male";
+
+        // Act
+        List<PersonResponse> actualPersonResponses =
+               _sut.GetFilteredPersons(gender, SearchOptions.ByGender);
+        PrintPersonResponses(actualPersonResponses, "Actual:");
+
+        // Assert
+        Assert.Equal(2, actualPersonResponses.Count);
+        foreach (var actualPersonResponse in actualPersonResponses)
+        {
+            Assert.Contains(gender, actualPersonResponse.Gender, StringComparison.OrdinalIgnoreCase);
+        }
+    }
     #endregion
 
     #region Helper Methods
