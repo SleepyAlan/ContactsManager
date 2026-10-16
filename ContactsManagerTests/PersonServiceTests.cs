@@ -341,7 +341,7 @@ public class PersonServiceTests
     [Theory]
     [InlineData("2007", "test3", "Alan S")]
     [InlineData("-01-", "test3", "Alan S", "test4")]
-    [InlineData("2007-01-01", "test3")]
+    [InlineData("2007-01-01", "test3", "Alan S")]
     [InlineData("2000-01-02")]
     [InlineData("1900")]
     public void GetFilteredPersons_ByDateOfBirth_MatchesSubstringOfIsoDate(
