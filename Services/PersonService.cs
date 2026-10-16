@@ -73,7 +73,7 @@ public class PersonService : IPersonService
         return allPersons.Where(predicate).ToList();
     }
 
-    public List<PersonResponse> GetSortedPersons(IEnumerable<PersonResponse> personsToSort, SearchOptions option, ListSortDirection order = ListSortDirection.Ascending)
+    public List<PersonResponse> GetSortedPersons(IEnumerable<PersonResponse> personsToSort, FilterOptions option, ListSortDirection order = ListSortDirection.Ascending)
     {
         throw new NotImplementedException();
     }

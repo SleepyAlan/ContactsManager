@@ -1,11 +1,17 @@
-﻿using ServiceContracts;
+﻿using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json.Linq;
+using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
 using Services;
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection.Metadata;
+using System.Text;
 using System.Xml.Linq;
 using Xunit.Abstractions;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CRUDTests;
 
@@ -535,7 +541,7 @@ public class PersonServiceTests
     {
         // Arrange
         IEnumerable<PersonResponse> personsToSort = null!;
-        SearchOptions option = SearchOptions.ByName;
+        FilterOptions option = FilterOptions.ByName;
         ListSortDirection order = ListSortDirection.Ascending;
 
         // Act & Assert
@@ -548,7 +554,7 @@ public class PersonServiceTests
     {
         // Arrange
         IEnumerable<PersonResponse> personsToSort = new List<PersonResponse>();
-        SearchOptions option = SearchOptions.ByName;
+        FilterOptions option = FilterOptions.ByName;
         ListSortDirection order = ListSortDirection.Ascending;
 
         // Act
@@ -563,7 +569,7 @@ public class PersonServiceTests
     {
         // Arrange
         List<PersonResponse> personsToSort = AddSamplePersons().Take(1).ToList();
-        SearchOptions option = SearchOptions.ByName;
+        FilterOptions option = FilterOptions.ByName;
         ListSortDirection order = ListSortDirection.Ascending;
 
         // Act
@@ -579,7 +585,7 @@ public class PersonServiceTests
     {
         // Arrange
         List<PersonResponse> personsToSort = AddSamplePersons().Take(2).ToList();
-        SearchOptions option = SearchOptions.ByName;
+        FilterOptions option = FilterOptions.ByName;
         ListSortDirection order = ListSortDirection.Ascending;
         // Act
         List<PersonResponse> sortedResult = _sut.GetSortedPersons(personsToSort, option, order);
@@ -588,6 +594,138 @@ public class PersonServiceTests
         Assert.True(string.Compare(
             sortedResult[0].PersonName,
             sortedResult[1].PersonName) <= 0);
+    }
+
+    // Fields that are or can be sorted as string: Name, Email, Gender, CountryName, Address, ReceiveNewsLetters (as string)
+    // Sorts in both directions
+    public static IEnumerable<object[]> SortableFieldsData()
+    {
+        var selectors = new (FilterOptions option, Func<PersonResponse, string?> keySelector)[]
+        {
+            (FilterOptions.ByName, p => p?.PersonName),
+            (FilterOptions.ByEmail, p => p?.Email),
+            (FilterOptions.ByGender, p => p?.Gender),
+            (FilterOptions.ByCountry, p => p?.CountryName),
+            (FilterOptions.ByAddress, p => p?.Address),
+            (FilterOptions.ByReceiveNewsLetters, p => p?.ReceiveNewsLetters.ToString())
+        };
+
+        var sortingOrders = new[] { ListSortDirection.Ascending, ListSortDirection.Descending };
+
+        foreach (var (option, keySelector) in selectors)
+        {
+            foreach (var order in sortingOrders)
+            {
+                yield return new object[] { option, keySelector, order };
+            }
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(SortableFieldsData))]
+    public void GetSortedPersons_SortByStringFields_ReturnsSortedList(
+        FilterOptions option,
+        Func<PersonResponse, string?> keySelector,
+        ListSortDirection order)
+    {
+        // Arrange
+        List<PersonResponse> input = AddSamplePersons(addMore: true);
+        var snapShotOfInput = input.ToList();
+
+        // Act
+        List<PersonResponse> sortedResult = _sut.GetSortedPersons(input, option, order);
+
+        // Assert
+        Assert.Equal(snapShotOfInput.Count, sortedResult.Count);
+        Assert.True(snapShotOfInput.ToHashSet().SetEquals(sortedResult),
+            "All original elements should be present in the sorted result.");
+        Assert.Equal(snapShotOfInput, input);
+
+        for (int i = 0; i < sortedResult.Count - 1; i++)
+        {
+            if (order == ListSortDirection.Ascending)
+            {
+                Assert.True(string.Compare(
+                    keySelector(sortedResult[i]),
+                    keySelector(sortedResult[i + 1])) <= 0);
+            }
+            else
+            {
+                Assert.True(string.Compare(
+                    keySelector(sortedResult[i]),
+                    keySelector(sortedResult[i + 1])) >= 0);
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData(ListSortDirection.Ascending)]
+    [InlineData(ListSortDirection.Descending)]
+    public void GetSortedPersons_SortByAge_ReturnsSortedList(
+        ListSortDirection order)
+    {
+        // Arrange
+        List<PersonResponse> input = AddSamplePersons(addMore: true);
+        var snapShotOfInput = input.ToList();
+        FilterOptions option = FilterOptions.ByAge;
+
+        // Act
+        List<PersonResponse> sortedResult = _sut.GetSortedPersons(input, option, order);
+
+        // Assert
+        Assert.NotSame(input, sortedResult);
+        Assert.Equal(snapShotOfInput, input);
+        Assert.Equal(snapShotOfInput.Count, sortedResult.Count);
+        Assert.True(snapShotOfInput.ToHashSet().SetEquals(sortedResult),
+            "All original elements should be present in the sorted result.");
+        var ages = sortedResult.Select(p => p.Age).ToList();
+        var expectedAges = order == ListSortDirection.Ascending
+            ? ages.OrderBy(a => a).ToList()
+            : ages.OrderByDescending(a => a).ToList();
+        Assert.Equal(expectedAges, ages);
+    }
+
+    // Sort by DateOfBirth, which is nullable DateTime
+    [Theory]
+    [InlineData(ListSortDirection.Ascending)]
+    [InlineData(ListSortDirection.Descending)]
+    public void GetSortedPersons_SortByDateOfBirth_ReturnsSortedList(
+    ListSortDirection order)
+    {
+        // Arrange
+        List<PersonResponse> input = AddSamplePersons(addMore: true);
+        var snapShotOfInput = input.ToList();
+        FilterOptions option = FilterOptions.ByDateOfBirth;
+
+        // Act
+        List<PersonResponse> sortedResult = _sut.GetSortedPersons(input, option, order);
+
+        // Assert
+        Assert.NotSame(input, sortedResult);
+        Assert.Equal(snapShotOfInput, input);
+        Assert.Equal(snapShotOfInput.Count, sortedResult.Count);
+        Assert.True(snapShotOfInput.ToHashSet().SetEquals(sortedResult),
+            "All original elements should be present in the sorted result.");
+        var datesOfBirth = sortedResult.Select(p => p.DateOfBirth).ToList();
+        var expectedDatesOfBirth = order == ListSortDirection.Ascending
+            ? datesOfBirth.OrderBy(d => d).ToList()
+            : datesOfBirth.OrderByDescending(d => d).ToList();
+        Assert.Equal(expectedDatesOfBirth, datesOfBirth);
+    }
+
+    [Theory]
+    [InlineData((FilterOptions)999)]
+    [InlineData((FilterOptions)30)]
+    [InlineData((FilterOptions)(-1))]
+    [InlineData((FilterOptions)(-10))]
+    public void GetSortedPersons_UnknownEnumValue_ThrowsArgumentOutOfRangeException(FilterOptions filterOption)
+    {
+        // Arrange
+        List<PersonResponse> input = AddSamplePersons(addMore: true);
+        ListSortDirection order = ListSortDirection.Ascending;
+        // Act & Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            _sut.GetSortedPersons(input, filterOption, order));
     }
 
     #endregion
@@ -602,7 +740,7 @@ public class PersonServiceTests
         }
     }
 
-    private List<PersonResponse> AddSamplePersons()
+    private List<PersonResponse> AddSamplePersons(bool addMore = false)
     {
         CountryResponse countryUSA = _countryService.AddCountry(new CountryAddRequest() { CountryName = "USA" });
         CountryResponse countryCanada = _countryService.AddCountry(new CountryAddRequest() { CountryName = "Canada" });
@@ -647,6 +785,7 @@ public class PersonServiceTests
             DateOfBirth = new DateTime(2000, 1, 1),
             ReceiveNewsLetters = false,
         };
+
         List<PersonResponse> expectedPersonResponses = new List<PersonResponse>
         {
             _sut.AddPerson(personAddRequest1),
@@ -654,6 +793,34 @@ public class PersonServiceTests
             _sut.AddPerson(personAddRequest3),
             _sut.AddPerson(personAddRequest4)
         };
+
+        if (!addMore) return expectedPersonResponses;
+
+        // Needed for GetSortedPersons() tests
+        PersonAddRequest personAddRequest5 = new PersonAddRequest()
+        {
+            PersonName = "barker",
+            Email = "barker@example.com",
+            Address = "sample address 3",
+            CountryId = countryCanada.CountryId,
+            Gender = GenderOptions.Male,
+            DateOfBirth = new DateTime(1990, 1, 1),
+            ReceiveNewsLetters = true,
+        };
+        PersonAddRequest personAddRequest6 = new PersonAddRequest()
+        {
+            PersonName = null,
+            Email = null,
+            Address = null,
+            CountryId = null,
+            Gender = null,
+            DateOfBirth = null,
+            ReceiveNewsLetters = false,
+        };
+
+        expectedPersonResponses.Add(_sut.AddPerson(personAddRequest5));
+        expectedPersonResponses.Add(_sut.AddPerson(personAddRequest6));
+
         return expectedPersonResponses;
     }
     #endregion
