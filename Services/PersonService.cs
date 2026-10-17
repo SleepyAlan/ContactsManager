@@ -24,13 +24,6 @@ public class PersonService : IPersonService
         _persons = new List<Person>();
     }
 
-    private PersonResponse ConvertToPersonResponse(Person person)
-    {
-        PersonResponse personResponse = person.ToPersonResponse();
-        personResponse.CountryName = _countryService
-            .GetCountryById(person.CountryId)?.CountryName;
-        return personResponse;
-    }
 
     public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
     {
@@ -124,6 +117,15 @@ public class PersonService : IPersonService
             return personsToSort.OrderBy(predicate, StringComparer.OrdinalIgnoreCase).ToList();
         }
         return personsToSort.OrderByDescending(predicate, StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
+    // Helper method to convert a Person entity to a PersonResponse DTO, including the country name.
+    private PersonResponse ConvertToPersonResponse(Person person)
+    {
+        PersonResponse personResponse = person.ToPersonResponse();
+        personResponse.CountryName = _countryService
+            .GetCountryById(person.CountryId)?.CountryName;
+        return personResponse;
     }
 
     // Below are private helper methods to build predicates for filtering based on different search options.
