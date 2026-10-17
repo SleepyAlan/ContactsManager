@@ -1,17 +1,10 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using Newtonsoft.Json.Linq;
-using ServiceContracts;
+﻿using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
+using ServiceContracts.Extensions;
 using Services;
-using System.Collections;
 using System.ComponentModel;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Xml.Linq;
 using Xunit.Abstractions;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CRUDTests;
 
@@ -736,6 +729,88 @@ public class PersonServiceTests
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             _sut.GetSortedPersons(input, filterOption, order));
     }
+
+    #endregion
+
+    #region UpdatePerson Tests
+    [Fact]
+    public void UpdatePerson_NullPersonUpdateRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        PersonUpdateRequest? personUpdateRequest = null;
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => _sut.UpdatePerson(personUpdateRequest));
+    }
+
+    [Fact]
+    public void UpdatePerson_InvalidPersonId_ThrowsArgumentException()
+    {
+        // Arrange
+        PersonUpdateRequest? personUpdateRequest = new PersonUpdateRequest()
+        {
+            PersonId = Guid.NewGuid()
+        };
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => _sut.UpdatePerson(personUpdateRequest));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void UpdatePerson_InvalidPersonName_ThrowsArgumentException(
+        string? personName)
+    {
+        // Arrange
+        var personResponse = AddSamplePersons().First();
+
+        var personUpdateRequest = personResponse.ToPersonUpdateRequest();
+        personUpdateRequest.PersonName = personName;
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => _sut.UpdatePerson(personUpdateRequest));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("invalid-email.format")]
+    public void UpdatePerson_InvalidEmail_ThrowsArgumentException(
+        string? email)
+    {
+        // Arrange
+        var personResponse = AddSamplePersons().First();
+
+        var personUpdateRequest = personResponse.ToPersonUpdateRequest();
+        personUpdateRequest.Email = email;
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => _sut.UpdatePerson(personUpdateRequest));
+    }
+
+    [Fact]
+    public void UpdatePerson_ValidUpdate_ReturnsUpdatedPersonResponse()
+    {
+        // Arrange
+        var personResponseBefore = AddSamplePersons().First();
+        var personUpdateRequest = personResponseBefore.ToPersonUpdateRequest();
+        personUpdateRequest.PersonName = "Updated Name";
+        personUpdateRequest.Email = "updated@example.com";
+        personUpdateRequest.Gender = GenderOptions.Male;
+        personUpdateRequest.ReceiveNewsLetters = true;
+        personUpdateRequest.Address = "Updated Address";
+        Guid personId = personResponseBefore.PersonId;
+
+        // Act
+        PersonResponse personResponseExpectedAfter = _sut.UpdatePerson(personUpdateRequest);
+        PersonResponse? personResponseActualAfter = _sut.GetPersonById(personId);
+
+        // Assert
+        Assert.NotEqual(personResponseBefore, personResponseExpectedAfter);
+        Assert.Equal(personResponseExpectedAfter, personResponseActualAfter);
+    }
+
 
     #endregion
 
