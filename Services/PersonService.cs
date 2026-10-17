@@ -65,7 +65,14 @@ public class PersonService : IPersonService
 
     public bool DeletePerson(Guid? personId)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(personId, nameof(personId));
+
+        Person? person = _persons.FirstOrDefault(
+            person => person.PersonId == personId);
+        if (person == null) return false;
+
+        int numberOfRemoved = _persons.RemoveAll(p => p.PersonId == personId);
+        return numberOfRemoved > 0;
     }
 
     public List<PersonResponse> GetAllPersons()
