@@ -45,4 +45,11 @@ public interface IPersonService
     /// <param name="order">Sort direction — ascending or descending; defaults to Ascending.</param>
     /// <returns>A list of PersonResponse ordered by the specified option and direction.</returns>
     List<PersonResponse> GetSortedPersons(IEnumerable<PersonResponse> personsToSort, FilterOptions option, ListSortDirection order = ListSortDirection.Ascending);
+
+    /// <summary>
+    /// Updates an existing person based on the provided request.
+    /// </summary>
+    /// <param name="personUpdateRequest">The request containing the details of the person to update.</param>
+    /// <returns>A PersonResponse dto containing the details of the updated person.</returns>
+    PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 }
