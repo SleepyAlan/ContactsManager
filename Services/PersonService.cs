@@ -40,7 +40,27 @@ public class PersonService : IPersonService
 
     public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(
+            personUpdateRequest, nameof(personUpdateRequest));
+
+        ModelValidationHelper.Validate(personUpdateRequest);
+
+        Person? personToUpdate = 
+            _persons.FirstOrDefault(p => p.PersonId == personUpdateRequest.PersonId) 
+            ?? throw new ArgumentException(
+                $"Person with PersonId {personUpdateRequest.PersonId} not found.",
+                nameof(personUpdateRequest.PersonId));
+
+        // Update all values except person id 
+        personToUpdate.PersonName = personUpdateRequest.PersonName;
+        personToUpdate.Email = personUpdateRequest.Email;
+        personToUpdate.DateOfBirth = personUpdateRequest.DateOfBirth;
+        personToUpdate.Gender = personUpdateRequest.Gender?.ToString();
+        personToUpdate.CountryId = personUpdateRequest.CountryId;
+        personToUpdate.Address = personUpdateRequest.Address;
+        personToUpdate.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
+        
+        return ConvertToPersonResponse(personToUpdate);
     }
 
     public List<PersonResponse> GetAllPersons()
