@@ -97,6 +97,8 @@ public class PersonService : IPersonService
         return personsToSort.OrderByDescending(predicate).ToList();
     }
 
+    // Below are private helper methods to build predicates for filtering based on different search options.
+
     private static Func<PersonResponse, bool> BuildPredicate(
         string searchString, SearchOptions option)
     {
@@ -117,8 +119,6 @@ public class PersonService : IPersonService
                     nameof(option), option, "Unsupported search option.")
         };
     }
-
-    // Below are the helper methods for building predicates based on different search options.
 
     private static bool ContainsSubstring(string? toCheck, string substring)
     {
