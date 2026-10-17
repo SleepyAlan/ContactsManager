@@ -73,9 +73,28 @@ public class PersonService : IPersonService
         return allPersons.Where(predicate).ToList();
     }
 
-    public List<PersonResponse> GetSortedPersons(IEnumerable<PersonResponse> personsToSort, FilterOptions option, ListSortDirection order = ListSortDirection.Ascending)
+    public List<PersonResponse> GetSortedPersons(
+        IEnumerable<PersonResponse> personsToSort,
+        FilterOptions option,
+        ListSortDirection order = ListSortDirection.Ascending)
     {
-        throw new NotImplementedException();
+        Func<PersonResponse, object?> predicate = option switch
+        {
+            FilterOptions.ByName => p => p.PersonName,
+            FilterOptions.ByEmail => p => p.Email,
+            FilterOptions.ByDateOfBirth => p => p.DateOfBirth,
+            FilterOptions.ByAge => p => p.Age,
+            FilterOptions.ByGender => p => p.Gender,
+            FilterOptions.ByCountry => p => p.CountryName,
+            FilterOptions.ByAddress => p => p.Address,
+            FilterOptions.ByReceiveNewsLetters => p => p.ReceiveNewsLetters,
+            _ => throw new ArgumentOutOfRangeException(nameof(option), option, $"{nameof(option)} provided is an invalid enum for {nameof(FilterOptions)}.")
+        };
+        if (order == ListSortDirection.Ascending)
+        {
+            return personsToSort.OrderBy(predicate).ToList();
+        }
+        return personsToSort.OrderByDescending(predicate).ToList();
     }
 
     private static Func<PersonResponse, bool> BuildPredicate(
