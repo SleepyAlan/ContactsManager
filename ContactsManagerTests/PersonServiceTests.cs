@@ -810,8 +810,42 @@ public class PersonServiceTests
         Assert.NotEqual(personResponseBefore, personResponseExpectedAfter);
         Assert.Equal(personResponseExpectedAfter, personResponseActualAfter);
     }
+    #endregion
 
+    #region DeletePerson Tests
 
+    [Fact]
+    public void DeletePerson_InvalidPersonId_ReturnsFalse()
+    {
+        // Arrange
+        AddSamplePersons();
+        Guid invalidPersonId = Guid.NewGuid();
+
+        // Act
+        bool result = _sut.DeletePerson(invalidPersonId);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void DeletePerson_ValidPersonId_ReturnsTrueAndValuePersists()
+    {
+        // Arrange
+        var personToDelete = AddSamplePersons().First();
+        Guid personId = personToDelete.PersonId;
+
+        // Act
+        var personResponseBefore = _sut.GetPersonById(personId);
+        bool result = _sut.DeletePerson(personId);
+        var personResponseAfter = _sut.GetPersonById(personId);
+
+        // Assert
+        Assert.True(result);
+        Assert.NotNull(personResponseBefore);
+        Assert.Null(personResponseAfter);
+        Assert.True(!personResponseBefore?.Equals(personResponseAfter));
+    }
     #endregion
 
     #region Helper Methods
