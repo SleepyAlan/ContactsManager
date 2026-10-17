@@ -7,11 +7,11 @@ namespace ServiceContracts.Extensions;
 public static class PersonResponseExtensions
 {
     /// <summary>
-    /// Converts a Person entity to a PersonUpdateRequest DTO.
+    /// Converts a PersonResponse DTO to a PersonUpdateRequest DTO.
     /// </summary>
-    /// <param name="person">The Person entity to convert.</param>
+    /// <param name="person">The PersonResponse DTO to convert.</param>
     /// <returns>A PersonUpdateRequest DTO.</returns>
-    public static PersonUpdateRequest ToPersonUpdateRequest(this Person person)
+    public static PersonUpdateRequest ToPersonUpdateRequest(this PersonResponse person)
     {
         GenderOptions? gender = Enum.TryParse<GenderOptions>(
                 person.Gender, true, out var genderParsed)
