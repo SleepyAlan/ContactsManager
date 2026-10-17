@@ -813,6 +813,17 @@ public class PersonServiceTests
     #endregion
 
     #region DeletePerson Tests
+    [Fact]
+    public void DeletePerson_NullPersonId_ThrowsArgumentNullException()
+    {
+        // Arrange
+        AddSamplePersons();
+        Guid? invalidPersonId = null;
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            _sut.DeletePerson(invalidPersonId));
+    }
 
     [Fact]
     public void DeletePerson_InvalidPersonId_ReturnsFalse()
