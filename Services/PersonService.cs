@@ -63,6 +63,11 @@ public class PersonService : IPersonService
         return ConvertToPersonResponse(personToUpdate);
     }
 
+    public bool DeletePerson(Guid? personId)
+    {
+        throw new NotImplementedException();
+    }
+
     public List<PersonResponse> GetAllPersons()
     {
         return _persons.Select(ConvertToPersonResponse).ToList();
