@@ -17,6 +17,20 @@ public interface IPersonService
     PersonResponse AddPerson(PersonAddRequest? personAddRequest);
 
     /// <summary>
+    /// Updates an existing person based on the provided request.
+    /// </summary>
+    /// <param name="personUpdateRequest">The request containing the details of the person to update.</param>
+    /// <returns>A PersonResponse dto containing the details of the updated person.</returns>
+    PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
+
+    /// <summary>
+    /// Deletes an existing person based on the provided personId.
+    /// </summary>
+    /// <param name="personId">The unique identifier of the person to delete.</param>
+    /// <returns>True if the person was successfully deleted; otherwise, false.</returns>
+    bool DeletePerson(Guid? personId);
+
+    /// <summary>
     /// Retrieves all persons.
     /// </summary>
     /// <returns>A list of PersonResponse dto containing the details of all persons.</returns>
@@ -45,11 +59,4 @@ public interface IPersonService
     /// <param name="order">Sort direction — ascending or descending; defaults to Ascending.</param>
     /// <returns>A list of PersonResponse ordered by the specified option and direction.</returns>
     List<PersonResponse> GetSortedPersons(IEnumerable<PersonResponse> personsToSort, FilterOptions option, ListSortDirection order = ListSortDirection.Ascending);
-
-    /// <summary>
-    /// Updates an existing person based on the provided request.
-    /// </summary>
-    /// <param name="personUpdateRequest">The request containing the details of the person to update.</param>
-    /// <returns>A PersonResponse dto containing the details of the updated person.</returns>
-    PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 }
