@@ -78,23 +78,52 @@ public class PersonService : IPersonService
         FilterOptions option,
         ListSortDirection order = ListSortDirection.Ascending)
     {
-        Func<PersonResponse, object?> predicate = option switch
+        if (personsToSort == null)
+        {
+            throw new ArgumentNullException(nameof(personsToSort), "The collection of persons to sort cannot be null.");
+        }
+        if (!Enum.IsDefined(typeof(ListSortDirection), order))
+        {
+            throw new ArgumentOutOfRangeException(nameof(order), order, $"{nameof(order)} provided is an invalid enum for {nameof(ListSortDirection)}.");
+        }
+
+        // Non-string properties sorting (DateOfBirth and Age)
+        if (option == FilterOptions.ByDateOfBirth || option == FilterOptions.ByAge)
+        {
+            return (option, order) switch
+            {
+                (FilterOptions.ByDateOfBirth, ListSortDirection.Ascending) =>
+                    personsToSort.OrderBy(p => p.DateOfBirth).ToList(),
+
+                (FilterOptions.ByDateOfBirth, ListSortDirection.Descending) =>
+                    personsToSort.OrderByDescending(p => p.DateOfBirth).ToList(),
+
+                (FilterOptions.ByAge, ListSortDirection.Ascending) =>
+                    personsToSort.OrderBy(p => p.Age).ToList(),
+
+                (FilterOptions.ByAge, ListSortDirection.Descending) =>
+                    personsToSort.OrderByDescending(p => p.Age).ToList(),
+
+                _ => throw new ArgumentOutOfRangeException(nameof(order), order, $"{nameof(order)} provided is an invalid enum for {nameof(ListSortDirection)}.")
+            };
+        }
+
+        // String/Casted to string sorting for other properties
+        Func<PersonResponse, string?> predicate = option switch
         {
             FilterOptions.ByName => p => p.PersonName,
             FilterOptions.ByEmail => p => p.Email,
-            FilterOptions.ByDateOfBirth => p => p.DateOfBirth,
-            FilterOptions.ByAge => p => p.Age,
             FilterOptions.ByGender => p => p.Gender,
             FilterOptions.ByCountry => p => p.CountryName,
             FilterOptions.ByAddress => p => p.Address,
-            FilterOptions.ByReceiveNewsLetters => p => p.ReceiveNewsLetters,
+            FilterOptions.ByReceiveNewsLetters => p => p.ReceiveNewsLetters.ToString(),
             _ => throw new ArgumentOutOfRangeException(nameof(option), option, $"{nameof(option)} provided is an invalid enum for {nameof(FilterOptions)}.")
         };
         if (order == ListSortDirection.Ascending)
         {
-            return personsToSort.OrderBy(predicate).ToList();
+            return personsToSort.OrderBy(predicate, StringComparer.OrdinalIgnoreCase).ToList();
         }
-        return personsToSort.OrderByDescending(predicate).ToList();
+        return personsToSort.OrderByDescending(predicate, StringComparer.OrdinalIgnoreCase).ToList();
     }
 
     // Below are private helper methods to build predicates for filtering based on different search options.
