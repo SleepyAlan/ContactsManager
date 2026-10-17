@@ -656,6 +656,9 @@ public class PersonServiceTests
                     keySelector(sortedResult[i + 1])) >= 0);
             }
         }
+
+        // Displaying the sorted result for debugging purposes
+        PrintPersonResponses(sortedResult, $"Sorted by {option} in {order} order:");
     }
 
     [Theory]
@@ -683,6 +686,9 @@ public class PersonServiceTests
             ? ages.OrderBy(a => a).ToList()
             : ages.OrderByDescending(a => a).ToList();
         Assert.Equal(expectedAges, ages);
+
+        // Displaying the sorted result for debugging purposes
+        PrintPersonResponses(sortedResult, $"Sorted by Age in {order} order:");
     }
 
     // Sort by DateOfBirth, which is nullable DateTime
@@ -711,6 +717,9 @@ public class PersonServiceTests
             ? datesOfBirth.OrderBy(d => d).ToList()
             : datesOfBirth.OrderByDescending(d => d).ToList();
         Assert.Equal(expectedDatesOfBirth, datesOfBirth);
+
+        // Displaying the sorted result for debugging purposes
+        PrintPersonResponses(sortedResult, $"Sorted by DateOfBirth in {order} order:");
     }
 
     [Theory]
@@ -809,8 +818,8 @@ public class PersonServiceTests
         };
         PersonAddRequest personAddRequest6 = new PersonAddRequest()
         {
-            PersonName = null,
-            Email = null,
+            PersonName = "Parker Null",
+            Email = "null@parker.com",
             Address = null,
             CountryId = null,
             Gender = null,
