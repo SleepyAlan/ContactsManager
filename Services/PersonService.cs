@@ -24,7 +24,6 @@ public class PersonService : IPersonService
         _persons = new List<Person>();
     }
 
-
     public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
     {
         ArgumentNullException.ThrowIfNull(personAddRequest, nameof(personAddRequest));
@@ -37,6 +36,11 @@ public class PersonService : IPersonService
         _persons.Add(person);
 
         return ConvertToPersonResponse(person);
+    }
+
+    public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
+    {
+        throw new NotImplementedException();
     }
 
     public List<PersonResponse> GetAllPersons()
