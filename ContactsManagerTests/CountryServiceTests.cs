@@ -14,7 +14,7 @@ public class CountryServiceTests
 
     public CountryServiceTests()
     {
-        _sut = new CountryService();
+        _sut = new CountryService(initializeWithSampleData: false);
     }
 
     #region AddCountry Tests

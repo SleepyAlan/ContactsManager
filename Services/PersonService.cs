@@ -20,7 +20,7 @@ public class PersonService : IPersonService
 
     public PersonService(ICountryService? service = null)
     {
-        _countryService = service ?? new CountryService();
+        _countryService = service ?? new CountryService(false);
         _persons = new List<Person>();
     }
 
