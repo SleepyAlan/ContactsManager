@@ -30,10 +30,13 @@
 
 .inner-header-container {
     width: 100%;
-    max-width: var(--container-max);
     margin-inline: auto;
     padding-inline: var(--container-pad);
     padding-block: var(--space-4);
+
+    &.max-width {
+        max-width: var(--container-max);
+    }
 
     .header-content {
         display: flex;
