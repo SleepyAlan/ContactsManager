@@ -18,7 +18,7 @@ public class PersonServiceTests
     {
         _testOutputHelper = testOutputHelper;
         _countryService = new CountryService(false);
-        _sut = new PersonService(_countryService);
+        _sut = new PersonService(_countryService, false);
     }
 
     #region AddPerson() Tests
