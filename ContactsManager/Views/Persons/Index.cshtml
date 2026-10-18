@@ -1,5 +1,38 @@
-﻿@{
-  ViewBag.Title = "Persons";
-}
+﻿@model IEnumerable<PersonResponse>
 
-<h1>Persons</h1>
+@{
+  ViewBag.Title = "Contacts";
+}
+<div class="container">
+  <h1>Contacts</h1>
+  <section class="table-wrap table-wrap-scroll">
+    <table class="table-striped">
+      <thead>
+        <tr>
+          <th>Person Name</th>
+          <th>Email</th>
+          <th>Date Of Birth</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Country</th>
+          <th>Address</th>
+          <th>Receives News Letters</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (PersonResponse person in Model)
+        {
+          <tr>
+            <td>@person.PersonName</td>
+            <td>@person.Email</td>
+            <td>@person.DateOfBirth?.ToString("MMMM dd, yyyy")</td>
+            <td class="num">@person.Age</td>
+            <td>@person.Gender</td>
+            <td>@person.CountryName</td>
+            <td>@person.Address</td>
+            <td>@person.ReceiveNewsLetters</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section></div>
