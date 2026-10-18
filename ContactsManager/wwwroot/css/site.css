@@ -667,6 +667,10 @@ kbd {
     max-width: var(--container-narrow);
 }
 
+.container-big {
+    max-width: 100rem;
+}
+
 /* Vertical page sections */
 .section {
     padding-block: var(--space-8);
