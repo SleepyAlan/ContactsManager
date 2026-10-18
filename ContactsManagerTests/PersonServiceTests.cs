@@ -6,7 +6,7 @@ using Services;
 using System.ComponentModel;
 using Xunit.Abstractions;
 
-namespace CRUDTests;
+namespace Services.Tests;
 
 public class PersonServiceTests
 {

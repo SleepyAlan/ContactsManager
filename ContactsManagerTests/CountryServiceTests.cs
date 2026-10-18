@@ -3,7 +3,7 @@ using Entities;
 using ServiceContracts.DTOs;
 using Services;
 
-namespace CRUDTests;
+namespace Services.Tests;
 
 public class CountryServiceTests
 {
