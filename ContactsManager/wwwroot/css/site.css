@@ -76,7 +76,8 @@
     --space-8: 4rem;
     --space-9: 6rem;
     /* Layout */
-    --container-max: 72rem;
+    --container-med: 72rem;
+    --container-max: 100rem;
     --container-narrow: 42rem;
     --container-pad: clamp(1rem, 4vw, 2rem);
     /* Shape & depth */
@@ -658,7 +659,7 @@ kbd {
 /* Centered, padded content column */
 .container {
     width: 100%;
-    max-width: var(--container-max);
+    max-width: var(--container-med);
     margin-inline: auto;
     padding-inline: var(--container-pad);
 }
@@ -668,7 +669,7 @@ kbd {
 }
 
 .container-big {
-    max-width: 100rem;
+    max-width: var(--container-max);
 }
 
 /* Vertical page sections */
