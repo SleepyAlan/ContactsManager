@@ -4,6 +4,12 @@
     grid-template-rows: auto 1fr auto;
 }
 
+.layout-header-body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 100dvh;
+}
+
 .layout-dashboard {
     display: grid;
     grid-template-columns: 240px 1fr;
