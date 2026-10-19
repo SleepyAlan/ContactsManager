@@ -362,9 +362,16 @@ label {
     margin-bottom: var(--space-1);
 }
 
-select {
+select,
+option {
     cursor: pointer;
 }
+
+    select option,
+    select optgroup {
+        background-color: var(--color-bg);
+        color: var(--color-text);
+    }
 
 input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"]),
 select,
@@ -393,6 +400,47 @@ textarea {
         opacity: 1;
     }
 
+/* Only supported in modern browsers */
+@supports (appearance: base-select) {
+    select,
+    ::picker(select) {
+        appearance: base-select;
+    }
+    /* Align text and arrow side-by-side (horizontally) */
+    select {
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    /* Style the arrow on the right side */
+    ::select-arrow {
+        position: static;
+        color: var(--color-border-strong);
+    }
+
+    ::checkmark {
+        display: none;
+        content: none;
+    }
+
+    ::picker(select) {
+        background-color: var(--color-bg);
+        border: 1px solid var(--color-border-strong);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
+
+    select option:hover,
+    select option:focus-visible {
+        background-color: var(--color-hover);
+    }
+
+    select option:checked {
+        background-color: var(--color-selected);
+    }
+}
+
 textarea {
     min-height: 7rem;
     resize: vertical;
@@ -410,6 +458,28 @@ input[type="radio"] {
     height: 1.1em;
     vertical-align: middle;
 }
+
+/* Search inputs: replace the native clear button with a simple X */
+input[type="search"] {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+    input[type="search"]::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-inline-start: var(--space-2);
+        cursor: pointer;
+        background-color: var(--color-muted);
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center / 60% no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center / 60% no-repeat;
+    }
+
+        input[type="search"]::-webkit-search-cancel-button:hover {
+            background-color: var(--color-text);
+        }
 
 :is(input, select, textarea):disabled {
     opacity: 0.6;
