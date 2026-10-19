@@ -292,8 +292,8 @@ public class PersonService : IPersonService
             SearchOptions.ByCountry => p => ContainsSubstring(p.CountryName, searchString),
             SearchOptions.ByEmail => p => ContainsSubstring(p.Email, searchString),
             SearchOptions.ByAddress => p => ContainsSubstring(p.Address, searchString),
-            SearchOptions.ByDateOfBirth => p => ContainsSubstring(
-                p.DateOfBirth?.ToString("yyyy-MM-dd"), searchString),
+            SearchOptions.ByDateOfBirth => p => (DateTimeSearch.Matcher(p.DateOfBirth, searchString)
+                || ContainsSubstring(p.DateOfBirth?.ToString("yyyy-MM-dd"), searchString)),
             SearchOptions.ByGender => BuildGenderPredicate(searchString),
             SearchOptions.GreaterThanAge => BuildAgePredicate(searchString, (x, y) => x > y),
             SearchOptions.LessThanAge => BuildAgePredicate(searchString, (x, y) => x < y),
