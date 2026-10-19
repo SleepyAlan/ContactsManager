@@ -362,6 +362,10 @@ label {
     margin-bottom: var(--space-1);
 }
 
+select {
+    cursor: pointer;
+}
+
 input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"]),
 select,
 textarea {

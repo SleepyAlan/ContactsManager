@@ -1,0 +1,298 @@
+﻿/*
+    General Flexbox and Utility CSS Stylesheet
+
+    1. Flexbox Layouts
+    2. Grid Layouts
+    3. Child Elements
+    4. Spacing Utilities
+    5. Borders
+    6. Sizing & Positioning
+    7. Responsive Breakpoints
+*/
+
+/* 
+   1. FLEXBOX LAYOUTS
+======================================== */
+.flex {
+    display: flex;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.align-start {
+    align-items: flex-start;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.align-end {
+    align-items: flex-end;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-auto {
+    flex: 0 1 auto;
+}
+
+.flex-none {
+    flex: none;
+}
+
+/* 
+   2. GRID LAYOUTS
+======================================== */
+.grid-1 {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+/*
+   3. CHILD ELEMENTS
+======================================== */
+.child {
+    min-width: 0;
+    padding: var(--space-3);
+}
+
+.child-grow {
+    flex: 1;
+}
+
+.child-fixed {
+    flex: 0 0 auto;
+}
+
+.child-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.child-full {
+    width: 100%;
+}
+
+.child-half {
+    width: 50%;
+}
+
+/* Direct children */
+.parent > * {
+    min-width: 0;
+}
+
+/* All descendants */
+.parent * {
+    max-width: 100%;
+}
+
+/* Nested child elements */
+.parent .child {
+    border-radius: var(--border-radius);
+}
+
+/* 
+   4. SPACING UTILITIES
+======================================== */
+.m-0 {
+    margin: 0;
+}
+
+.mt-1 {
+    margin-top: var(--space-1);
+}
+
+.mt-2 {
+    margin-top: var(--space-2);
+}
+
+.mt-4 {
+    margin-top: var(--space-4);
+}
+
+.mb-2 {
+    margin-bottom: var(--space-2);
+}
+
+.mb-4 {
+    margin-bottom: var(--space-4);
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.p-2 {
+    padding: var(--space-2);
+}
+
+.p-4 {
+    padding: var(--space-4);
+}
+
+.p-6 {
+    padding: var(--space-6);
+}
+
+.gap-1 {
+    gap: var(--space-1);
+}
+
+.gap-2 {
+    gap: var(--space-2);
+}
+
+.gap-4 {
+    gap: var(--space-4);
+}
+
+.gap-6 {
+    gap: var(--space-6);
+}
+
+/* 
+   5. BORDERS
+======================================== */
+.border {
+    border: 1px solid var(--color-border);
+}
+
+/* Check site.css for base border styles already implemented */
+
+/*
+   6. SIZING & POSITIONING
+======================================== */
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+}
+
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.sticky {
+    position: sticky;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
+
+/* 
+   7. RESPONSIVE BREAKPOINTS
+======================================== */
+@media (max-width: 768px) {
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .flex-row {
+        flex-wrap: wrap;
+    }
+
+    .child-half {
+        width: 100%;
+    }
+
+    .section {
+        padding-block: var(--space-5);
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        width: min(100% - 1rem, var(--container-width));
+    }
+
+    .card {
+        padding: var(--space-4);
+    }
+}
