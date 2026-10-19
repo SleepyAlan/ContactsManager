@@ -372,6 +372,49 @@ option {
         background-color: var(--color-bg);
         color: var(--color-text);
     }
+/* Select with a custom caret: down when closed, up when open */
+.select-wrap {
+    position: relative;
+
+    & select {
+        -webkit-appearance: none;
+        appearance: none;
+        padding-inline-end: 2.5rem; /* room for the caret */
+        cursor: pointer;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset-inline-end: var(--space-3);
+        top: 50%;
+        width: 1rem;
+        height: 1rem;
+        margin-top: -0.5rem;
+        background-color: var(--color-muted);
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+        pointer-events: none; /* clicks pass through to the select */
+        transition: transform var(--duration) var(--ease);
+    }
+
+    &:has(select:focus)::after {
+        background-color: var(--color-primary);
+    }
+
+    &:has(select:disabled)::after {
+        opacity: 0.6;
+    }
+
+    &:has(select:open)::after {
+        transform: rotate(180deg);
+    }
+
+    &.is-open::after {
+        transform: rotate(180deg);
+    }
+}
+
 
 input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"]),
 select,
@@ -403,6 +446,7 @@ textarea {
 /* Only supported in modern browsers */
 @supports (appearance: base-select) {
     select,
+    .select-wrap select,
     ::picker(select) {
         appearance: base-select;
     }
@@ -417,6 +461,11 @@ textarea {
     ::select-arrow {
         position: static;
         color: var(--color-border-strong);
+    }
+
+    .select-wrap select::picker-icon {
+        display: none;
+        /* select-wrap has its own custom arrow*/
     }
 
     ::checkmark {
