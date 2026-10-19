@@ -1,10 +1,39 @@
-﻿@model IEnumerable<PersonResponse>
+﻿@model PersonsViewModel
 
 @{
   ViewBag.Title = "Contacts";
+  var listItems = Model.SearchFields.Select(x => new SelectListItem
+  {
+    Value = x.Key,
+    Text = x.Value
+  });
 }
-<div class="container container-big">
+<form action="~/persons/index" method="get" class="container container-big stack">
   <h1>Contacts</h1>
+  <div class=" min-w-zero">
+    <div class="card max-width">
+      <div class="cluster flex-between">
+        <div class="flex-1">
+          <select name="searchField" asp-for="@Model.SelectedSearchField" asp-items="listItems">
+            <option value="">Select a search option</option>
+          </select>
+        </div>
+        <div class="flex-1 child-min-max">
+          <input type="search" name="searchString" id="search" placeholder="Search" value="@Model.SearchString" />
+        </div>
+        <div class="flex-auto cluster">
+          <div>
+            <button class="btn">Search</button>
+          </div>
+          <div>
+            <a href="~/persons/index" class="btn">Clear all</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <section class="table-wrap table-wrap-scroll">
     <table class="table-striped">
       <thead>
@@ -20,19 +49,20 @@
         </tr>
       </thead>
       <tbody>
-        @foreach (PersonResponse person in Model)
+        @foreach (PersonResponse? person in Model.Persons)
         {
           <tr>
-            <td>@person.PersonName</td>
-            <td>@person.Email</td>
-            <td>@person.DateOfBirth?.ToString("MMMM dd, yyyy")</td>
-            <td class="num">@person.Age</td>
-            <td>@person.Gender</td>
-            <td>@person.CountryName</td>
-            <td>@person.Address</td>
-            <td>@person.ReceiveNewsLetters</td>
+            <td>@person?.PersonName</td>
+            <td>@person?.Email</td>
+            <td>@person?.DateOfBirth?.ToString("MMMM dd, yyyy")</td>
+            <td class="num">@person?.Age</td>
+            <td>@person?.Gender</td>
+            <td>@person?.CountryName</td>
+            <td>@person?.Address</td>
+            <td>@person?.ReceiveNewsLetters</td>
           </tr>
         }
       </tbody>
     </table>
-  </section></div>
+  </section>
+</form>
