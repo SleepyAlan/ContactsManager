@@ -62,4 +62,11 @@ public PersonsController(
 
         return View(viewModel);
     }
+
+    [Route("persons/create")]
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View();
+    }
 }
