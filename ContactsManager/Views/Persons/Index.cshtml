@@ -13,7 +13,7 @@
   <div class=" min-w-zero">
     <div class="card max-width">
       <div class="cluster flex-between">
-        <div class="flex-1">
+        <div class="select-wrap flex-1">
           <select name="searchField" asp-for="@Model.SelectedSearchField" asp-items="listItems">
             <option value="">Select a search option</option>
           </select>
@@ -29,7 +29,6 @@
             <a href="~/persons/index" class="btn">Clear all</a>
           </div>
         </div>
-
       </div>
     </div>
   </div>
