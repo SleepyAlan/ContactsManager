@@ -1,0 +1,33 @@
+﻿@using System.ComponentModel
+@model PersonsViewModel
+@functions {
+  string SortUrl(string column)
+  {
+    var direction =
+        Model.SortColumn == column &&
+        Model.SortDirection == ListSortDirection.Ascending.ToString()
+            ? ListSortDirection.Descending.ToString()
+            : ListSortDirection.Ascending.ToString();
+
+    return Url.Action("Index", new
+    {
+      searchField = Model.SelectedSearchField,
+      searchString = Model.SearchString,
+      sortBy = column,
+      sortDirection = direction
+    })!;
+  }
+
+  string SortArrow(string column)
+  {
+    if (Model.SortColumn != column)
+      return "↕";
+
+    return Model.SortDirection == ListSortDirection.Ascending.ToString() ? "↑" : "↓";
+  }
+}
+<th>
+  <a style="text-decoration: none;" href="@SortUrl(ViewBag.ColumnKey)">
+    @ViewBag.ColumnDisplayName @SortArrow(ViewBag.ColumnKey)
+  </a>
+</th>

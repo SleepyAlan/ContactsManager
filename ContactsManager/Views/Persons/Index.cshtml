@@ -37,14 +37,12 @@
     <table class="table-striped">
       <thead>
         <tr>
-          <th>Person Name</th>
-          <th>Email</th>
-          <th>Date Of Birth</th>
-          <th>Age</th>
-          <th>Gender</th>
-          <th>Country</th>
-          <th>Address</th>
-          <th>Receives News Letters</th>
+          @foreach (var (key, value) in Model.SortFields)
+          {
+            ViewBag.ColumnKey = key;
+            ViewBag.ColumnDisplayName = value;
+            <partial name="_FilterColumnHeaderForTable" model="Model" />
+          }
         </tr>
       </thead>
       <tbody>
