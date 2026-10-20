@@ -2,14 +2,14 @@
 
 @{
   ViewBag.Title = "Contacts";
+  ViewBag.Description = "Contacts List";
   var listItems = Model.SearchFields.Select(x => new SelectListItem
   {
     Value = x.Key,
     Text = x.Value
   });
 }
-<form action="~/persons/index" method="get" class="container container-big stack">
-  <h1>Contacts</h1>
+<form action="~/persons/index" method="get" class="container container-big stack section">
   <div class=" min-w-zero">
     <div class="card max-width">
       <div class="cluster flex-between">
