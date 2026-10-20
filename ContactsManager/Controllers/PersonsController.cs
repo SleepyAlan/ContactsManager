@@ -67,6 +67,7 @@ public PersonsController(
     [HttpGet]
     public IActionResult Create()
     {
-        return View();
+        var countries = _countryService.GetAllCountries();
+        return View(countries);
     }
 }

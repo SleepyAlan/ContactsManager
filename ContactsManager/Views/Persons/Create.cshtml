@@ -1,4 +1,4 @@
-﻿@* @model PersonCreateViewModel *@
+﻿@model IEnumerable<CountryResponse>?
 
 @{
   ViewBag.Title = "Create Contact";
@@ -8,7 +8,7 @@
   <div class="card container container-narrow">
     <div class="center">
 
-    <h4 class="text-primary">Create a New Contact</h4>
+      <h4 class="text-primary">Create a New Contact</h4>
     </div>
     <form class="stack" asp-action="Create" method="post">
       <fieldset class="bg-surface">
@@ -42,16 +42,24 @@
             <label for="CountryId">Country</label>
             <div class="select-wrap">
               <select id="CountryId" name="CountryId">
-                <option value="">Select A Country</option>
-                @* @foreach (var country in Model.Countries) // create view model
-              {
-                <option value="@country.Id">@country.Name</option>
-              } *@
+
+                @if (Model == null || !Model.Any())
+                {
+                  <option value="">No countries available</option>
+                }
+                else
+                {
+                  <option value="">Select A Country</option>
+                  foreach (var country in Model)
+                  {
+                    <option value="@country.CountryId">@country.CountryName</option>
+                  }
+                }
+
               </select>
             </div>
           </div>
           <div class="flex-auto flex-column">
-            @* ReceiveNewsLetters *@
             <label for="ReceiveNewsLetters">Receive Newsletters</label>
             <input type="checkbox" id="ReceiveNewsLetters" name="ReceiveNewsLetters" />
 
@@ -67,7 +75,7 @@
         <button class=" btn btn-secondary" type="reset">Reset Form</button>
         <button class="btn">Submit</button>
       </div>
-      
+
     </form>
   </div>
 </div>
