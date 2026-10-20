@@ -86,7 +86,7 @@
 /* 
    2. GRID LAYOUTS
 ======================================== */
-.grid-1 {
+.grid-layout {
     display: grid;
     gap: var(--space-4);
 }
