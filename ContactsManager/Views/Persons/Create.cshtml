@@ -1,7 +1,69 @@
-﻿@{
+﻿@* @model PersonCreateViewModel *@
+
+@{
   ViewBag.Title = "Create Contact";
 }
 <div class="container container-big stack">
   <h1>Add a new Contact</h1>
-  <div></div>
+  <div class="card container">
+    <form class="stack" asp-action="Create" method="post">
+      <fieldset class="bg-surface">
+        <legend>Required Information</legend>
+        <label for="PersonName">Full Name</label>
+        <input required type="text" id="PersonName" name="PersonName" />
+        <label for="Email">Email</label>
+        <input required type="email" id="Email" name="Email" />
+      </fieldset>
+      <fieldset class="bg-surface">
+        <legend>Optional Information</legend>
+        <div class="cluster">
+          <div class="flex-1">
+            <label for="DateOfBirth">Date of Birth</label>
+            <input type="date" id="DateOfBirth" name="DateOfBirth" />
+          </div>
+          <div class="flex-1">
+            <label for="Gender">Gender</label>
+            <div class="select-wrap">
+              <select id="Gender" name="Gender">
+                <option value="">Select A Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="cluster">
+          <div class="flex-1">
+            <label for="CountryId">Country</label>
+            <div class="select-wrap">
+              <select id="CountryId" name="CountryId">
+                <option value="">Select A Country</option>
+                @* @foreach (var country in Model.Countries) // create view model
+              {
+                <option value="@country.Id">@country.Name</option>
+              } *@
+              </select>
+            </div>
+          </div>
+          <div class="flex-auto flex-column">
+            @* ReceiveNewsLetters *@
+            <label for="ReceiveNewsLetters">Receive Newsletters</label>
+            <input type="checkbox" id="ReceiveNewsLetters" name="ReceiveNewsLetters" />
+
+          </div>
+        </div>
+        <div>
+          <label for="Address">Address</label>
+          <textarea id="Address" name="Address" autocomplete="street-address"
+                    rows="3" placeholder="123 Main St, Apt 4B"></textarea>
+        </div>
+      </fieldset>
+      <div class="flex-center flex-between">
+        <button class=" btn btn-secondary" type="reset">Reset Form</button>
+        <button class="btn">Submit</button>
+      </div>
+      
+    </form>
+  </div>
 </div>
