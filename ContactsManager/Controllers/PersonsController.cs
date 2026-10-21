@@ -34,8 +34,8 @@ public class PersonsController : Controller
         ( FilterOptions.ByReceiveNewsLetters.ToString(), "Receives News Letters" )
     };
 
-public PersonsController(
-        ICountryService countryService, IPersonService personService)
+    public PersonsController(
+            ICountryService countryService, IPersonService personService)
     {
         _countryService = countryService;
         _personService = personService;
@@ -45,11 +45,11 @@ public PersonsController(
     [Route("/")]
     public IActionResult Index(
         SearchOptions? searchField,
-        string? searchString, 
+        string? searchString,
         FilterOptions sortBy = FilterOptions.ByName,
         ListSortDirection sortDirection = ListSortDirection.Ascending)
     {
-        
+
 
         // if null or empty searchString, then it retrieves all persons
         var allPersons = _personService.GetFilteredPersons(searchString, searchField ?? 0);
@@ -67,6 +67,24 @@ public PersonsController(
     [HttpGet]
     public IActionResult Create()
     {
+        var countries = _countryService.GetAllCountries();
+        return View(countries);
+    }
+
+    [Route("persons/create")]
+    [HttpPost]
+    public IActionResult Create(PersonAddRequest? personAddRequest)
+    {
+        if (ModelState.IsValid)
+        {
+            return RedirectToAction("Index", "Persons");
+        }
+
+        var errors = ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage).ToList();
+        ViewBag.Errors = errors;
+
         var countries = _countryService.GetAllCountries();
         return View(countries);
     }
