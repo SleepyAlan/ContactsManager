@@ -9,7 +9,7 @@
     Text = x.Value
   });
 }
-<form action="~/persons/index" method="get" class="container container-big stack section">
+<form id="persons-filter" method="get" asp-action="Index" class="container container-big stack section">
   <div class=" min-w-zero">
     <div class="card max-width">
       <div class="cluster flex-between">
@@ -26,40 +26,23 @@
             <button class="btn">Search</button>
           </div>
           <div>
-            <a href="~/persons/index" class="btn">Clear all</a>
+            <a href="~/persons/index" class="btn" data-clear>Clear all</a>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <section class="table-wrap table-wrap-scroll">
-    <table class="table-striped">
-      <thead>
-        <tr>
-          @foreach (var (key, value) in Model.SortFields)
-          {
-            ViewBag.ColumnKey = key;
-            ViewBag.ColumnDisplayName = value;
-            <partial name="_FilterColumnHeaderForTable" model="Model" />
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @foreach (PersonResponse? person in Model.Persons)
-        {
-          <tr>
-            <td>@person?.PersonName</td>
-            <td>@person?.Email</td>
-            <td>@person?.DateOfBirth?.ToString("MMMM dd, yyyy")</td>
-            <td class="num">@person?.Age</td>
-            <td>@person?.Gender</td>
-            <td>@person?.CountryName</td>
-            <td>@person?.Address</td>
-            <td>@person?.ReceiveNewsLetters</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </section>
+  <input type="hidden" name="sortBy" value="@Model.SortColumn" />
+  <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+
+  <p id="persons-status" class="visually-hidden" role="status" aria-live="polite"></p>
+
+  <div id="persons-table" data-url="@Url.Action("Table")">
+    <partial name="_PersonsTable" model="Model" />
+  </div>
 </form>
+
+@section Scripts {
+  <script src="~/Views/Persons/Index.cshtml.js" asp-append-version="true" defer></script>
+}

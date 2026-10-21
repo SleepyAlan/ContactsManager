@@ -83,7 +83,7 @@ public class PersonsController : Controller
     }
 
     // Fragment for fetch(): just the table
-    [HttpGet]
+    [HttpGet("[action]")]
     public async Task<IActionResult> Table(
         SearchOptions? searchField,
         string? searchString,
