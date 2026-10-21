@@ -152,7 +152,7 @@ public class PersonService : IPersonService
 
         _persons.Add(person);
 
-        return ConvertToPersonResponse(person);
+        return await ConvertToPersonResponse(person);
     }
 
     public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest)
@@ -177,7 +177,7 @@ public class PersonService : IPersonService
         personToUpdate.Address = personUpdateRequest.Address;
         personToUpdate.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
         
-        return ConvertToPersonResponse(personToUpdate);
+        return await ConvertToPersonResponse(personToUpdate);
     }
 
     public async Task<bool> DeletePerson(Guid? personId)
@@ -194,7 +194,9 @@ public class PersonService : IPersonService
 
     public async Task<List<PersonResponse>> GetAllPersons()
     {
-        return _persons.Select(ConvertToPersonResponse).ToList();
+        var tasks = _persons.Select(ConvertToPersonResponse);
+        var results = await Task.WhenAll(tasks);
+        return results.ToList();
     }
 
     public async Task<PersonResponse?> GetPersonById(Guid? personId)
@@ -202,7 +204,7 @@ public class PersonService : IPersonService
         if (personId == null) return null;
         Person? person = _persons.FirstOrDefault(
             person => person.PersonId == personId);
-        return person is null ? null : ConvertToPersonResponse(person);
+        return person is null ? null : await ConvertToPersonResponse(person);
     }
 
     public async Task<List<PersonResponse>> GetFilteredPersons(string? searchString, SearchOptions option)
@@ -273,11 +275,11 @@ public class PersonService : IPersonService
     }
 
     // Helper method to convert a Person entity to a PersonResponse DTO, including the country name.
-    private PersonResponse ConvertToPersonResponse(Person person)
+    private async Task<PersonResponse> ConvertToPersonResponse(Person person)
     {
         PersonResponse personResponse = person.ToPersonResponse();
-        personResponse.CountryName = _countryService
-            .GetCountryById(person.CountryId)?.CountryName;
+        personResponse.CountryName = (await _countryService
+            .GetCountryById(person.CountryId))?.CountryName;
         return personResponse;
     }
 

@@ -870,8 +870,8 @@ public class PersonServiceTests
 
     private async Task<List<PersonResponse>> AddSamplePersons(bool addMore = false)
     {
-        CountryResponse countryUSA =  _countryService.AddCountry(new CountryAddRequest() { CountryName = "USA" });
-        CountryResponse countryCanada = _countryService.AddCountry(new CountryAddRequest() { CountryName = "Canada" });
+        CountryResponse countryUSA =  await _countryService.AddCountry(new CountryAddRequest() { CountryName = "USA" });
+        CountryResponse countryCanada = await _countryService.AddCountry(new CountryAddRequest() { CountryName = "Canada" });
 
         PersonAddRequest personAddRequest1 = new PersonAddRequest()
         {
