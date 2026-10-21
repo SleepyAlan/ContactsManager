@@ -1050,6 +1050,11 @@ kbd {
     object-fit: cover;
 }
 
+[aria-busy="true"] {
+    opacity: 0.6;
+    transition: opacity var(--duration) var(--ease);
+}
+
 /* 13. Accessibility & motion
    ========================================================================== */
 :focus-visible {
