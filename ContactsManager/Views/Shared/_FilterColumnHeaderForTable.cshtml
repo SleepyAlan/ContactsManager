@@ -9,7 +9,7 @@
             ? ListSortDirection.Descending.ToString()
             : ListSortDirection.Ascending.ToString();
 
-    return Url.Action("Index", new
+    return Url.Action("Index", "Persons", new
     {
       searchField = Model.SelectedSearchField,
       searchString = Model.SearchString,
@@ -26,11 +26,6 @@
     return Model.SortDirection == ListSortDirection.Ascending.ToString() ? "↑" : "↓";
   }
 }
-@* <th>
-  <a style="text-decoration: none;" href="@SortUrl(ViewBag.ColumnKey)">
-    @ViewBag.ColumnDisplayName @SortArrow(ViewBag.ColumnKey)
-  </a>
-</th> *@
 @{
   var column = (string)ViewBag.ColumnKey;
   var ariaSort = Model.SortColumn != column ? "none"

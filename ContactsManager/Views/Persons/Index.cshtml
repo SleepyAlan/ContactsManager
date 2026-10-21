@@ -9,7 +9,7 @@
     Text = x.Value
   });
 }
-<form id="persons-filter" method="get" asp-action="Index" class="container container-big stack section">
+<form id="persons-filter" method="get" asp-controller="Persons" asp-action="Index" class="container container-big stack section">
   <div class=" min-w-zero">
     <div class="card max-width">
       <div class="cluster flex-between">
@@ -26,7 +26,7 @@
             <button class="btn">Search</button>
           </div>
           <div>
-            <a href="~/persons/index" class="btn" data-clear>Clear all</a>
+            <a asp-controller="Persons" asp-action="Index" class="btn" data-clear>Clear all</a>
           </div>
         </div>
       </div>
@@ -38,7 +38,7 @@
 
   <p id="persons-status" class="visually-hidden" role="status" aria-live="polite"></p>
 
-  <div id="persons-table" data-url="@Url.Action("Table")">
+  <div id="persons-table" data-url="@Url.Action("Table", "Persons")">
     <partial name="_PersonsTable" model="Model" />
   </div>
 </form>

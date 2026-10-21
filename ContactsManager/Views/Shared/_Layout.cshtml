@@ -43,8 +43,8 @@
           <h2 class="title">Contacts Manager</h2>
         </div>
         <nav class="p-2">
-          <a class="p-2 @SetCurrentNavAsBold("Contacts")" href="~/persons/index">Contacts</a>
-          <a class="p-2 @SetCurrentNavAsBold("Create Contact")" href="~/persons/Create">Create Contact</a>
+          <a class="p-2 @SetCurrentNavAsBold("Contacts")" asp-controller="Persons" asp-action="Index">Contacts</a>
+          <a class="p-2 @SetCurrentNavAsBold("Create Contact")" asp-controller="Persons" asp-action="Create">Create Contact</a>
         </nav>
       </div>
     </div>
