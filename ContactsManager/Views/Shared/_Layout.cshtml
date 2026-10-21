@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="~/css/site.css" />
   <link rel="stylesheet" href="~/css/layout.css" />
   <link rel="stylesheet" href="~/css/Utility.css" />
+  @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="layout-header-body">
   <header class="header">
@@ -51,5 +52,6 @@
   <main>
     @RenderBody()
   </main>
+  @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
