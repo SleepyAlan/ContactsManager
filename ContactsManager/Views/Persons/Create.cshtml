@@ -19,18 +19,23 @@
     <form class="stack" asp-controller="Persons" asp-action="Create" method="post">
       <fieldset class="bg-surface">
         <legend>Required Information</legend>
+
         <label asp-for="PersonName">Full Name</label>
         <input required type="text" asp-for="PersonName" />
+
         <label asp-for="Email">Email</label>
         <input required type="email" asp-for="Email" />
+
       </fieldset>
       <fieldset class="bg-surface">
         <legend>Optional Information</legend>
+
         <div class="cluster">
           <div class="flex-1">
             <label asp-for="DateOfBirth">Date of Birth</label>
             <input type="date" asp-for="DateOfBirth" />
           </div>
+
           <div class="flex-1">
             <label asp-for="Gender">Gender</label>
             <div class="select-wrap">
@@ -40,6 +45,7 @@
             </div>
           </div>
         </div>
+
         <div class="cluster">
           <div class="flex-1">
             <label asp-for="CountryId">Country</label>
@@ -49,12 +55,13 @@
               </select>
             </div>
           </div>
+
           <div class="flex-auto flex-column">
             <label asp-for="ReceiveNewsLetters">Receive Newsletters</label>
             <input type="checkbox" asp-for="ReceiveNewsLetters" value="true" />
-
           </div>
         </div>
+
         <div>
           <label asp-for="Address">Address</label>
           <textarea asp-for="Address" autocomplete="street-address"
