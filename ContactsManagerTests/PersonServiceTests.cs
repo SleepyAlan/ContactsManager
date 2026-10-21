@@ -23,16 +23,16 @@ public class PersonServiceTests
 
     #region AddPerson() Tests
     [Fact]
-    public void AddPerson_NullPersonAddRequest_ThrowsArgumentNullException()
+    public async Task AddPerson_NullPersonAddRequest_ThrowsArgumentNullException()
     {
         // Arrange
         PersonAddRequest? personAddRequest = null;
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => _sut.AddPerson(personAddRequest));
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await _sut.AddPerson(personAddRequest));
     }
 
     [Fact]
-    public void AddPerson_PersonNameIsNull_ThrowsArgumentException()
+    public async Task AddPerson_PersonNameIsNull_ThrowsArgumentException()
     {
         // Arrange
         PersonAddRequest personAddRequest = new PersonAddRequest()
@@ -40,11 +40,11 @@ public class PersonServiceTests
             PersonName = null
         };
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => _sut.AddPerson(personAddRequest));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _sut.AddPerson(personAddRequest));
     }
 
     [Fact]
-    public void AddPerson_PersonNameIsEmpty_ThrowsArgumentException()
+    public async Task AddPerson_PersonNameIsEmpty_ThrowsArgumentException()
     {
         // Arrange
         PersonAddRequest personAddRequest = new PersonAddRequest()
@@ -53,11 +53,11 @@ public class PersonServiceTests
         };
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => _sut.AddPerson(personAddRequest));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _sut.AddPerson(personAddRequest));
     }
 
     [Fact]
-    public void AddPerson_PersonNameIsWhitespace_ThrowsArgumentException()
+    public async Task AddPerson_PersonNameIsWhitespace_ThrowsArgumentException()
     {
         // Arrange
         PersonAddRequest personAddRequest = new PersonAddRequest()
@@ -66,11 +66,11 @@ public class PersonServiceTests
         };
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => _sut.AddPerson(personAddRequest));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _sut.AddPerson(personAddRequest));
     }
 
     [Fact]
-    public void AddPerson_ValidPersonAddRequest_ReturnsPersonResponse()
+    public async Task AddPerson_ValidPersonAddRequest_ReturnsPersonResponse()
     {
         // Arrange
         PersonAddRequest personAddRequest = new PersonAddRequest()
@@ -84,7 +84,7 @@ public class PersonServiceTests
             ReceiveNewsLetters = true,
         };
         // Act
-        PersonResponse actualPersonResponse = _sut.AddPerson(personAddRequest);
+        PersonResponse actualPersonResponse = await _sut.AddPerson(personAddRequest);
 
         // Assert
         Assert.True(actualPersonResponse.PersonId != Guid.Empty);
@@ -92,7 +92,7 @@ public class PersonServiceTests
     }
 
     [Fact]
-    public void AddPerson_ValidPersonAddRequest_VerifyItPersistsViaGetAllPersons()
+    public async Task AddPerson_ValidPersonAddRequest_VerifyItPersistsViaGetAllPersons()
     {
         // Arrange
         PersonAddRequest personAddRequest = new PersonAddRequest()
@@ -107,8 +107,8 @@ public class PersonServiceTests
         };
 
         // Act
-        PersonResponse expectedPersonResponse = _sut.AddPerson(personAddRequest);
-        List<PersonResponse> actualPersonResponses = _sut.GetAllPersons();
+        PersonResponse expectedPersonResponse = await _sut.AddPerson(personAddRequest);
+        List<PersonResponse> actualPersonResponses = await _sut.GetAllPersons();
 
 
         // Assert
@@ -119,24 +119,24 @@ public class PersonServiceTests
 
     #region GetAllPersons() Tests
     [Fact]
-    public void GetAllPersons_IfNoPersons_ReturnsEmptyList()
+    public async Task GetAllPersons_IfNoPersons_ReturnsEmptyList()
     {
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetAllPersons();
+        List<PersonResponse> actualPersonResponses = await _sut.GetAllPersons();
 
         // Assert
         Assert.Empty(actualPersonResponses);
     }
 
     [Fact]
-    public void GetAllPersons_IfFewPersons_ReturnsListOfPersons()
+    public async Task GetAllPersons_IfFewPersons_ReturnsListOfPersons()
     {
         // Arrange
-        List<PersonResponse> expectedPersonResponses = AddSamplePersons();
+        List<PersonResponse> expectedPersonResponses = await AddSamplePersons();
         PrintPersonResponses(expectedPersonResponses, "Expected:");
 
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetAllPersons();
+        List<PersonResponse> actualPersonResponses = await _sut.GetAllPersons();
         PrintPersonResponses(actualPersonResponses, "Actual:");
 
         // Assert
@@ -150,46 +150,46 @@ public class PersonServiceTests
 
     #region GetPersonById() Tests
     [Fact]
-    public void GetPersonById_NullPersonId_ReturnsNull()
+    public async Task GetPersonById_NullPersonId_ReturnsNull()
     {
         // Arrange
         Guid? personId = null;
 
         // Act
-        PersonResponse? response = _sut.GetPersonById(personId);
+        PersonResponse? response = await _sut.GetPersonById(personId);
 
         // Assert
         Assert.Null(response);
     }
 
     [Fact]
-    public void GetPersonById_EmptyPersonId_ReturnsNull()
+    public async Task GetPersonById_EmptyPersonId_ReturnsNull()
     {
         // Arrange
         Guid? personId = Guid.Empty;
 
         // Act
-        PersonResponse? response = _sut.GetPersonById(personId);
+        PersonResponse? response = await _sut.GetPersonById(personId);
 
         // Assert
         Assert.Null(response);
     }
 
     [Fact]
-    public void GetPersonById_InvalidPersonId_ReturnsNull()
+    public async Task GetPersonById_InvalidPersonId_ReturnsNull()
     {
         // Arrange
         Guid? personId = Guid.NewGuid();
 
         // Act
-        PersonResponse? response = _sut.GetPersonById(personId);
+        PersonResponse? response = await _sut.GetPersonById(personId);
 
         // Assert
         Assert.Null(response);
     }
 
     [Fact]
-    public void GetPersonById_ValidPersonId_ReturnsPersonResponse()
+    public async Task GetPersonById_ValidPersonId_ReturnsPersonResponse()
     {
         // Arrange
         PersonAddRequest personAddRequest = new PersonAddRequest()
@@ -202,11 +202,11 @@ public class PersonServiceTests
             DateOfBirth = DateTime.Now,
             ReceiveNewsLetters = true,
         };
-        PersonResponse expectedPersonResponse = _sut.AddPerson(personAddRequest);
+        PersonResponse expectedPersonResponse = await _sut.AddPerson(personAddRequest);
 
         // Act
         PersonResponse? actualPersonResponse =
-            _sut.GetPersonById(expectedPersonResponse.PersonId);
+            await _sut.GetPersonById(expectedPersonResponse.PersonId);
 
         // Assert
         Assert.NotNull(actualPersonResponse);
@@ -216,10 +216,10 @@ public class PersonServiceTests
 
     #region GetFilteredPersons() Tests
     [Fact]
-    public void GetFilteredPersons_IfNoPersons_ReturnsEmptyList()
+    public async Task GetFilteredPersons_IfNoPersons_ReturnsEmptyList()
     {
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(null, SearchOptions.ByName);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(null, SearchOptions.ByName);
 
         // Assert
         Assert.Empty(actualPersonResponses);
@@ -246,13 +246,13 @@ public class PersonServiceTests
     [InlineData("", SearchOptions.LessThanAge)]
     [InlineData(null, SearchOptions.EqualToAge)]
     [InlineData("", SearchOptions.EqualToAge)]
-    public void GetFilteredPersons_NullOrEmptySearchStringOrNoneOption_ReturnsAllPersons(string? search, SearchOptions option)
+    public async Task GetFilteredPersons_NullOrEmptySearchStringOrNoneOption_ReturnsAllPersons(string? search, SearchOptions option)
     {
         // Arrange
-        List<PersonResponse> allPersonResponses = AddSamplePersons();
+        List<PersonResponse> allPersonResponses = await AddSamplePersons();
 
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, option);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, option);
 
         // Assert
         allPersonResponses.ForEach(expectedPerson =>
@@ -265,14 +265,14 @@ public class PersonServiceTests
     [InlineData("tes", "test3", "test4")]
     [InlineData("ALAN", "Alan S")]
     [InlineData("zzz")]
-    public void GetFilteredPersons_ByName_ReturnsMatchedCaseInsensitiveSubstring(
+    public async Task GetFilteredPersons_ByName_ReturnsMatchedCaseInsensitiveSubstring(
         string search, params string[] expected)
     {
         // Arrange
         AddSamplePersons();
 
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByName);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByName);
 
         // Assert
         Assert.Equal(
@@ -284,14 +284,14 @@ public class PersonServiceTests
     [InlineData("canada", "Adam W", "test4")]
     [InlineData("USA", "Alan S")]
     [InlineData("zzz")]
-    public void GetFilteredPersons_ByCountry_ReturnsMatchedCaseInsensitiveSubstring(
+    public async Task GetFilteredPersons_ByCountry_ReturnsMatchedCaseInsensitiveSubstring(
         string search, params string[] expected)
     {
         // Arrange
         AddSamplePersons();
 
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByCountry);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByCountry);
 
         // Assert
         Assert.Equal(
@@ -303,14 +303,14 @@ public class PersonServiceTests
     [InlineData("example.com", "Adam W", "test3", "test4")]
     [InlineData("gmail", "Alan S")]
     [InlineData("zzz")]
-    public void GetFilteredPersons_ByEmail_ReturnsMatchedCaseInsensitiveSubstring(
+    public async Task GetFilteredPersons_ByEmail_ReturnsMatchedCaseInsensitiveSubstring(
         string search, params string[] expected)
     {
         // Arrange
         AddSamplePersons();
 
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByEmail);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByEmail);
 
         // Assert
         Assert.Equal(
@@ -323,14 +323,14 @@ public class PersonServiceTests
     [InlineData("ROAD", "Alan S")]
     [InlineData("StreeT", "Adam W")]
     [InlineData("zzz")]
-    public void GetFilteredPersons_ByAddress_ReturnsMatchedCaseInsensitiveSubstring(
+    public async Task GetFilteredPersons_ByAddress_ReturnsMatchedCaseInsensitiveSubstring(
         string search, params string[] expected)
     {
         // Arrange
         AddSamplePersons();
 
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByAddress);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByAddress);
 
         // Assert
         Assert.Equal(
@@ -344,13 +344,13 @@ public class PersonServiceTests
     [InlineData("2007-01-01", "test3", "Alan S")]
     [InlineData("2000-01-02")]
     [InlineData("1900")]
-    public void GetFilteredPersons_ByDateOfBirth_MatchesSubstringOfIsoDate(
+    public async Task GetFilteredPersons_ByDateOfBirth_MatchesSubstringOfIsoDate(
         string search, params string[] expected)
     {
         // Arrange
         AddSamplePersons();
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByDateOfBirth);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByDateOfBirth);
         // Assert
         Assert.Equal(
             expected.OrderBy(e => e),
@@ -368,13 +368,13 @@ public class PersonServiceTests
     [InlineData("50")]
     [InlineData("100")]
     [InlineData("500")]
-    public void GetFilteredPersons_GreaterThanAge_ReturnsPersonsWhoseAgeIsGreaterThan(
+    public async Task GetFilteredPersons_GreaterThanAge_ReturnsPersonsWhoseAgeIsGreaterThan(
         string search)
     {
         // Arrange
         AddSamplePersons();
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.GreaterThanAge);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.GreaterThanAge);
         // Assert
         Assert.All(actualPersonResponses, p => Assert.True(p.Age > int.Parse(search)));
     }
@@ -390,30 +390,30 @@ public class PersonServiceTests
     [InlineData("50")]
     [InlineData("100")]
     [InlineData("500")]
-    public void GetFilteredPersons_LessThanAge_ReturnsPersonsWhoseAgeIsLessThan(
+    public async Task GetFilteredPersons_LessThanAge_ReturnsPersonsWhoseAgeIsLessThan(
         string search)
     {
         // Arrange
         AddSamplePersons();
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.LessThanAge);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.LessThanAge);
         // Assert
         Assert.All(actualPersonResponses, p => Assert.True(p.Age < int.Parse(search)));
     }
 
     [Fact]
-    public void GetFilteredPersons_EqualToAge_ReturnsPersonsWhoseAgeMatchesExactly()
+    public async Task GetFilteredPersons_EqualToAge_ReturnsPersonsWhoseAgeMatchesExactly()
     {
         // Arrange
-        List<PersonResponse> expectedPersonResponses = AddSamplePersons();
+        List<PersonResponse> expectedPersonResponses = await AddSamplePersons();
         // This and one other person have this age
         var age1 = expectedPersonResponses.First(p => p.PersonName == "Alan S").Age;
         // Only one with this age
         var age2 = expectedPersonResponses.First(p => p.PersonName == "Adam W").Age;
 
         // Act
-        List<PersonResponse> actualPersonResponsesAge1 = _sut.GetFilteredPersons(age1.ToString(), SearchOptions.EqualToAge);
-        List<PersonResponse> actualPersonResponsesAge2 = _sut.GetFilteredPersons(age2.ToString(), SearchOptions.EqualToAge);
+        List<PersonResponse> actualPersonResponsesAge1 = await _sut.GetFilteredPersons(age1.ToString(), SearchOptions.EqualToAge);
+        List<PersonResponse> actualPersonResponsesAge2 = await _sut.GetFilteredPersons(age2.ToString(), SearchOptions.EqualToAge);
 
         // Assert
         Assert.All(actualPersonResponsesAge1, p => Assert.Equal(age1, p.Age));
@@ -425,7 +425,7 @@ public class PersonServiceTests
     [InlineData("26x")]
     [InlineData(" ")]
     [InlineData("12 34")]
-    public void GetFilteredPersons_AgeOptions_WithNonNumericSearch_ThrowsArgumentException(string search)
+    public async Task GetFilteredPersons_AgeOptions_WithNonNumericSearch_ThrowsArgumentException(string search)
     {
         var options = new[]
         {
@@ -435,7 +435,7 @@ public class PersonServiceTests
         };
         foreach (var option in options)
         {
-            var ex = Assert.Throws<ArgumentException>(
+            var ex = await Assert.ThrowsAsync<ArgumentException>(
                 () => _sut.GetFilteredPersons(search, option));
             Assert.Contains("valid number", ex.Message);
         }
@@ -446,13 +446,13 @@ public class PersonServiceTests
     [InlineData("MALE", "test3", "Alan S")]
     [InlineData("female", "Adam W")]
     [InlineData("Other", "test4")]
-    public void GetFilteredPersons_ByGender_WhenSearchIsEnumName_MatchesExactly(
+    public async Task GetFilteredPersons_ByGender_WhenSearchIsEnumName_MatchesExactly(
         string search, params string[] expected)
     {
         // Arrange
         AddSamplePersons();
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByGender);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByGender);
         // Assert
         Assert.Equal(
             expected.OrderBy(e => e),
@@ -463,12 +463,12 @@ public class PersonServiceTests
     [InlineData("ale", "test3", "Alan S", "Adam W")]
     [InlineData("emal", "Adam W")]
     [InlineData("zzz")]
-    public void GetFilteredPersons_ByGender_WhenSearchIsNotEnumName_FallsBackToSubstring(string search, params string[] expected)
+    public async Task GetFilteredPersons_ByGender_WhenSearchIsNotEnumName_FallsBackToSubstring(string search, params string[] expected)
     {
         // Arrange
         AddSamplePersons();
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByGender);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByGender);
         // Assert
         Assert.Equal(
             expected.OrderBy(e => e),
@@ -480,12 +480,12 @@ public class PersonServiceTests
     [InlineData("TRUE", "Alan S", "test3")]
     [InlineData("false", "Adam W", "test4")]
     [InlineData("FaLSe", "Adam W", "test4")]
-    public void GetFilteredPersons_ByReceiveNewsLetters_FiltersOnBoolean(string search, params string[] expected)
+    public async Task GetFilteredPersons_ByReceiveNewsLetters_FiltersOnBoolean(string search, params string[] expected)
     {
         // Arrange
         AddSamplePersons();
         // Act
-        List<PersonResponse> actualPersonResponses = _sut.GetFilteredPersons(search, SearchOptions.ByReceiveNewsLetters);
+        List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByReceiveNewsLetters);
         // Assert
         Assert.Equal(
             expected.OrderBy(e => e),
@@ -496,13 +496,13 @@ public class PersonServiceTests
     [InlineData("yes")]
     [InlineData("1")]
     [InlineData("abc")]
-    public void GetFilteredPersons_ByReceiveNewsLetters_AnythingOtherThanTrueIsTreatedAsFalse(string search)
+    public async Task GetFilteredPersons_ByReceiveNewsLetters_AnythingOtherThanTrueIsTreatedAsFalse(string search)
     {
         // Arrange
         AddSamplePersons();
 
         // Act
-        var responses = _sut.GetFilteredPersons(search, SearchOptions.ByReceiveNewsLetters);
+        var responses = await _sut.GetFilteredPersons(search, SearchOptions.ByReceiveNewsLetters);
 
         // Assert
         Assert.All(responses, p => Assert.False(p.ReceiveNewsLetters));
@@ -515,15 +515,15 @@ public class PersonServiceTests
     [InlineData((SearchOptions)30)]
     [InlineData((SearchOptions)(-1))]
     [InlineData((SearchOptions)(-10))]
-    public void GetFilteredPersons_UnknownEnumValue_ThrowsArgumentOutOfRangeException(SearchOptions searchOption)
+    public async Task GetFilteredPersons_UnknownEnumValue_ThrowsArgumentOutOfRangeException(SearchOptions searchOption)
     {
         // Arrange
         AddSamplePersons();
 
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
         {
-            _sut.GetFilteredPersons("anything", searchOption);
+            await _sut.GetFilteredPersons("anything", searchOption);
         });
     }
     #endregion
@@ -558,10 +558,10 @@ public class PersonServiceTests
     }
 
     [Fact]
-    public void GetSortedPersons_SingleElement_ReturnsSameElement()
+    public async Task GetSortedPersons_SingleElement_ReturnsSameElement()
     {
         // Arrange
-        List<PersonResponse> personsToSort = AddSamplePersons().Take(1).ToList();
+        List<PersonResponse> personsToSort = (await AddSamplePersons()).Take(1).ToList();
         FilterOptions option = FilterOptions.ByName;
         ListSortDirection order = ListSortDirection.Ascending;
 
@@ -574,10 +574,10 @@ public class PersonServiceTests
     }
 
     [Fact]
-    public void GetSortedPersons_TwoElements_ReturnsSortedList()
+    public async Task GetSortedPersons_TwoElements_ReturnsSortedList()
     {
         // Arrange
-        List<PersonResponse> personsToSort = AddSamplePersons().Take(2).ToList();
+        List<PersonResponse> personsToSort = (await AddSamplePersons()).Take(2).ToList();
         FilterOptions option = FilterOptions.ByName;
         ListSortDirection order = ListSortDirection.Ascending;
         // Act
@@ -616,13 +616,13 @@ public class PersonServiceTests
 
     [Theory]
     [MemberData(nameof(SortableFieldsData))]
-    public void GetSortedPersons_SortByStringFields_ReturnsSortedList(
+    public async Task GetSortedPersons_SortByStringFields_ReturnsSortedList(
         FilterOptions option,
         Func<PersonResponse, string?> keySelector,
         ListSortDirection order)
     {
         // Arrange
-        List<PersonResponse> input = AddSamplePersons(addMore: true);
+        List<PersonResponse> input = await AddSamplePersons(addMore: true);
         var snapShotOfInput = input.ToList();
 
         // Act
@@ -657,11 +657,11 @@ public class PersonServiceTests
     [Theory]
     [InlineData(ListSortDirection.Ascending)]
     [InlineData(ListSortDirection.Descending)]
-    public void GetSortedPersons_SortByAge_ReturnsSortedList(
+    public async Task GetSortedPersons_SortByAge_ReturnsSortedList(
         ListSortDirection order)
     {
         // Arrange
-        List<PersonResponse> input = AddSamplePersons(addMore: true);
+        List<PersonResponse> input = await AddSamplePersons(addMore: true);
         var snapShotOfInput = input.ToList();
         FilterOptions option = FilterOptions.ByAge;
 
@@ -688,11 +688,11 @@ public class PersonServiceTests
     [Theory]
     [InlineData(ListSortDirection.Ascending)]
     [InlineData(ListSortDirection.Descending)]
-    public void GetSortedPersons_SortByDateOfBirth_ReturnsSortedList(
+    public async Task GetSortedPersons_SortByDateOfBirth_ReturnsSortedList(
     ListSortDirection order)
     {
         // Arrange
-        List<PersonResponse> input = AddSamplePersons(addMore: true);
+        List<PersonResponse> input = await AddSamplePersons(addMore: true);
         var snapShotOfInput = input.ToList();
         FilterOptions option = FilterOptions.ByDateOfBirth;
 
@@ -720,10 +720,10 @@ public class PersonServiceTests
     [InlineData((FilterOptions)30)]
     [InlineData((FilterOptions)(-1))]
     [InlineData((FilterOptions)(-10))]
-    public void GetSortedPersons_UnknownEnumValue_ThrowsArgumentOutOfRangeException(FilterOptions filterOption)
+    public async Task GetSortedPersons_UnknownEnumValue_ThrowsArgumentOutOfRangeException(FilterOptions filterOption)
     {
         // Arrange
-        List<PersonResponse> input = AddSamplePersons(addMore: true);
+        List<PersonResponse> input = await AddSamplePersons(addMore: true);
         ListSortDirection order = ListSortDirection.Ascending;
         // Act & Assert
         Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -734,16 +734,16 @@ public class PersonServiceTests
 
     #region UpdatePerson Tests
     [Fact]
-    public void UpdatePerson_NullPersonUpdateRequest_ThrowsArgumentNullException()
+    public async Task UpdatePerson_NullPersonUpdateRequest_ThrowsArgumentNullException()
     {
         // Arrange
         PersonUpdateRequest? personUpdateRequest = null;
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => _sut.UpdatePerson(personUpdateRequest));
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await _sut.UpdatePerson(personUpdateRequest));
     }
 
     [Fact]
-    public void UpdatePerson_InvalidPersonId_ThrowsArgumentException()
+    public async Task UpdatePerson_InvalidPersonId_ThrowsArgumentException()
     {
         // Arrange
         PersonUpdateRequest? personUpdateRequest = new PersonUpdateRequest()
@@ -751,24 +751,24 @@ public class PersonServiceTests
             PersonId = Guid.NewGuid()
         };
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => _sut.UpdatePerson(personUpdateRequest));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _sut.UpdatePerson(personUpdateRequest));
     }
 
     [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void UpdatePerson_InvalidPersonName_ThrowsArgumentException(
+    public async Task UpdatePerson_InvalidPersonName_ThrowsArgumentException(
         string? personName)
     {
         // Arrange
-        var personResponse = AddSamplePersons().First();
+        var personResponse = (await AddSamplePersons()).First();
 
         var personUpdateRequest = personResponse.ToPersonUpdateRequest();
         personUpdateRequest.PersonName = personName;
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => _sut.UpdatePerson(personUpdateRequest));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _sut.UpdatePerson(personUpdateRequest));
     }
 
     [Theory]
@@ -776,24 +776,24 @@ public class PersonServiceTests
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("invalid-email.format")]
-    public void UpdatePerson_InvalidEmail_ThrowsArgumentException(
+    public async Task UpdatePerson_InvalidEmail_ThrowsArgumentException(
         string? email)
     {
         // Arrange
-        var personResponse = AddSamplePersons().First();
+        var personResponse = (await AddSamplePersons()).First();
 
         var personUpdateRequest = personResponse.ToPersonUpdateRequest();
         personUpdateRequest.Email = email;
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => _sut.UpdatePerson(personUpdateRequest));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _sut.UpdatePerson(personUpdateRequest));
     }
 
     [Fact]
-    public void UpdatePerson_ValidUpdate_ReturnsUpdatedPersonResponse()
+    public async Task UpdatePerson_ValidUpdate_ReturnsUpdatedPersonResponse()
     {
         // Arrange
-        var personResponseBefore = AddSamplePersons().First();
+        var personResponseBefore = (await AddSamplePersons()).First();
         var personUpdateRequest = personResponseBefore.ToPersonUpdateRequest();
         personUpdateRequest.PersonName = "Updated Name";
         personUpdateRequest.Email = "updated@example.com";
@@ -803,8 +803,8 @@ public class PersonServiceTests
         Guid personId = personResponseBefore.PersonId;
 
         // Act
-        PersonResponse personResponseExpectedAfter = _sut.UpdatePerson(personUpdateRequest);
-        PersonResponse? personResponseActualAfter = _sut.GetPersonById(personId);
+        PersonResponse personResponseExpectedAfter = await _sut.UpdatePerson(personUpdateRequest);
+        PersonResponse? personResponseActualAfter = await _sut.GetPersonById(personId);
 
         // Assert
         Assert.NotEqual(personResponseBefore, personResponseExpectedAfter);
@@ -814,42 +814,41 @@ public class PersonServiceTests
 
     #region DeletePerson Tests
     [Fact]
-    public void DeletePerson_NullPersonId_ThrowsArgumentNullException()
+    public async Task DeletePerson_NullPersonId_ThrowsArgumentNullException()
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
         Guid? invalidPersonId = null;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() =>
-            _sut.DeletePerson(invalidPersonId));
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await _sut.DeletePerson(invalidPersonId));
     }
 
     [Fact]
-    public void DeletePerson_InvalidPersonId_ReturnsFalse()
+    public async Task DeletePerson_InvalidPersonId_ReturnsFalse()
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
         Guid invalidPersonId = Guid.NewGuid();
 
         // Act
-        bool result = _sut.DeletePerson(invalidPersonId);
+        bool result = await _sut.DeletePerson(invalidPersonId);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void DeletePerson_ValidPersonId_ReturnsTrueAndValuePersists()
+    public async Task DeletePerson_ValidPersonId_ReturnsTrueAndValuePersists()
     {
         // Arrange
-        var personToDelete = AddSamplePersons().First();
+        var personToDelete = (await AddSamplePersons()).First();
         Guid personId = personToDelete.PersonId;
 
         // Act
-        var personResponseBefore = _sut.GetPersonById(personId);
-        bool result = _sut.DeletePerson(personId);
-        var personResponseAfter = _sut.GetPersonById(personId);
+        var personResponseBefore = await _sut.GetPersonById(personId);
+        bool result = await _sut.DeletePerson(personId);
+        var personResponseAfter = await _sut.GetPersonById(personId);
 
         // Assert
         Assert.True(result);
@@ -869,9 +868,9 @@ public class PersonServiceTests
         }
     }
 
-    private List<PersonResponse> AddSamplePersons(bool addMore = false)
+    private async Task<List<PersonResponse>> AddSamplePersons(bool addMore = false)
     {
-        CountryResponse countryUSA = _countryService.AddCountry(new CountryAddRequest() { CountryName = "USA" });
+        CountryResponse countryUSA =  _countryService.AddCountry(new CountryAddRequest() { CountryName = "USA" });
         CountryResponse countryCanada = _countryService.AddCountry(new CountryAddRequest() { CountryName = "Canada" });
 
         PersonAddRequest personAddRequest1 = new PersonAddRequest()
@@ -917,10 +916,10 @@ public class PersonServiceTests
 
         List<PersonResponse> expectedPersonResponses = new List<PersonResponse>
         {
-            _sut.AddPerson(personAddRequest1),
-            _sut.AddPerson(personAddRequest2),
-            _sut.AddPerson(personAddRequest3),
-            _sut.AddPerson(personAddRequest4)
+            await _sut.AddPerson(personAddRequest1),
+            await _sut.AddPerson(personAddRequest2),
+            await _sut.AddPerson(personAddRequest3),
+            await _sut.AddPerson(personAddRequest4)
         };
 
         if (!addMore) return expectedPersonResponses;
@@ -947,8 +946,8 @@ public class PersonServiceTests
             ReceiveNewsLetters = false,
         };
 
-        expectedPersonResponses.Add(_sut.AddPerson(personAddRequest5));
-        expectedPersonResponses.Add(_sut.AddPerson(personAddRequest6));
+        expectedPersonResponses.Add(await _sut.AddPerson(personAddRequest5));
+        expectedPersonResponses.Add(await _sut.AddPerson(personAddRequest6));
 
         return expectedPersonResponses;
     }
