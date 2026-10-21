@@ -13,43 +13,43 @@ public interface IPersonService
     /// Adds a new person based on the provided request.
     /// </summary>
     /// <param name="personAddRequest">The request containing the details of the person to add.</param>
-    /// <returns>PersonResponse dto containing the details of the added person.</returns>
-    PersonResponse AddPerson(PersonAddRequest? personAddRequest);
+    /// <returns>A Task that results in a PersonResponse dto containing the details of the added person.</returns>
+    Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest);
 
     /// <summary>
     /// Updates an existing person based on the provided request.
     /// </summary>
     /// <param name="personUpdateRequest">The request containing the details of the person to update.</param>
-    /// <returns>A PersonResponse dto containing the details of the updated person.</returns>
-    PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
+    /// <returns>A Task that results in a PersonResponse dto containing the details of the updated person.</returns>
+    Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 
     /// <summary>
     /// Deletes an existing person based on the provided personId.
     /// </summary>
     /// <param name="personId">The unique identifier of the person to delete.</param>
-    /// <returns>True if the person was successfully deleted; otherwise, false.</returns>
-    bool DeletePerson(Guid? personId);
+    /// <returns>A Task that results in true if the person was successfully deleted; otherwise, false.</returns>
+    Task<bool> DeletePerson(Guid? personId);
 
     /// <summary>
     /// Retrieves all persons.
     /// </summary>
-    /// <returns>A list of PersonResponse dto containing the details of all persons.</returns>
-    List<PersonResponse> GetAllPersons();
+    /// <returns>A Task that results in a list of PersonResponse dto containing the details of all persons.</returns>
+    Task<List<PersonResponse>> GetAllPersons();
 
     /// <summary>
     /// Retrieves a person by their unique identifier.
     /// </summary>
     /// <param name="personId">The unique identifier of the person.</param>
-    /// <returns>A PersonResponse dto containing the details of the person, or null if not found.</returns>
-    PersonResponse? GetPersonById(Guid? personId);
+    /// <returns>A Task that results in a PersonResponse dto containing the details of the person, or null if not found.</returns>
+    Task<PersonResponse?> GetPersonById(Guid? personId);
 
     /// <summary>
     /// Retrieves a list of persons based on the provided search string and search option.
     /// </summary>
     /// <param name="searchString">The search string to filter persons.</param>
     /// <param name="option">The search option to determine the filtering criteria.</param>
-    /// <returns>A list of PersonResponse dto containing the details of the filtered persons.</returns>
-    List<PersonResponse> GetFilteredPersons(string? searchString, SearchOptions option);
+    /// <returns>A Task that results in a list of PersonResponse dto containing the details of the filtered persons.</returns>
+    Task<List<PersonResponse>> GetFilteredPersons(string? searchString, SearchOptions option);
 
     /// <summary>
     /// Gets the provided persons sorted according to the specified search option and sort direction.
