@@ -48,7 +48,7 @@ public class CountryService : ICountryService
         }
     }
 
-    public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
+    public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
     {
         ArgumentNullException.ThrowIfNull(
             countryAddRequest,
@@ -81,14 +81,14 @@ public class CountryService : ICountryService
         return country.ToCountryResponse();
     }
 
-    public List<CountryResponse> GetAllCountries()
+    public async Task<List<CountryResponse>> GetAllCountries()
     {
         return _countries
             .Select(country => country.ToCountryResponse())
             .ToList();
     }
 
-    public CountryResponse? GetCountryById(Guid? countryId)
+    public async Task<CountryResponse?> GetCountryById(Guid? countryId)
     {
         if (countryId is null) return null;
 
