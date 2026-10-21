@@ -8,6 +8,7 @@ using System.ComponentModel;
 
 namespace ContactsManager.Controllers;
 
+[Route("[controller]")]
 public class PersonsController : Controller
 {
     private readonly ICountryService _countryService;
@@ -41,8 +42,8 @@ public class PersonsController : Controller
         _personService = personService;
     }
 
-    [Route("persons/index")]
-    [Route("/")]
+    [HttpGet("[action]")]
+    [HttpGet("/")]
     public IActionResult Index(
         SearchOptions? searchField,
         string? searchString,
@@ -63,20 +64,19 @@ public class PersonsController : Controller
         return View(viewModel);
     }
 
-    [Route("persons/create")]
-    [HttpGet]
+    [HttpGet("[action]")]
     public IActionResult Create()
     {
         var countries = _countryService.GetAllCountries();
         return View(countries);
     }
 
-    [Route("persons/create")]
-    [HttpPost]
+    [HttpPost("[action]")]
     public IActionResult Create(PersonAddRequest? personAddRequest)
     {
         if (ModelState.IsValid)
         {
+            _personService.AddPerson(personAddRequest);
             return RedirectToAction("Index", "Persons");
         }
 
