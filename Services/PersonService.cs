@@ -141,7 +141,7 @@ public class PersonService : IPersonService
         }
     }
 
-    public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
+    public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
     {
         ArgumentNullException.ThrowIfNull(personAddRequest, nameof(personAddRequest));
 
@@ -155,7 +155,7 @@ public class PersonService : IPersonService
         return ConvertToPersonResponse(person);
     }
 
-    public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
+    public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest)
     {
         ArgumentNullException.ThrowIfNull(
             personUpdateRequest, nameof(personUpdateRequest));
@@ -180,7 +180,7 @@ public class PersonService : IPersonService
         return ConvertToPersonResponse(personToUpdate);
     }
 
-    public bool DeletePerson(Guid? personId)
+    public async Task<bool> DeletePerson(Guid? personId)
     {
         ArgumentNullException.ThrowIfNull(personId, nameof(personId));
 
@@ -192,12 +192,12 @@ public class PersonService : IPersonService
         return numberOfRemoved > 0;
     }
 
-    public List<PersonResponse> GetAllPersons()
+    public async Task<List<PersonResponse>> GetAllPersons()
     {
         return _persons.Select(ConvertToPersonResponse).ToList();
     }
 
-    public PersonResponse? GetPersonById(Guid? personId)
+    public async Task<PersonResponse?> GetPersonById(Guid? personId)
     {
         if (personId == null) return null;
         Person? person = _persons.FirstOrDefault(
@@ -205,9 +205,9 @@ public class PersonService : IPersonService
         return person is null ? null : ConvertToPersonResponse(person);
     }
 
-    public List<PersonResponse> GetFilteredPersons(string? searchString, SearchOptions option)
+    public async Task<List<PersonResponse>> GetFilteredPersons(string? searchString, SearchOptions option)
     {
-        var allPersons = GetAllPersons();
+        var allPersons = await GetAllPersons();
 
         if (string.IsNullOrEmpty(searchString))
         {
