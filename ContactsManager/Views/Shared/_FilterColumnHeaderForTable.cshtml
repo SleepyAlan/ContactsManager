@@ -26,8 +26,18 @@
     return Model.SortDirection == ListSortDirection.Ascending.ToString() ? "↑" : "↓";
   }
 }
-<th>
+@* <th>
   <a style="text-decoration: none;" href="@SortUrl(ViewBag.ColumnKey)">
     @ViewBag.ColumnDisplayName @SortArrow(ViewBag.ColumnKey)
+  </a>
+</th> *@
+@{
+  var column = (string)ViewBag.ColumnKey;
+  var ariaSort = Model.SortColumn != column ? "none"
+      : Model.SortDirection == ListSortDirection.Descending.ToString() ? "descending" : "ascending";
+}
+<th scope="col" aria-sort="@ariaSort">
+  <a href="@SortUrl(column)" data-sort>
+    @ViewBag.ColumnDisplayName <span aria-hidden="true">@SortArrow(column)</span>
   </a>
 </th>
