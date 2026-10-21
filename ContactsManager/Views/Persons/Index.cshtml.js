@@ -43,6 +43,16 @@
         load();
     });
 
+    // Row click: forward to the row's real link. Delegated, so it survives table swaps.
+    container.addEventListener("click", (e) => {
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (e.target.closest("a, button, input, select, textarea, label")) return;  // let real controls work
+        if (window.getSelection().toString()) return; // person is selecting text
+
+        const link = e.target.closest("tr.row-link")?.querySelector("a[data-row-link]");
+        if (link) location.href = link.href;
+    });
+
     // Clear button
     form.querySelector("[data-clear]")?.addEventListener("click", (e) => {
         if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;

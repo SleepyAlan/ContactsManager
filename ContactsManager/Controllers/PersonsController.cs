@@ -127,6 +127,26 @@ public class PersonsController : Controller
         return RedirectToAction("Index", "Persons");
     }
 
+    [HttpGet("[action]/{personId:guid}")]
+    public async Task<IActionResult> Details(Guid? personId)
+    {
+        PersonResponse? person;
+        try
+        {
+            person = await _personService.GetPersonById(personId);
+            if (person is null)
+            {
+                throw new ArgumentException("Person not found");
+            }
+        }
+        catch (Exception e) when (e is ArgumentNullException or ArgumentException)
+        {
+            return NotFound();
+        }
+
+        return View(person);
+    }
+
     [HttpGet("[action]")]
     public async Task<IActionResult> Table(
         SearchOptions? searchField,

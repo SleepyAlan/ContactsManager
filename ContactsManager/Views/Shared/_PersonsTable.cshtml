@@ -17,8 +17,10 @@
     <tbody>
       @foreach (PersonResponse? person in people)
       {
-        <tr>
-          <td>@person?.PersonName</td>
+        <tr class="row-link">
+          <td>
+            <a href="@Url.Action("Details", "Persons", new { personId = person?.PersonId })" data-row-link>@person?.PersonName</a>
+          </td>
           <td>@person?.Email</td>
           <td>@person?.DateOfBirth?.ToString("MMMM dd, yyyy")</td>
           <td class="num">@person?.Age</td>

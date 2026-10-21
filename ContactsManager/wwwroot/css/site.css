@@ -742,6 +742,17 @@ tbody tr:is([aria-selected="true"], .is-selected) {
         cursor: pointer;
     }
 
+/* Rows that link to a detail page */
+.row-link {
+    cursor: pointer;
+
+    & a[data-row-link] {
+        color: inherit;
+        font-weight: var(--weight-medium);
+    }
+}
+
+
 /* 9. Code
    ========================================================================== */
 code,
