@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CountryResponse>?
+﻿@model PersonAddRequest
 
 @{
   ViewBag.Title = "Create Contact";
@@ -19,60 +19,45 @@
     <form class="stack" asp-controller="Persons" asp-action="Create" method="post">
       <fieldset class="bg-surface">
         <legend>Required Information</legend>
-        <label for="PersonName">Full Name</label>
-        <input required type="text" id="PersonName" name="PersonName" />
-        <label for="Email">Email</label>
-        <input required type="email" id="Email" name="Email" />
+        <label asp-for="PersonName">Full Name</label>
+        <input required type="text" asp-for="PersonName" />
+        <label asp-for="Email">Email</label>
+        <input required type="email" asp-for="Email" />
       </fieldset>
       <fieldset class="bg-surface">
         <legend>Optional Information</legend>
         <div class="cluster">
           <div class="flex-1">
-            <label for="DateOfBirth">Date of Birth</label>
-            <input type="date" id="DateOfBirth" name="DateOfBirth" />
+            <label asp-for="DateOfBirth">Date of Birth</label>
+            <input type="date" asp-for="DateOfBirth" />
           </div>
           <div class="flex-1">
-            <label for="Gender">Gender</label>
+            <label asp-for="Gender">Gender</label>
             <div class="select-wrap">
-              <select id="Gender" name="Gender">
+              <select asp-for="Gender" asp-items="ViewBag.GenderItems">
                 <option value="">Select A Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </select>
             </div>
           </div>
         </div>
         <div class="cluster">
           <div class="flex-1">
-            <label for="CountryId">Country</label>
+            <label asp-for="CountryId">Country</label>
             <div class="select-wrap">
-              <select id="CountryId" name="CountryId">
-
-                @if (Model == null || !Model.Any())
-                {
-                  <option value="">No countries available</option>
-                }
-                else
-                {
-                  <option value="">Select A Country</option>
-                  foreach (var country in Model)
-                  {
-                    <option value="@country.CountryId">@country.CountryName</option>
-                  }
-                }
+              <select asp-for="CountryId" asp-items="ViewBag.CountryItems">
+                <option value="">Select A Country</option>
               </select>
             </div>
           </div>
           <div class="flex-auto flex-column">
-            <label for="ReceiveNewsLetters">Receive Newsletters</label>
-            <input type="checkbox" id="ReceiveNewsLetters" name="ReceiveNewsLetters" value="true" />
+            <label asp-for="ReceiveNewsLetters">Receive Newsletters</label>
+            <input type="checkbox" asp-for="ReceiveNewsLetters" value="true" />
 
           </div>
         </div>
         <div>
-          <label for="Address">Address</label>
-          <textarea id="Address" name="Address" autocomplete="street-address"
+          <label asp-for="Address">Address</label>
+          <textarea asp-for="Address" autocomplete="street-address"
                     rows="1" placeholder="123 Main St, Apt 4B"></textarea>
         </div>
       </fieldset>

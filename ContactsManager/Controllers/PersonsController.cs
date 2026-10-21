@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Services;
+﻿using ContactsManager.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
-using ContactsManager.Models;
+using Services;
 using System.ComponentModel;
 
 namespace ContactsManager.Controllers;
@@ -61,7 +62,18 @@ public class PersonsController : Controller
     public async Task<IActionResult> Create()
     {
         var countries = await _countryService.GetAllCountries();
-        return View(countries);
+        var genders = Enum.GetNames(typeof(GenderOptions));
+        ViewBag.GenderItems = genders.Select(g => new SelectListItem
+        {
+            Value = g,
+            Text = g
+        });
+        ViewBag.CountryItems = countries.Select(c => new SelectListItem
+        {
+            Value = c.CountryId.ToString(),
+            Text = c.CountryName
+        });
+        return View();
     }
 
     [HttpPost("[action]")]
