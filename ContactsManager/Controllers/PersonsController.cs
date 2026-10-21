@@ -82,7 +82,51 @@ public class PersonsController : Controller
         return View(countries);
     }
 
-    // Fragment for fetch(): just the table
+    [HttpGet("[action]")]
+    public async Task<IActionResult> Update(Guid? personAddRequest)
+    {
+        PersonResponse? person;
+        try
+        {
+            person = await _personService.GetPersonById(personAddRequest);
+
+        }
+        catch (ArgumentNullException)
+        {
+            return RedirectToAction("Index", "Persons");
+        }
+        catch (ArgumentException)
+        {
+            return RedirectToAction("Index", "Persons");
+        }
+
+        if (person is null)
+        {
+            return NotFound();
+        }
+        return View(person);
+    }
+
+    [HttpPost("[action]")]
+    public async Task<IActionResult> Update(PersonUpdateRequest? personUpdateRequest)
+    {
+        PersonResponse? person;
+        try
+        {
+            person = await _personService.UpdatePerson(personUpdateRequest);
+            if (person is null)
+            {
+                throw new ArgumentException("Person not found");
+            }
+        }
+        catch (Exception e) when (e is ArgumentNullException or ArgumentException)
+        {
+            return BadRequest();
+        }
+
+        return RedirectToAction("Index", "Persons");
+    }
+
     [HttpGet("[action]")]
     public async Task<IActionResult> Table(
         SearchOptions? searchField,
