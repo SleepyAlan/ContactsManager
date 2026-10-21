@@ -44,39 +44,32 @@ public class PersonsController : Controller
 
     [HttpGet("[action]")]
     [HttpGet("/")]
-    public IActionResult Index(
+    public async Task<IActionResult> Index(
         SearchOptions? searchField,
         string? searchString,
         FilterOptions sortBy = FilterOptions.ByName,
         ListSortDirection sortDirection = ListSortDirection.Ascending)
     {
-
-
         // if null or empty searchString, then it retrieves all persons
-        var allPersons = _personService.GetFilteredPersons(searchString, searchField ?? 0);
-        var sortedPersons = _personService.GetSortedPersons(allPersons, sortBy, sortDirection);
-        var viewModel = new PersonsViewModel(
-            sortedPersons,
-            _searchFields,
-            _sortFields,
-            searchField.ToString() ?? "", searchString, sortBy.ToString(), sortDirection.ToString());
+        PersonsViewModel viewModel = await BuildViewModel(searchField, searchString, sortBy, sortDirection);
 
         return View(viewModel);
     }
 
+
     [HttpGet("[action]")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        var countries = _countryService.GetAllCountries();
+        var countries = await _countryService.GetAllCountries();
         return View(countries);
     }
 
     [HttpPost("[action]")]
-    public IActionResult Create(PersonAddRequest? personAddRequest)
+    public async Task<IActionResult> Create(PersonAddRequest? personAddRequest)
     {
         if (ModelState.IsValid)
         {
-            _personService.AddPerson(personAddRequest);
+            await _personService.AddPerson(personAddRequest);
             return RedirectToAction("Index", "Persons");
         }
 
@@ -85,7 +78,32 @@ public class PersonsController : Controller
             .Select(e => e.ErrorMessage).ToList();
         ViewBag.Errors = errors;
 
-        var countries = _countryService.GetAllCountries();
+        var countries = await _countryService.GetAllCountries();
         return View(countries);
+    }
+
+    // Fragment for fetch(): just the table
+    [HttpGet]
+    public async Task<IActionResult> Table(
+        SearchOptions? searchField,
+        string? searchString,
+        FilterOptions sortBy = FilterOptions.ByName,
+        ListSortDirection sortDirection = ListSortDirection.Ascending)
+    {
+        return PartialView("_PersonsTable",
+            await BuildViewModel(searchField, searchString, sortBy, sortDirection));
+    }
+
+
+    private async Task<PersonsViewModel> BuildViewModel(SearchOptions? searchField, string? searchString, FilterOptions sortBy, ListSortDirection sortDirection)
+    {
+        var allPersons = await _personService.GetFilteredPersons(searchString, searchField ?? 0);
+        var sortedPersons = _personService.GetSortedPersons(allPersons, sortBy, sortDirection);
+        var viewModel = new PersonsViewModel(
+            sortedPersons,
+            _searchFields,
+            _sortFields,
+            searchField.ToString() ?? "", searchString, sortBy.ToString(), sortDirection.ToString());
+        return viewModel;
     }
 }
