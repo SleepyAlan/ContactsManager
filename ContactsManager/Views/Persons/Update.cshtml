@@ -9,8 +9,9 @@
     <div class="center">
       <h4 class="text-primary">Update Contact Information</h4>
     </div>
-    <form class="stack" asp-controller="Persons" asp-action="Create" method="post">
+    <form class="stack" asp-controller="Persons" asp-action="Update" method="post">
       <fieldset class="bg-surface">
+        <input type="hidden" asp-for="PersonId" />
         <legend>Required Information</legend>
         <div>
           <label asp-for="PersonName">Full Name</label>

@@ -79,7 +79,7 @@ public class PersonsController : Controller
     }
 
 
-    [HttpGet("[action]")]
+    [HttpGet("[action]/{personId:guid}")]
     public async Task<IActionResult> Update(Guid? personId)
     {
         PersonResponse? person;
@@ -106,7 +106,7 @@ public class PersonsController : Controller
         return View(updateRequest);
     }
 
-    [HttpPost("[action]")]
+    [HttpPost("[action]/{personId:guid}")]
     public async Task<IActionResult> Update(PersonUpdateRequest? personUpdateRequest)
     {
         try
