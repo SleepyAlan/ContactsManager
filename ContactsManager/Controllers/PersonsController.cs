@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
+using ServiceContracts.Extensions;
 using Services;
 using System.ComponentModel;
 
@@ -61,7 +62,7 @@ public class PersonsController : Controller
     [HttpGet("[action]")]
     public async Task<IActionResult> Create()
     {
-        await SetupCreateViewBag();
+        await SetupGenderCountryViewBag();
         return View();
     }
 
@@ -73,18 +74,19 @@ public class PersonsController : Controller
             await _personService.AddPerson(personAddRequest);
             return RedirectToAction("Index", "Persons");
         }
-        await SetupCreateViewBag();
+        await SetupGenderCountryViewBag();
         return View(personAddRequest);
     }
 
 
     [HttpGet("[action]")]
-    public async Task<IActionResult> Update(Guid? personAddRequest)
+    public async Task<IActionResult> Update(Guid? personId)
     {
         PersonResponse? person;
         try
         {
-            person = await _personService.GetPersonById(personAddRequest);
+            person = await _personService.GetPersonById(personId);
+
         }
         catch (ArgumentNullException)
         {
@@ -94,20 +96,25 @@ public class PersonsController : Controller
         {
             return RedirectToAction("Index", "Persons");
         }
+        if (person is null)
+        {
+            return NotFound();
+        }
 
-        return person is null ? NotFound() : View(person);
+        var updateRequest = person.ToPersonUpdateRequest();
+        await SetupGenderCountryViewBag();
+        return View(updateRequest);
     }
 
     [HttpPost("[action]")]
     public async Task<IActionResult> Update(PersonUpdateRequest? personUpdateRequest)
     {
-        PersonResponse? person;
         try
         {
-            person = await _personService.UpdatePerson(personUpdateRequest);
-            if (person is null)
+            if (personUpdateRequest is not null && ModelState.IsValid)
             {
-                throw new ArgumentException("Person not found");
+                PersonResponse person = await _personService.UpdatePerson(personUpdateRequest);
+                return RedirectToAction("Index", "Persons");
             }
         }
         catch (Exception e) when (e is ArgumentNullException or ArgumentException)
@@ -115,7 +122,8 @@ public class PersonsController : Controller
             return BadRequest();
         }
 
-        return RedirectToAction("Index", "Persons");
+        await SetupGenderCountryViewBag();
+        return View(personUpdateRequest);
     }
 
 
@@ -156,9 +164,9 @@ public class PersonsController : Controller
     // for the views above. These methods are not directly accessible
     // via HTTP requests.
     private async Task<PersonsViewModel> BuildViewModel(
-        SearchOptions? searchField, 
-        string? searchString, 
-        FilterOptions sortBy, 
+        SearchOptions? searchField,
+        string? searchString,
+        FilterOptions sortBy,
         ListSortDirection sortDirection)
     {
         var allPersons = await _personService.GetFilteredPersons(searchString, searchField ?? 0);
@@ -171,7 +179,7 @@ public class PersonsController : Controller
         return viewModel;
     }
 
-    private async Task SetupCreateViewBag()
+    private async Task SetupGenderCountryViewBag()
     {
         var countries = await _countryService.GetAllCountries();
         var genders = Enum.GetNames(typeof(GenderOptions));
