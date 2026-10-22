@@ -1,0 +1,126 @@
+﻿/* Modal dialog component
+<dialog>
+    <form method="dialog">
+        .dialog-header / .dialog-body / .dialog-footer
+    </form>
+</dialog>
+*/
+
+dialog {
+    margin: auto;
+    padding: 0;
+    width: min(var(--dialog-width, 32rem), calc(100% - 2 * var(--space-4)));
+    max-height: calc(100dvh - 2 * var(--space-5));
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    /* Closed/start state for the open transition */
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.98);
+    transition: 
+        opacity var(--duration) var(--ease),
+        transform var(--duration) var(--ease), 
+        overlay var(--duration) var(--ease) allow-discrete, 
+        display var(--duration) var(--ease) allow-discrete;
+}
+
+    /* display:flex only while open, otherwise it would override the closed state */
+    dialog[open] {
+        display: flex;
+        flex-direction: column;
+        opacity: 1;
+        transform: none;
+    }
+
+    dialog > form {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0; /* lets .dialog-body scroll instead of the whole dialog */
+    }
+
+@starting-style {
+    dialog[open] {
+        opacity: 0;
+        transform: translateY(0.5rem) scale(0.98);
+    }
+}
+
+/* Literal colour: ::backdrop doesn't reliably inherit custom properties in every browser */
+dialog::backdrop {
+    background-color: rgb(10 20 16 / 0.55);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: 
+        opacity var(--duration) var(--ease),
+        overlay var(--duration) var(--ease) allow-discrete,
+        display var(--duration) var(--ease) allow-discrete;
+}
+
+dialog[open]::backdrop {
+    opacity: 1;
+}
+
+@starting-style {
+    dialog[open]::backdrop {
+        opacity: 0;
+    }
+}
+
+/* Stop the page scrolling behind a modal */
+html:has(dialog:modal) {
+    overflow: hidden;
+}
+
+/* Sizes: set the width token on the dialog */
+.dialog-sm {
+    --dialog-width: 24rem;
+}
+
+.dialog-lg {
+    --dialog-width: 48rem;
+}
+
+/* Destructive confirmations */
+.dialog-danger {
+    border: 2px solid var(--color-danger-strong);
+}
+
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+
+    & > :is(h1, h2, h3) {
+        font-size: var(--text-xl);
+    }
+}
+
+.dialog-body {
+    flex: 1;
+    min-height: 0;
+    padding: var(--space-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.dialog-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+}
+
+/* Small screens: pin the footer buttons to full width */
+@media (max-width: 30rem) {
+    .dialog-footer > * {
+        flex: 1 1 100%;
+    }
+}

@@ -147,6 +147,17 @@ public class PersonsController : Controller
         return View(person);
     }
 
+    [HttpPost("[action]/{personId:guid}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid? personId)
+    {
+        if (personId is not null)
+        {
+            await _personService.DeletePerson(personId);
+        }
+        return RedirectToAction("Index", "Persons");
+    }
+
 
     [HttpGet("[action]")]
     public async Task<IActionResult> Table(

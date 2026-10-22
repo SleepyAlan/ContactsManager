@@ -18,7 +18,32 @@
     </dl>
     <div class="split">
       <a style="text-decoration: none;" asp-controller="Persons" asp-action="Update" asp-route-personId="@Model?.PersonId" class="btn">Update Contact</a>
-      <a style="text-decoration: none;" asp-controller="Persons" asp-action="Delete" asp-route-personId="@Model?.PersonId" class="btn btn-danger">Delete</a>
+      <button type="button" class="btn btn-danger" data-dialog-open="confirm-delete">Delete contact</button>
     </div>
   </div>
 </div>
+
+
+<dialog id="confirm-delete" class="dialog-sm dialog-danger" aria-labelledby="confirm-delete-title">
+  <form method="post" asp-controller="Persons" asp-action="Delete" asp-route-personId="@Model?.PersonId">
+    <header class="dialog-header">
+      <h4 id="confirm-delete-title">Delete contact?</h4>
+      <button type="button" class="btn btn-ghost btn-sm" aria-label="Close" data-dialog-close>✕</button>
+    </header>
+    <div class="dialog-body">
+      <p>This permanently removes the contact for <span class="font-bold">@(Model?.PersonName ?? "unknown")</span>. This can't be undone.</p>
+    </div>
+    <footer class="dialog-footer">
+      <button type="button" class="btn btn-secondary" autofocus data-dialog-close>Cancel</button>
+      <button type="submit" class="btn btn-danger">Delete</button>
+    </footer>
+  </form>
+</dialog>
+
+@section Styles {
+  <link rel="stylesheet" href="~/css/modal.css" />
+}
+
+@section Scripts {
+  <script src="~/js/modal.js"></script>
+}
