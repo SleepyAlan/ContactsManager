@@ -145,6 +145,23 @@
     width: 100%;
 }
 
+.child-min-w-16 {
+    min-width: 16rem;
+}
+
+.child-min-w-12 {
+    min-width: 12rem;
+}
+
+.child-min-w-10 {
+    min-width: 10rem;
+}
+
+.child-min-w-8 {
+    min-width: 8rem;
+}
+
+
 .child-half {
     width: 50%;
 }

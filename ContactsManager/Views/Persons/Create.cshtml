@@ -33,7 +33,7 @@
             <span asp-validation-for="DateOfBirth" class="text-xs text-danger"></span>
           </div>
 
-          <div class="flex-1">
+          <div class="flex-1 child-min-w-12">
             <label asp-for="Gender">Gender</label>
             <div class="select-wrap">
               <select asp-for="Gender" asp-items="ViewBag.GenderItems">
@@ -45,7 +45,7 @@
         </div>
 
         <div class="cluster">
-          <div class="flex-1">
+          <div class="flex-1 child-min-w-10">
             <label asp-for="CountryId">Country</label>
             <div class="select-wrap">
               <select asp-for="CountryId" asp-items="ViewBag.CountryItems">
