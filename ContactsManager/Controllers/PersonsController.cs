@@ -118,6 +118,7 @@ public class PersonsController : Controller
         return RedirectToAction("Index", "Persons");
     }
 
+
     [HttpGet("[action]/{personId:guid}")]
     public async Task<IActionResult> Details(Guid? personId)
     {
@@ -137,6 +138,7 @@ public class PersonsController : Controller
 
         return View(person);
     }
+
 
     [HttpGet("[action]")]
     public async Task<IActionResult> Table(
