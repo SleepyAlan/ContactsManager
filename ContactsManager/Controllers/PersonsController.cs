@@ -111,7 +111,7 @@ public class PersonsController : Controller
     {
         try
         {
-            if (personUpdateRequest is not null && ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 PersonResponse person = await _personService.UpdatePerson(personUpdateRequest);
                 return RedirectToAction("Index", "Persons");
