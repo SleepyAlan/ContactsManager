@@ -8,24 +8,20 @@
   <div class="card container container-narrow">
     <div class="center">
       <h4 class="text-primary">Create a New Contact</h4>
-      @if (ViewBag.Errors != null)
-      {
-        @foreach (string error in ViewBag.Errors)
-        {
-          <span class="alert alert-danger mt-1 text-sm">@error</span>
-        }
-      }
     </div>
     <form class="stack" asp-controller="Persons" asp-action="Create" method="post">
       <fieldset class="bg-surface">
         <legend>Required Information</legend>
-
-        <label asp-for="PersonName">Full Name</label>
-        <input required type="text" asp-for="PersonName" />
-
-        <label asp-for="Email">Email</label>
-        <input required type="email" asp-for="Email" />
-
+        <div>
+          <label asp-for="PersonName">Full Name</label>
+          <input type="text" asp-for="PersonName" />
+          <span asp-validation-for="PersonName" class="text-xs text-danger"></span>
+        </div>
+        <div>
+          <label asp-for="Email">Email</label>
+          <input type="email" asp-for="Email" />
+          <span asp-validation-for="Email" class="text-xs text-danger"></span>
+        </div>
       </fieldset>
       <fieldset class="bg-surface">
         <legend>Optional Information</legend>
@@ -34,6 +30,7 @@
           <div class="flex-1">
             <label asp-for="DateOfBirth">Date of Birth</label>
             <input type="date" asp-for="DateOfBirth" />
+            <span asp-validation-for="DateOfBirth" class="text-xs text-danger"></span>
           </div>
 
           <div class="flex-1">
@@ -43,6 +40,7 @@
                 <option value="">Select A Gender</option>
               </select>
             </div>
+            <span asp-validation-for="Gender" class="text-xs text-danger"></span>
           </div>
         </div>
 
@@ -54,11 +52,13 @@
                 <option value="">Select A Country</option>
               </select>
             </div>
+            <span asp-validation-for="CountryId" class="text-xs text-danger"></span>
           </div>
 
           <div class="flex-auto flex-column">
             <label asp-for="ReceiveNewsLetters">Receive Newsletters</label>
             <input type="checkbox" asp-for="ReceiveNewsLetters" value="true" />
+            <span asp-validation-for="ReceiveNewsLetters" class="text-xs text-danger"></span>
           </div>
         </div>
 
@@ -66,6 +66,7 @@
           <label asp-for="Address">Address</label>
           <textarea asp-for="Address" autocomplete="street-address"
                     rows="1" placeholder="123 Main St, Apt 4B"></textarea>
+          <span asp-validation-for="Address" class="text-xs text-danger"></span>
         </div>
       </fieldset>
       <div class="flex-center flex-between">
@@ -76,3 +77,7 @@
     </form>
   </div>
 </div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

@@ -61,18 +61,7 @@ public class PersonsController : Controller
     [HttpGet("[action]")]
     public async Task<IActionResult> Create()
     {
-        var countries = await _countryService.GetAllCountries();
-        var genders = Enum.GetNames(typeof(GenderOptions));
-        ViewBag.GenderItems = genders.Select(g => new SelectListItem
-        {
-            Value = g,
-            Text = g
-        });
-        ViewBag.CountryItems = countries.Select(c => new SelectListItem
-        {
-            Value = c.CountryId.ToString(),
-            Text = c.CountryName
-        });
+        await SetupCreateViewBag();
         return View();
     }
 
@@ -84,15 +73,10 @@ public class PersonsController : Controller
             await _personService.AddPerson(personAddRequest);
             return RedirectToAction("Index", "Persons");
         }
-
-        var errors = ModelState.Values
-            .SelectMany(v => v.Errors)
-            .Select(e => e.ErrorMessage).ToList();
-        ViewBag.Errors = errors;
-
-        var countries = await _countryService.GetAllCountries();
-        return View(countries);
+        await SetupCreateViewBag();
+        return View(personAddRequest);
     }
+
 
     [HttpGet("[action]")]
     public async Task<IActionResult> Update(Guid? personAddRequest)
@@ -181,5 +165,21 @@ public class PersonsController : Controller
             _sortFields,
             searchField.ToString() ?? "", searchString, sortBy.ToString(), sortDirection.ToString());
         return viewModel;
+    }
+
+    private async Task SetupCreateViewBag()
+    {
+        var countries = await _countryService.GetAllCountries();
+        var genders = Enum.GetNames(typeof(GenderOptions));
+        ViewBag.GenderItems = genders.Select(g => new SelectListItem
+        {
+            Value = g,
+            Text = g
+        });
+        ViewBag.CountryItems = countries.Select(c => new SelectListItem
+        {
+            Value = c.CountryId.ToString(),
+            Text = c.CountryName
+        });
     }
 }
