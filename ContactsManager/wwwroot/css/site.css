@@ -985,6 +985,18 @@ kbd {
     color: var(--color-primary-strong);
 }
 
+.text-danger {
+    color: var(--color-danger);
+}
+
+.text-warning {
+    color: var(--color-warning);
+}
+
+.text-success {
+    color: var(--color-success);
+}
+
 .text-center {
     text-align: center;
 }
