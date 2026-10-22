@@ -51,8 +51,8 @@ public class PersonsController : Controller
         FilterOptions sortBy = FilterOptions.ByName,
         ListSortDirection sortDirection = ListSortDirection.Ascending)
     {
-        // if null or empty searchString, then it retrieves all persons
-        PersonsViewModel viewModel = await BuildViewModel(searchField, searchString, sortBy, sortDirection);
+        PersonsViewModel viewModel = await BuildViewModel(
+            searchField, searchString, sortBy, sortDirection);
 
         return View(viewModel);
     }
@@ -85,7 +85,6 @@ public class PersonsController : Controller
         try
         {
             person = await _personService.GetPersonById(personAddRequest);
-
         }
         catch (ArgumentNullException)
         {
@@ -96,11 +95,7 @@ public class PersonsController : Controller
             return RedirectToAction("Index", "Persons");
         }
 
-        if (person is null)
-        {
-            return NotFound();
-        }
-        return View(person);
+        return person is null ? NotFound() : View(person);
     }
 
     [HttpPost("[action]")]
@@ -150,12 +145,19 @@ public class PersonsController : Controller
         FilterOptions sortBy = FilterOptions.ByName,
         ListSortDirection sortDirection = ListSortDirection.Ascending)
     {
-        return PartialView("_PersonsTable",
-            await BuildViewModel(searchField, searchString, sortBy, sortDirection));
+        var model = await BuildViewModel(searchField, searchString, sortBy, sortDirection);
+        return PartialView("_PersonsTable", model);
     }
 
 
-    private async Task<PersonsViewModel> BuildViewModel(SearchOptions? searchField, string? searchString, FilterOptions sortBy, ListSortDirection sortDirection)
+    // Below are private methods that are reusable view models and ViewBag setup
+    // for the views above. These methods are not directly accessible
+    // via HTTP requests.
+    private async Task<PersonsViewModel> BuildViewModel(
+        SearchOptions? searchField, 
+        string? searchString, 
+        FilterOptions sortBy, 
+        ListSortDirection sortDirection)
     {
         var allPersons = await _personService.GetFilteredPersons(searchString, searchField ?? 0);
         var sortedPersons = _personService.GetSortedPersons(allPersons, sortBy, sortDirection);
