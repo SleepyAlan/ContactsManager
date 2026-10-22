@@ -6,17 +6,19 @@
   <a href="javascript:history.back()">← Back to contacts</a>
 
   <div class="card">
-    <h1 class="text-2xl">@Model?.PersonName</h1>
-    <dl class="stack">
-      <div><dt class="text-muted text-sm">Email</dt><dd>@Model?.Email</dd></div>
-      <div><dt class="text-muted text-sm">Date of birth</dt><dd>@Model?.DateOfBirth?.ToString("MMMM dd, yyyy")</dd></div>
-      <div><dt class="text-muted text-sm">Age</dt><dd>@Model?.Age</dd></div>
-      <div><dt class="text-muted text-sm">Gender</dt><dd>@Model?.Gender</dd></div>
-      <div><dt class="text-muted text-sm">Country</dt><dd>@Model?.CountryName</dd></div>
-      <div><dt class="text-muted text-sm">Address</dt><dd>@Model?.Address</dd></div>
-      <div><dt class="text-muted text-sm">Receives News letters</dt><dd>@Model?.ReceiveNewsLetters</dd></div>
+    <div class="center">
+      <h3>@Model?.PersonName</h3>
+    </div>
+    <dl class="stack" style="--stack-gap: var(--space-2);">
+      <div class="cluster"><dt class="text-muted">Email: </dt><dd>@Model?.Email</dd></div>
+      <div class="cluster"><dt class="text-muted">Date of birth: </dt><dd>@Model?.DateOfBirth?.ToString("MMMM dd, yyyy")</dd></div>
+      <div class="cluster"><dt class="text-muted">Age: </dt><dd>@Model?.Age</dd></div>
+      <div class="cluster"><dt class="text-muted">Gender: </dt><dd>@Model?.Gender</dd></div>
+      <div class="cluster"><dt class="text-muted">Country: </dt><dd>@Model?.CountryName</dd></div>
+      <div class="cluster"><dt class="text-muted">Address: </dt><dd>@Model?.Address</dd></div>
+      <div class="cluster"><dt class="text-muted">Receives News letters: </dt><dd>@Model?.ReceiveNewsLetters</dd></div>
     </dl>
-    <div class="split">
+    <div class="split mt-4">
       <a style="text-decoration: none;" asp-controller="Persons" asp-action="Update" asp-route-personId="@Model?.PersonId" class="btn">Update Contact</a>
       <button type="button" class="btn btn-danger" data-dialog-open="confirm-delete">Delete contact</button>
     </div>
