@@ -1,3 +1,5 @@
+using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using Services;
 
@@ -12,7 +14,12 @@ if (builder.Environment.IsDevelopment())
 
 builder.Services
     .AddSingleton<ICountryService, CountryService>()
-    .AddSingleton<IPersonService, PersonService>();
+    .AddSingleton<IPersonService, PersonService>()
+    .AddDbContext<ContactsManagerDbContext>(options =>
+    {
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
 
 var app = builder.Build();
 

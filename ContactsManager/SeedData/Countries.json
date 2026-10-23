@@ -1,0 +1,42 @@
+[
+  {
+    "CountryId": "0f9fdbd5-6bea-4873-aa5c-de758713d61d",
+    "CountryName": "Denmark"
+  },
+  {
+    "CountryId": "6a42a633-541a-4130-ad50-3bbd2e29e9ae",
+    "CountryName": "Canada"
+  },
+  {
+    "CountryId": "43a6ea02-4653-4bf4-a2ca-668c68560e09",
+    "CountryName": "Indonesia"
+  },
+  {
+    "CountryId": "6d31a689-d784-4ab9-8b89-ded33f527262",
+    "CountryName": "United States"
+  },
+  {
+    "CountryId": "6c5a9705-5494-4d30-a5fd-c867320f9399",
+    "CountryName": "China"
+  },
+  {
+    "CountryId": "fb490384-9fce-4a7b-a026-ad07b747be8b",
+    "CountryName": "Brazil"
+  },
+  {
+    "CountryId": "66b14595-ba52-4881-a43f-828cc9cbf925",
+    "CountryName": "Japan"
+  },
+  {
+    "CountryId": "d1ffeaab-42b4-4d53-9a4b-f0769518de15",
+    "CountryName": "South Korea"
+  },
+  {
+    "CountryId": "3d9b0f61-d15c-4ac1-8395-feefa3d52327",
+    "CountryName": "Argentina"
+  },
+  {
+    "CountryId": "8bac6c2a-ce92-4d31-ba1f-58154ea7839a",
+    "CountryName": "Mexico"
+  }
+]
