@@ -14,12 +14,12 @@
         <legend>Required Information</legend>
         <div>
           <label asp-for="PersonName">Full Name</label>
-          <input type="text" asp-for="PersonName" />
+          <input required type="text" asp-for="PersonName" />
           <span asp-validation-for="PersonName" class="text-xs text-danger"></span>
         </div>
         <div>
           <label asp-for="Email">Email</label>
-          <input type="email" asp-for="Email" />
+          <input required type="email" asp-for="Email" />
           <span asp-validation-for="Email" class="text-xs text-danger"></span>
         </div>
       </fieldset>
