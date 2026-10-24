@@ -82,7 +82,8 @@ public class PersonService : IPersonService
 
     public async Task<List<PersonResponse>> GetAllPersons()
     {
-        var tasks = _db.Persons.ToList().Select(ConvertToPersonResponse);
+        var persons = await _db.sp_GetAllPersons();
+        var tasks = persons.Select(ConvertToPersonResponse);
         var results = await Task.WhenAll(tasks);
         return results.ToList();
     }
