@@ -13,8 +13,8 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services
-    .AddSingleton<ICountryService, CountryService>()
-    .AddSingleton<IPersonService, PersonService>()
+    .AddScoped<ICountryService, CountryService>()
+    .AddScoped<IPersonService, PersonService>()
     .AddDbContext<ContactsManagerDbContext>(options =>
     {
         options.UseSqlServer(
