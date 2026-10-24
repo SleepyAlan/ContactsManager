@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using Services.Helpers;
 using ServiceContracts.Enums;
 using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services;
 
@@ -82,10 +83,14 @@ public class PersonService : IPersonService
 
     public async Task<List<PersonResponse>> GetAllPersons()
     {
-        var persons = await _db.sp_GetAllPersons();
-        var tasks = persons.Select(ConvertToPersonResponse);
-        var results = await Task.WhenAll(tasks);
-        return results.ToList();
+        var query = _db.Persons
+            .LeftJoin(
+                _db.Countries,
+                p => p.CountryId,
+                c => c.CountryId,
+                (p, c) => p.ToPersonResponse(c == null ? null : c.CountryName));
+
+        return await query.ToListAsync();
     }
 
     public async Task<PersonResponse?> GetPersonById(Guid? personId)

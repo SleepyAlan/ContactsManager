@@ -10,7 +10,8 @@ public static class PersonExtensions
     /// </summary>
     /// <param name="person">The Person entity to convert.</param>
     /// <returns>A PersonResponse DTO.</returns>
-    public static PersonResponse ToPersonResponse(this Person person)
+    public static PersonResponse ToPersonResponse(
+        this Person person, string? countryName = null)
     {
         int age = -1;
         bool isAgeCalculated = false;
@@ -24,7 +25,7 @@ public static class PersonExtensions
             }
             isAgeCalculated = true;
         }
-        //string? countryName = person.Country?.CountryName;
+        
         return new PersonResponse
         {
             PersonId = person.PersonId,
@@ -34,7 +35,7 @@ public static class PersonExtensions
             Age = isAgeCalculated ? age : null,
             Gender = person.Gender,
             CountryId = person.CountryId,
-            //CountryName = person.Country?.CountryName,
+            CountryName = countryName,
             Address = person.Address,
             ReceiveNewsLetters = person.ReceiveNewsLetters
         };
