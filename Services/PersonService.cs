@@ -83,14 +83,13 @@ public class PersonService : IPersonService
 
     public async Task<List<PersonResponse>> GetAllPersons()
     {
-        var query = _db.Persons
+        return await _db.Persons
             .LeftJoin(
                 _db.Countries,
                 p => p.CountryId,
                 c => c.CountryId,
-                (p, c) => p.ToPersonResponse(c == null ? null : c.CountryName));
-
-        return await query.ToListAsync();
+                (p, c) => p.ToPersonResponse(c == null ? null : c.CountryName))
+            .ToListAsync();
     }
 
     public async Task<PersonResponse?> GetPersonById(Guid? personId)
