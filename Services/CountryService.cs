@@ -2,6 +2,7 @@
 using ServiceContracts.DTOs;
 using Entities;
 using ServiceContracts.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services;
 
@@ -53,9 +54,9 @@ public class CountryService : ICountryService
 
     public async Task<List<CountryResponse>> GetAllCountries()
     {
-        return _db.Countries
+        return await _db.Countries
             .Select(country => country.ToCountryResponse())
-            .ToList();
+            .ToListAsync();
     }
 
     public async Task<CountryResponse?> GetCountryById(Guid? countryId)
