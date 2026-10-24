@@ -162,7 +162,7 @@ public class PersonService : IPersonService
         return personsToSort.OrderByDescending(predicate, StringComparer.OrdinalIgnoreCase).ToList();
     }
 
-    // Helper method to convert a Person entity to a PersonResponse DTO, including the country name.
+    #region Private Helper Methods
     private async Task<PersonResponse> ConvertToPersonResponse(Person person)
     {
         PersonResponse personResponse = person.ToPersonResponse();
@@ -170,9 +170,9 @@ public class PersonService : IPersonService
             .GetCountryById(person.CountryId))?.CountryName;
         return personResponse;
     }
+    #endregion
 
-    // Below are private helper methods to build predicates for filtering based on different search options.
-
+    #region Private Helper Methods for Building Predicates
     private static Func<PersonResponse, bool> BuildPredicate(
         string searchString, SearchOptions option)
     {
@@ -229,4 +229,5 @@ public class PersonService : IPersonService
         bool result = search.Equals("true", StringComparison.OrdinalIgnoreCase);
         return personResponse => personResponse.ReceiveNewsLetters == result;
     }
+    #endregion
 }
