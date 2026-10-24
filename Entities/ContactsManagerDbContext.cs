@@ -20,14 +20,18 @@ public class ContactsManagerDbContext : DbContext
         {
             PropertyNameCaseInsensitive = true
         };
+
         // Seed countries data from json on model creation.
         string countriesJson = File.ReadAllText("SeedData/Countries.json");
         var countries = JsonSerializer.Deserialize<List<Country>>(countriesJson, options);
-        modelBuilder.Entity<Country>().HasData(countries);
 
         // Seed persons data from json on model creation.
         string personsJson = File.ReadAllText("SeedData/Persons.json");
         var persons = JsonSerializer.Deserialize<List<Person>>(personsJson, options);
+
+        if (countries is null || persons is null) return;
+
+        modelBuilder.Entity<Country>().HasData(countries);
         modelBuilder.Entity<Person>().HasData(persons);
     }
 }
