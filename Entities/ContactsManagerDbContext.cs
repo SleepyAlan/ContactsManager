@@ -15,6 +15,12 @@ public class ContactsManagerDbContext : DbContext
         modelBuilder.Entity<Country>().ToTable("Countries");
         modelBuilder.Entity<Person>().ToTable("Persons");
 
+        modelBuilder.Entity<Person>()
+            .HasOne<Country>()
+            .WithMany()
+            .HasForeignKey(p => p.CountryId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         // Seeding database with initial data from json files.
         var options = new JsonSerializerOptions
         {
