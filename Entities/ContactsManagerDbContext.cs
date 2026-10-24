@@ -40,4 +40,9 @@ public class ContactsManagerDbContext : DbContext
         modelBuilder.Entity<Country>().HasData(countries);
         modelBuilder.Entity<Person>().HasData(persons);
     }
+
+    public List<Person> sp_GetAllPersons()
+    {
+        return Persons.FromSqlRaw("EXECUTE [dbo].[GetAllPersons]").ToList();
+    }
 }
