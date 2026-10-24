@@ -1,4 +1,5 @@
-﻿using ServiceContracts;
+﻿using Entities;
+using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
 using ServiceContracts.Extensions;
@@ -14,11 +15,13 @@ public class PersonServiceTests
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly ICountryService _countryService;
 
-    public PersonServiceTests(ITestOutputHelper testOutputHelper)
-    {
+    public PersonServiceTests(
+        ITestOutputHelper testOutputHelper,
+        ContactsManagerDbContext db)
+    {// TODO: Fix all tests. migrated to database.
         _testOutputHelper = testOutputHelper;
-        _countryService = new CountryService(false);
-        _sut = new PersonService(_countryService, false);
+        _countryService = new CountryService(db);
+        _sut = new PersonService(db, _countryService);
     }
 
     #region AddPerson() Tests

@@ -12,9 +12,9 @@ public class CountryServiceTests
     /// </summary>
     private readonly ICountryService _sut;
 
-    public CountryServiceTests()
-    {
-        _sut = new CountryService(initializeWithSampleData: false);
+    public CountryServiceTests(ContactsManagerDbContext db)
+    { //TODO: Fix all tests. Migrated to database.
+        _sut = new CountryService(db);
     }
 
     #region AddCountry Tests
