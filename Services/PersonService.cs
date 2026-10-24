@@ -14,7 +14,6 @@ namespace Services;
 /// </summary>
 public class PersonService : IPersonService
 {
-    // will replace with entity framework in future, for now we will use in-memory list to store persons
     private readonly ContactsManagerDbContext _db;
     private readonly ICountryService _countryService;
 
