@@ -24,4 +24,6 @@ public class Person
     public string? Address { get; set; }
 
     public bool ReceiveNewsLetters { get; set; }
+
+    public Country? Country { get; set; }
 }

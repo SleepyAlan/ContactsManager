@@ -16,7 +16,7 @@ public class ContactsManagerDbContext : DbContext
         modelBuilder.Entity<Person>().ToTable("Persons");
 
         modelBuilder.Entity<Person>()
-            .HasOne<Country>()
+            .HasOne(p => p.Country)
             .WithMany()
             .HasForeignKey(p => p.CountryId)
             .OnDelete(DeleteBehavior.SetNull);

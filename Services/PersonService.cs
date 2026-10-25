@@ -84,11 +84,8 @@ public class PersonService : IPersonService
     public async Task<List<PersonResponse>> GetAllPersons()
     {
         return await _db.Persons
-            .LeftJoin(
-                _db.Countries,
-                p => p.CountryId,
-                c => c.CountryId,
-                (p, c) => p.ToPersonResponse(c == null ? null : c.CountryName))
+            .Select(p => p.ToPersonResponse(
+                p.Country == null ? null : p.Country.CountryName))
             .ToListAsync();
     }
 
