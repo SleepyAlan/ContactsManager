@@ -1,12 +1,11 @@
-﻿using ServiceContracts;
-using ServiceContracts.DTOs;
-using Entities;
-using ServiceContracts.Extensions;
-using System.ComponentModel.DataAnnotations;
-using Services.Helpers;
-using ServiceContracts.Enums;
-using System.ComponentModel;
+﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using ServiceContracts;
+using ServiceContracts.DTOs;
+using ServiceContracts.Enums;
+using ServiceContracts.Extensions;
+using Services.Helpers;
+using System.ComponentModel;
 
 namespace Services;
 
@@ -34,10 +33,17 @@ public class PersonService : IPersonService
         Person person = personAddRequest.ToPerson();
         person.PersonId = Guid.NewGuid();
 
-        _db.Persons.Add(person);
+        var entityEntry = _db.Persons.Add(person);
         await _db.SaveChangesAsync();
 
-        return await ConvertToPersonResponse(person);
+        if (person.CountryId.HasValue)
+        {
+            // Loading navigational property
+            await entityEntry
+                .Reference(p => p.Country)
+                .LoadAsync();
+        }
+        return person.ToPersonResponse();
     }
 
     public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest)
@@ -47,8 +53,9 @@ public class PersonService : IPersonService
 
         ModelValidationHelper.Validate(personUpdateRequest);
 
-        Person? personToUpdate = 
-            _db.Persons.FirstOrDefault(p => p.PersonId == personUpdateRequest.PersonId) 
+        Person? personToUpdate = _db.Persons
+            .Include(p => p.Country)
+            .FirstOrDefault(p => p.PersonId == personUpdateRequest.PersonId) 
             ?? throw new ArgumentException(
                 $"Person with PersonId {personUpdateRequest.PersonId} not found.",
                 nameof(personUpdateRequest.PersonId));
@@ -64,7 +71,7 @@ public class PersonService : IPersonService
 
         await _db.SaveChangesAsync();
 
-        return await ConvertToPersonResponse(personToUpdate);
+        return personToUpdate.ToPersonResponse();
     }
 
     public async Task<bool> DeletePerson(Guid? personId)
@@ -84,17 +91,21 @@ public class PersonService : IPersonService
     public async Task<List<PersonResponse>> GetAllPersons()
     {
         return await _db.Persons
-            .Select(p => p.ToPersonResponse(
-                p.Country == null ? null : p.Country.CountryName))
+            .Include(p => p.Country)
+            .Select(p => p.ToPersonResponse())
             .ToListAsync();
     }
 
     public async Task<PersonResponse?> GetPersonById(Guid? personId)
     {
         if (personId == null) return null;
-        Person? person = _db.Persons.FirstOrDefault(
-            person => person.PersonId == personId);
-        return person is null ? null : await ConvertToPersonResponse(person);
+
+        Person? person = _db.Persons
+            .Include(p => p.Country)
+            .FirstOrDefault(
+                person => person.PersonId == personId);
+
+        return person is null ? null : person.ToPersonResponse();
     }
 
     public async Task<List<PersonResponse>> GetFilteredPersons(string? searchString, SearchOptions option)
@@ -163,16 +174,6 @@ public class PersonService : IPersonService
         }
         return personsToSort.OrderByDescending(predicate, StringComparer.OrdinalIgnoreCase).ToList();
     }
-
-    #region Private Helper Methods
-    private async Task<PersonResponse> ConvertToPersonResponse(Person person)
-    {
-        PersonResponse personResponse = person.ToPersonResponse();
-        personResponse.CountryName = (await _countryService
-            .GetCountryById(person.CountryId))?.CountryName;
-        return personResponse;
-    }
-    #endregion
 
     #region Private Helper Methods for Building Predicates
     private static Func<PersonResponse, bool> BuildPredicate(
