@@ -21,7 +21,7 @@ public class PersonServiceTests
     {// TODO: Fix all tests. migrated to database.
         _testOutputHelper = testOutputHelper;
         _countryService = new CountryService(db);
-        _sut = new PersonService(db, _countryService);
+        _sut = new PersonService(db);
     }
 
     #region AddPerson() Tests
