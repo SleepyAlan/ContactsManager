@@ -8,9 +8,6 @@ namespace Services;
 
 public class CountryService : ICountryService
 {
-    /// <summary>
-    /// In-memory list to store Country entities.
-    /// </summary>
     private readonly ContactsManagerDbContext _db;
 
     public CountryService(ContactsManagerDbContext dbContext)
@@ -31,8 +28,8 @@ public class CountryService : ICountryService
                 nameof(countryAddRequest.CountryName));
         }
 
-        bool countryExists = _db.Countries
-            .Any(country => 
+        bool countryExists = await _db.Countries
+            .AnyAsync(country => 
                 country.CountryName != null &&
                 country.CountryName.Equals(countryAddRequest.CountryName, StringComparison.OrdinalIgnoreCase));
 
@@ -63,7 +60,8 @@ public class CountryService : ICountryService
     {
         if (countryId is null) return null;
 
-        Country? country = _db.Countries.FirstOrDefault(country => country.CountryId == countryId);
+        Country? country = await _db.Countries
+            .FirstOrDefaultAsync(country => country.CountryId == countryId);
 
         return country?.ToCountryResponse();
     }
