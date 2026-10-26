@@ -1,5 +1,6 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Rotativa.AspNetCore;
 using ServiceContracts;
 using Services;
 
@@ -31,5 +32,7 @@ if (builder.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
+
+app.UseRotativa();
 
 app.Run();
