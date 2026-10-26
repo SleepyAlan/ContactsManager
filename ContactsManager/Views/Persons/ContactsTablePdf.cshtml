@@ -1,0 +1,43 @@
+﻿@model PersonsViewModel
+
+@{
+  Layout = null;
+}
+
+@{
+  var people = Model.Persons?.ToList() ?? new List<PersonResponse?>(); // enumerate once
+}
+<link href="@("Https://" + Context.Request.Host.ToString() + "/site.css")" rel="stylesheet"/>
+<section class="table-wrap table-wrap-scroll" data-count="@people.Count">
+  <table class="table-striped">
+    <thead>
+      <tr>
+        @foreach (var (key, value) in Model.SortFields)
+        {
+          <th scope="col">
+              @value
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (PersonResponse? person in people)
+      {
+        <tr>
+          <td>@person?.PersonName</td>
+          <td>@person?.Email</td>
+          <td>@person?.DateOfBirth?.ToString("MMMM dd, yyyy")</td>
+          <td class="num">@person?.Age</td>
+          <td>@person?.Gender</td>
+          <td>@person?.CountryName</td>
+          <td>@person?.Address</td>
+          <td>@person?.ReceiveNewsLetters</td>
+        </tr>
+      }
+      @if (people.Count == 0)
+      {
+        <tr><td colspan="8">No contacts match your search.</td></tr>
+      }
+    </tbody>
+  </table>
+</section>

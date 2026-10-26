@@ -1,12 +1,14 @@
 ﻿using ContactsManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Rotativa.AspNetCore;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
 using ServiceContracts.Extensions;
 using Services;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace ContactsManager.Controllers;
 
@@ -88,8 +90,8 @@ public class PersonsController : Controller
             person = await _personService.GetPersonById(personId);
 
         }
-        catch (Exception e) when 
-            (e is ArgumentNullException or ArgumentException) 
+        catch (Exception e) when
+            (e is ArgumentNullException or ArgumentException)
         {
             return RedirectToAction("Index", "Persons");
         }
@@ -168,6 +170,26 @@ public class PersonsController : Controller
         return PartialView("_PersonsTable", model);
     }
 
+    [Route("ContactsTablePdf")]
+    public async Task<IActionResult> PersonPDF()
+    {
+        var allPersons = await _personService.GetAllPersons();
+        var viewModel = new PersonsViewModel(
+            allPersons,
+            _searchFields,
+            _sortFields);
+        return new ViewAsPdf("ContactsTablePdf", viewModel, ViewData)
+        {
+            PageMargins = new Rotativa.AspNetCore.Options.Margins
+            {
+                Top = 20,
+                Bottom = 20,
+                Left = 20,
+                Right = 20
+            },
+            PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape
+        };
+    }
 
     // Below are private methods that are reusable view models and ViewBag setup
     // for the views above. These methods are not directly accessible
