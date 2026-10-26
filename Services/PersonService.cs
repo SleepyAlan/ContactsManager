@@ -9,19 +9,14 @@ using System.ComponentModel;
 
 namespace Services;
 
-/// <summary>
-/// Represents a service for managing persons, implementing the IPersonService interface.
-/// </summary>
 public class PersonService : IPersonService
 {
     private readonly ContactsManagerDbContext _db;
-    private readonly ICountryService _countryService;
 
     public PersonService(
-        ContactsManagerDbContext dbContext, ICountryService countryService)
+        ContactsManagerDbContext dbContext)
     {
         _db = dbContext;
-        _countryService = countryService;
     }
 
     public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
@@ -53,9 +48,9 @@ public class PersonService : IPersonService
 
         ModelValidationHelper.Validate(personUpdateRequest);
 
-        Person? personToUpdate = _db.Persons
+        Person? personToUpdate = await _db.Persons
             .Include(p => p.Country)
-            .FirstOrDefault(p => p.PersonId == personUpdateRequest.PersonId) 
+            .FirstOrDefaultAsync(p => p.PersonId == personUpdateRequest.PersonId) 
             ?? throw new ArgumentException(
                 $"Person with PersonId {personUpdateRequest.PersonId} not found.",
                 nameof(personUpdateRequest.PersonId));
@@ -78,13 +73,14 @@ public class PersonService : IPersonService
     {
         ArgumentNullException.ThrowIfNull(personId, nameof(personId));
 
-        Person? person = _db.Persons
-            .FirstOrDefault(person => person.PersonId == personId);
+        Person? person = await _db.Persons
+            .FirstOrDefaultAsync(person => person.PersonId == personId);
 
         if (person == null) return false;
 
         _db.Persons.Remove(person);
         await _db.SaveChangesAsync();
+
         return true;
     }
 
@@ -100,9 +96,9 @@ public class PersonService : IPersonService
     {
         if (personId == null) return null;
 
-        Person? person = _db.Persons
+        Person? person = await _db.Persons
             .Include(p => p.Country)
-            .FirstOrDefault(
+            .FirstOrDefaultAsync(
                 person => person.PersonId == personId);
 
         return person is null ? null : person.ToPersonResponse();
