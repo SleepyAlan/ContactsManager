@@ -88,14 +88,12 @@ public class PersonsController : Controller
             person = await _personService.GetPersonById(personId);
 
         }
-        catch (ArgumentNullException)
+        catch (Exception e) when 
+            (e is ArgumentNullException or ArgumentException) 
         {
             return RedirectToAction("Index", "Persons");
         }
-        catch (ArgumentException)
-        {
-            return RedirectToAction("Index", "Persons");
-        }
+
         if (person is null)
         {
             return NotFound();
@@ -186,7 +184,10 @@ public class PersonsController : Controller
             sortedPersons,
             _searchFields,
             _sortFields,
-            searchField.ToString() ?? "", searchString, sortBy.ToString(), sortDirection.ToString());
+            searchField.ToString() ?? "",
+            searchString,
+            sortBy.ToString(),
+            sortDirection.ToString());
         return viewModel;
     }
 
