@@ -193,7 +193,7 @@ public class PersonsController : Controller
     {
         var memoryStream = await _personService.GetPersonsCsvFile();
 
-        return File(memoryStream, "application/octet-stream", "Contacts.csv");
+        return File(memoryStream, "text/csv", "Contacts.csv");
     }
 
     // Below are private methods that are reusable view models and ViewBag setup

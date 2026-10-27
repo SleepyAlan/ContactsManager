@@ -39,7 +39,7 @@
               <ul class="menu-list">
                 <li>
                   <a asp-controller="Persons" asp-action="PersonsPDF" asp-all-route-data="exportRoute"
-                     data-export target="_blank" rel="noopener">PDF <span class="menu-hint">.pdf</span></a>
+                     data-export rel="noopener">PDF <span class="menu-hint">.pdf</span></a>
                 </li>
                 <li>
                   <a asp-controller="Persons" asp-action="PersonsExcel" asp-all-route-data="exportRoute"
@@ -51,17 +51,6 @@
                 </li>
               </ul>
             </details>
-          </div>
-          <div>
-            <a class="btn btn-secondary"
-               id="export-link"
-               asp-controller="Persons"
-               asp-action="PersonsPDF"
-               asp-route-searchField="@Model.SelectedSearchField"
-               asp-route-searchString="@Model.SearchString"
-               asp-route-sortBy="@Model.SortColumn"
-               asp-route-sortDirection="@Model.SortDirection"
-               target="_blank" rel="noopener">Export PDF</a>
           </div>
         </div>
       </div>
@@ -79,6 +68,7 @@
 </form>
 
 @section Scripts {
+  <script src="~/js/dropdown-menu.js" asp-append-version="true" defer></script>
   <script src="~/Views/Persons/Index.cshtml.js" asp-append-version="true" defer></script>
 }
 

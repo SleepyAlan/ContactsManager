@@ -176,15 +176,19 @@ public class PersonService : IPersonService
     public async Task<MemoryStream> GetPersonsCsvFile()
     {
         var memoryStream = new MemoryStream();
-        using var streamWriter = new StreamWriter(memoryStream);
+        using var streamWriter = new StreamWriter(
+            memoryStream,
+            leaveOpen: true);
         using var csvWriter = new CsvWriter(
             streamWriter,
             CultureInfo.InvariantCulture,
             leaveOpen: true);
 
         csvWriter.WriteHeader<PersonResponse>();
-        csvWriter.NextRecord();
+        await csvWriter.NextRecordAsync();
+
         var persons = await GetAllPersons();
+
         await csvWriter.WriteRecordsAsync(persons);
 
         // Flush the CSV writer to push records to the streamWriter
