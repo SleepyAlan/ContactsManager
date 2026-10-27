@@ -205,6 +205,23 @@ public class PersonsController : Controller
         return File(memoryStream, "text/csv", "Contacts.csv");
     }
 
+    [Route("[action]")]
+    public async Task<IActionResult> PersonsExcel(
+        SearchOptions? searchField,
+        string? searchString,
+        FilterOptions sortBy = FilterOptions.ByName,
+        ListSortDirection sortDirection = ListSortDirection.Ascending)
+    {
+        var allPersons = await _personService
+            .GetFilteredPersons(searchString, searchField ?? 0);
+        var sortedPersons = _personService
+            .GetSortedPersons(allPersons, sortBy, sortDirection);
+        var memoryStream = await _personService
+            .GetPersonsExcelFile(sortedPersons);
+
+        return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Contacts.xlsx");
+    }
+
     // Below are private methods that are reusable view models and ViewBag setup
     // for the views above. These methods are not directly accessible
     // via HTTP requests.

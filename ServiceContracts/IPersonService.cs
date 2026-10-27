@@ -67,4 +67,12 @@ public interface IPersonService
     /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="MemoryStream"/> with
     /// the generated CSV content.</returns>
     Task<MemoryStream> GetPersonsCsvFile(IEnumerable<PersonResponse>? persons = null);
+
+    /// <summary>
+    /// Asynchronously creates an Excel file containing person records.
+    /// </summary>
+    /// <param name="persons">The person records to include. If <see langword="null"/>, uses the default person data source.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="MemoryStream"/> with
+    /// the generated Excel file.</returns>
+    Task<MemoryStream> GetPersonsExcelFile(IEnumerable<PersonResponse>? persons = null);
 }

@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
@@ -195,6 +196,31 @@ public class PersonService : IPersonService
         await csvWriter.FlushAsync();
         // Flush the streamWriter to push everything into the memoryStream
         await streamWriter.FlushAsync();
+        // Reset the position of the memory stream to the beginning for the consumer to read from the start
+        memoryStream.Position = 0;
+
+        return memoryStream;
+    }
+
+    public async Task<MemoryStream> GetPersonsExcelFile(
+        IEnumerable<PersonResponse>? persons = null)
+    {
+        var memoryStream = new MemoryStream();
+        using var excelPackage = new ExcelPackage(memoryStream);
+        var worksheet = excelPackage.Workbook.Worksheets.Add("ContactsSheet");
+        persons ??= await GetAllPersons();
+
+        // Column headers are generated from the properties of PersonResponse
+        worksheet.Cells["A1"].LoadFromCollection(persons, true);
+
+        worksheet.Column(4).Style.Numberformat.Format = "MMMM dd, yyyy";
+
+        ExcelStylingHelper.ApplyPersonsStyling(worksheet);
+
+        //worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+        await excelPackage.SaveAsync();
+
         // Reset the position of the memory stream to the beginning for the consumer to read from the start
         memoryStream.Position = 0;
 

@@ -1,5 +1,6 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Rotativa.AspNetCore;
 using ServiceContracts;
 using Services;
@@ -34,5 +35,6 @@ app.UseRouting();
 app.MapControllers();
 
 app.UseRotativa();
+ExcelPackage.License.SetNonCommercialPersonal("Alan S");
 
 app.Run();
