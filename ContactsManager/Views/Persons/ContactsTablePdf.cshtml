@@ -1,43 +1,63 @@
 ﻿@model PersonsViewModel
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
 
 @{
   Layout = null;
+  var people = Model.Persons?.Where(p => p is not null).ToList() ?? new List<PersonResponse?>();
+  var css = File.ReadAllText(System.IO.Path.Combine(Env.WebRootPath, "css", "RotativaTable.css"));
 }
 
-@{
-  var people = Model.Persons?.ToList() ?? new List<PersonResponse?>(); // enumerate once
-}
-<link href="@("Https://" + Context.Request.Host.ToString() + "/site.css")" rel="stylesheet"/>
-<section class="table-wrap table-wrap-scroll" data-count="@people.Count">
-  <table class="table-striped">
-    <thead>
-      <tr>
-        @foreach (var (key, value) in Model.SortFields)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Contacts</title>
+  <style>@Html.Raw(css)</style>
+</head>
+<body>
+  <div class="pdf-page">
+    <div class="pdf-header">
+      <h1 class="pdf-title">Contacts</h1>
+      <p class="pdf-meta">
+        @people.Count @(people.Count == 1 ? "contact" : "contacts")
+        @if (!string.IsNullOrWhiteSpace(Model.SearchString))
         {
-          <th scope="col">
-              @value
-          </th>
+          <text> · filtered by "@Model.SearchString"</text>
         }
-      </tr>
-    </thead>
-    <tbody>
-      @foreach (PersonResponse? person in people)
-      {
+        · Generated @DateTime.Now.ToString("MMMM dd, yyyy")
+      </p>
+    </div>
+
+    <table class="pdf-table">
+      <thead>
         <tr>
-          <td>@person?.PersonName</td>
-          <td>@person?.Email</td>
-          <td>@person?.DateOfBirth?.ToString("MMMM dd, yyyy")</td>
-          <td class="num">@person?.Age</td>
-          <td>@person?.Gender</td>
-          <td>@person?.CountryName</td>
-          <td>@person?.Address</td>
-          <td>@person?.ReceiveNewsLetters</td>
+          @foreach (var (key, value) in Model.SortFields)
+          {
+            <th>@value</th>
+          }
         </tr>
-      }
-      @if (people.Count == 0)
-      {
-        <tr><td colspan="8">No contacts match your search.</td></tr>
-      }
-    </tbody>
-  </table>
-</section>
+      </thead>
+      <tbody>
+        @foreach (var person in people)
+        {
+          <tr>
+            <td>@person?.PersonName</td>
+            <td>@person?.Email</td>
+            <td>@person?.DateOfBirth?.ToString("MMMM dd, yyyy")</td>
+            <td class="num">@person?.Age</td>
+            <td>@person?.Gender</td>
+            <td>@person?.CountryName</td>
+            <td>@person?.Address</td>
+            <td>@person?.ReceiveNewsLetters</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (people.Count == 0)
+    {
+      <p class="pdf-empty">No contacts match the current search.</p>
+    }
+  </div>
+</body>
+</html>

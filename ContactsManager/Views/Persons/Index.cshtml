@@ -28,6 +28,17 @@
           <div>
             <a asp-controller="Persons" asp-action="Index" class="btn" data-clear>Clear all</a>
           </div>
+          <div>
+            <a class="btn btn-secondary"
+               id="export-link"
+               asp-controller="Persons"
+               asp-action="PersonsPDF"
+               asp-route-searchField="@Model.SelectedSearchField"
+               asp-route-searchString="@Model.SearchString"
+               asp-route-sortBy="@Model.SortColumn"
+               asp-route-sortDirection="@Model.SortDirection"
+               target="_blank" rel="noopener">Export PDF</a>
+          </div>
         </div>
       </div>
     </div>

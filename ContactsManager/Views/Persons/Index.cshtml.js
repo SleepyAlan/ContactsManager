@@ -30,6 +30,13 @@
         } finally {
             container.removeAttribute("aria-busy");
         }
+
+        // Keep the PDF export link pointing at the current filters
+        const exportLink = document.getElementById("export-link");
+        if (exportLink) {
+            const base = exportLink.href.split("?")[0];
+            exportLink.href = params.toString() ? `${base}?${params}` : base;
+        }
     }
 
     // Sort links

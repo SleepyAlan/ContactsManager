@@ -170,24 +170,21 @@ public class PersonsController : Controller
         return PartialView("_PersonsTable", model);
     }
 
-    [Route("ContactsTablePdf")]
-    public async Task<IActionResult> PersonPDF()
+    [Route("[action]")]
+    public async Task<IActionResult> PersonsPDF(
+        SearchOptions? searchField,
+        string? searchString,
+        FilterOptions sortBy = FilterOptions.ByName,
+        ListSortDirection sortDirection = ListSortDirection.Ascending)
     {
-        var allPersons = await _personService.GetAllPersons();
-        var viewModel = new PersonsViewModel(
-            allPersons,
-            _searchFields,
-            _sortFields);
-        return new ViewAsPdf("ContactsTablePdf", viewModel, ViewData)
+        var model = await BuildViewModel(searchField, searchString, sortBy, sortDirection);
+
+        return new ViewAsPdf("ContactsTablePdf", model)
         {
-            PageMargins = new Rotativa.AspNetCore.Options.Margins
-            {
-                Top = 20,
-                Bottom = 20,
-                Left = 20,
-                Right = 20
-            },
-            PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape
+            FileName = "Contacts.pdf",
+            PageSize = Rotativa.AspNetCore.Options.Size.A4,
+            PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape,
+            PageMargins = new Rotativa.AspNetCore.Options.Margins(12, 10, 12, 10)
         };
     }
 

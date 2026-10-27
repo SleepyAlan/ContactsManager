@@ -1,0 +1,135 @@
+﻿/* Stylesheet for Rotativa / wkhtmltopdf (old WebKit).
+   No custom properties, no color-mix, no nesting, no :is()/:where()/:has(),
+   no flexbox/grid, no clamp(), no logical properties. Plain hex values only.
+   Palette matches the site: brand #1B7A5A, text #14201B, muted #4B5C55. */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #FFFFFF;
+    color: #14201B;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.4;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.pdf-page {
+    width: 100%;
+}
+
+/* Title block */
+.pdf-header {
+    margin: 0 0 12px 0;
+    padding: 0 0 8px 0;
+    border-bottom: 2px solid #1B7A5A;
+}
+
+.pdf-title {
+    margin: 0;
+    font-size: 18pt;
+    font-weight: bold;
+    color: #14201B;
+}
+
+.pdf-meta {
+    margin: 4px 0 0 0;
+    font-size: 9pt;
+    color: #4B5C55;
+}
+
+/* Table */
+.pdf-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 8.5pt;
+    border: 1px solid #C9D2CE;
+}
+
+    .pdf-table th,
+    .pdf-table td {
+        padding: 6px 8px;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid #DDE3E0;
+        word-wrap: break-word; /* long emails and addresses wrap instead of overflowing */
+        overflow: hidden;
+        page-break-inside: avoid;
+    }
+
+    .pdf-table th {
+        background-color: #E5ECE8;
+        color: #14201B;
+        font-weight: bold;
+        border-bottom: 2px solid #7D8D86;
+    }
+
+    /* Zebra striping */
+    .pdf-table tbody tr:nth-child(even) td {
+        background-color: #F0F4F2;
+    }
+
+    .pdf-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    /* Keep rows whole and repeat the header on every page */
+    .pdf-table thead {
+        display: table-header-group;
+    }
+
+    .pdf-table tr {
+        page-break-inside: avoid;
+    }
+
+    /* Numeric column */
+    .pdf-table .num {
+        text-align: right;
+    }
+
+    /* Column widths (8 columns = 100%): Name, Email, Date of birth, Age,
+   Gender, Country, Address, Newsletter. */
+    .pdf-table th:nth-child(1) {
+        width: 14%;
+    }
+
+    .pdf-table th:nth-child(2) {
+        width: 20%;
+    }
+
+    .pdf-table th:nth-child(3) {
+        width: 12%;
+    }
+
+    .pdf-table th:nth-child(4) {
+        width: 5%;
+    }
+
+    .pdf-table th:nth-child(5) {
+        width: 8%;
+    }
+
+    .pdf-table th:nth-child(6) {
+        width: 12%;
+    }
+
+    .pdf-table th:nth-child(7) {
+        width: 21%;
+    }
+
+    .pdf-table th:nth-child(8) {
+        width: 8%;
+    }
+
+/* Empty state */
+.pdf-empty {
+    padding: 16px 8px;
+    text-align: center;
+    color: #4B5C55;
+}
