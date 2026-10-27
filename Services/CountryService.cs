@@ -33,7 +33,7 @@ public class CountryService : ICountryService
         bool countryExists = await _db.Countries
             .AnyAsync(country => 
                 country.CountryName != null &&
-                country.CountryName.Equals(countryAddRequest.CountryName, StringComparison.OrdinalIgnoreCase));
+                country.CountryName == countryAddRequest.CountryName);
 
         if (countryExists)
         {

@@ -8,6 +8,10 @@
   <div class="card container container-narrow">
     <div class="center">
       <h4 class="text-primary">Add a new Country</h4>
+      @if(ViewBag.Message is not null)
+      {
+        <h6>@ViewBag.Message</h6>
+      }
     </div>
     <div class="stack">
       <form asp-controller="Countries" asp-action="AddCountry" method="post">
@@ -24,13 +28,14 @@
           <button class="btn" type="submit">Submit Country</button>
         </div>
       </form>
-      <form asp-controller="Countries" asp-action="UploadCountriesFromExcel" method="post">
+      <form asp-controller="Countries" asp-action="UploadCountriesFromExcel" method="post" enctype="multipart/form-data">
         <fieldset class="bg-surface">
           <legend>Upload Countries from Excel</legend>
           <div class="cluster">
             <div class="flex-1">
               <label for="excelFile">Choose an Excel File</label>
-              <input type="file" id="excelFile" name="excelFile" accept=".xls, .xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+              <input type="file" id="excelFile" name="excelFile" accept=".xls, .xlsx" />
+              @Html.ValidationMessage("excelFile", "", new { @class = "text-danger text-xs" })
             </div>
           </div>
         </fieldset>
