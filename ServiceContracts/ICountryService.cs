@@ -1,4 +1,5 @@
-﻿using ServiceContracts.DTOs;
+﻿using Microsoft.AspNetCore.Http;
+using ServiceContracts.DTOs;
 
 namespace ServiceContracts;
 
@@ -13,6 +14,13 @@ public interface ICountryService
     /// <param name="countryAddRequest">The request object containing the details of the country to add.</param>
     /// <returns>A task that results in CountryResponse dto representing the added country.</returns>
     Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest);
+    
+    /// <summary>
+    /// Uploads country/countries from an Excel file.
+    /// </summary>
+    /// <param name="formFile">Excel file that contains country records to upload.</param>
+    /// <returns>A task that results in the number of countries uploaded.</returns>
+    Task<int> UploadCountriesFromExcel(IFormFile formFile);
 
     /// <summary>
     /// Retrieves all countries.
