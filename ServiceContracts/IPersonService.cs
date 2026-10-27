@@ -59,4 +59,6 @@ public interface IPersonService
     /// <param name="order">Sort direction — ascending or descending; defaults to Ascending.</param>
     /// <returns>A list of PersonResponse ordered by the specified option and direction.</returns>
     List<PersonResponse> GetSortedPersons(IEnumerable<PersonResponse> personsToSort, FilterOptions option, ListSortDirection order = ListSortDirection.Ascending);
+
+    Task<MemoryStream> GetPersonsCsvFile();
 }

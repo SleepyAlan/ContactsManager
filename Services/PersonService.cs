@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using CsvHelper;
+using Entities;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTOs;
@@ -6,6 +7,7 @@ using ServiceContracts.Enums;
 using ServiceContracts.Extensions;
 using Services.Helpers;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Services;
 
@@ -169,6 +171,30 @@ public class PersonService : IPersonService
             return personsToSort.OrderBy(predicate, StringComparer.OrdinalIgnoreCase).ToList();
         }
         return personsToSort.OrderByDescending(predicate, StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
+    public async Task<MemoryStream> GetPersonsCsvFile()
+    {
+        var memoryStream = new MemoryStream();
+        using var streamWriter = new StreamWriter(memoryStream);
+        using var csvWriter = new CsvWriter(
+            streamWriter,
+            CultureInfo.InvariantCulture,
+            leaveOpen: true);
+
+        csvWriter.WriteHeader<PersonResponse>();
+        csvWriter.NextRecord();
+        var persons = await GetAllPersons();
+        await csvWriter.WriteRecordsAsync(persons);
+
+        // Flush the CSV writer to push records to the streamWriter
+        await csvWriter.FlushAsync();
+        // Flush the streamWriter to push everything into the memoryStream
+        await streamWriter.FlushAsync();
+        // Reset the position of the memory stream to the beginning for the consumer to read from the start
+        memoryStream.Position = 0;
+
+        return memoryStream;
     }
 
     #region Private Helper Methods for Building Predicates
