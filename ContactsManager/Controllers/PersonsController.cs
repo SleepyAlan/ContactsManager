@@ -188,6 +188,14 @@ public class PersonsController : Controller
         };
     }
 
+    [Route("[action]")]
+    public async Task<IActionResult> PersonsCSV()
+    {
+        var memoryStream = await _personService.GetPersonsCsvFile();
+
+        return File(memoryStream, "application/octet-stream", "Contacts.csv");
+    }
+
     // Below are private methods that are reusable view models and ViewBag setup
     // for the views above. These methods are not directly accessible
     // via HTTP requests.
