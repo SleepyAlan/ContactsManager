@@ -1,0 +1,49 @@
+﻿@model CountryAddRequest
+
+@{
+  ViewBag.Title = "Add Country";
+  ViewBag.Description = "Add a new Country";
+}
+<div class="container container-big stack section">
+  <div class="card container container-narrow">
+    <div class="center">
+      <h4 class="text-primary">Add a new Country</h4>
+    </div>
+    <div class="stack">
+      <form asp-controller="Countries" asp-action="AddCountry" method="post">
+        <fieldset class="bg-surface">
+          <legend>Add a single Country</legend>
+          <div>
+            <label asp-for="CountryName">Country Name</label>
+            <input required type="text" asp-for="CountryName" />
+            <span asp-validation-for="CountryName" class="text-xs text-danger"></span>
+          </div>
+        </fieldset>
+        <div class="flex-center flex-between mt-2">
+          <button class=" btn btn-secondary" type="reset">Reset Form</button>
+          <button class="btn" type="submit">Submit Country</button>
+        </div>
+      </form>
+      <form asp-controller="Countries" asp-action="UploadCountriesFromExcel" method="post">
+        <fieldset class="bg-surface">
+          <legend>Upload Countries from Excel</legend>
+          <div class="cluster">
+            <div class="flex-1">
+              <label for="excelFile">Choose an Excel File</label>
+              <input type="file" id="excelFile" name="excelFile" accept=".xls, .xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="flex-center flex-between mt-2">
+          <button class=" btn btn-secondary" type="reset">Reset Selection</button>
+          <button class="btn" type="submit">Submit Countries</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}
