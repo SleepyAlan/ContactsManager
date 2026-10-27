@@ -3,6 +3,8 @@ using ServiceContracts.DTOs;
 using Entities;
 using ServiceContracts.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 
 namespace Services;
 
@@ -64,5 +66,35 @@ public class CountryService : ICountryService
             .FirstOrDefaultAsync(country => country.CountryId == countryId);
 
         return country?.ToCountryResponse();
+    }
+
+    public async Task<int> UploadCountriesFromExcel(IFormFile formFile)
+    {
+        var memoryStream = new MemoryStream();
+        await formFile.CopyToAsync(memoryStream);
+
+        using var excelPackage = new ExcelPackage(memoryStream);
+
+        var worksheet = excelPackage.Workbook.Worksheets["Countries"];
+        int rowCount = worksheet.Dimension.Rows;
+        int countriesUploaded = 0;
+        for (int i = 2; i <= rowCount; i++)
+        {
+            string countryName = worksheet.Cells[i, 1].Text;
+
+            var countryAddRequest = new CountryAddRequest
+            {
+                CountryName = countryName
+            };
+            try
+            {
+                await AddCountry(countryAddRequest);
+                countriesUploaded++;
+            }
+            // Country already exists or invalid, skip to the next one
+            catch (ArgumentException) { continue; }
+            
+        }
+        return countriesUploaded;
     }
 }
