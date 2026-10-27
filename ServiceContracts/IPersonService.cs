@@ -60,5 +60,11 @@ public interface IPersonService
     /// <returns>A list of PersonResponse ordered by the specified option and direction.</returns>
     List<PersonResponse> GetSortedPersons(IEnumerable<PersonResponse> personsToSort, FilterOptions option, ListSortDirection order = ListSortDirection.Ascending);
 
-    Task<MemoryStream> GetPersonsCsvFile();
+    /// <summary>
+    /// Asynchronously generates a CSV file stream for person records.
+    /// </summary>
+    /// <param name="persons">Person records to convert to CSV output, or <see langword="null"/> will result in all persons being included.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="MemoryStream"/> with
+    /// the generated CSV content.</returns>
+    Task<MemoryStream> GetPersonsCsvFile(IEnumerable<PersonResponse>? persons = null);
 }

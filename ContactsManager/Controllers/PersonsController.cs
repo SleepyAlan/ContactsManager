@@ -189,9 +189,18 @@ public class PersonsController : Controller
     }
 
     [Route("[action]")]
-    public async Task<IActionResult> PersonsCSV()
+    public async Task<IActionResult> PersonsCSV(
+        SearchOptions? searchField,
+        string? searchString,
+        FilterOptions sortBy = FilterOptions.ByName,
+        ListSortDirection sortDirection = ListSortDirection.Ascending)
     {
-        var memoryStream = await _personService.GetPersonsCsvFile();
+        var allPersons = await _personService
+            .GetFilteredPersons(searchString, searchField ?? 0);
+        var sortedPersons = _personService
+            .GetSortedPersons(allPersons, sortBy, sortDirection);
+        var memoryStream = await _personService
+            .GetPersonsCsvFile(sortedPersons);
 
         return File(memoryStream, "text/csv", "Contacts.csv");
     }

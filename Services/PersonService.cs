@@ -173,7 +173,7 @@ public class PersonService : IPersonService
         return personsToSort.OrderByDescending(predicate, StringComparer.OrdinalIgnoreCase).ToList();
     }
 
-    public async Task<MemoryStream> GetPersonsCsvFile()
+    public async Task<MemoryStream> GetPersonsCsvFile(IEnumerable<PersonResponse>? persons = null)
     {
         var memoryStream = new MemoryStream();
         using var streamWriter = new StreamWriter(
@@ -187,7 +187,7 @@ public class PersonService : IPersonService
         csvWriter.WriteHeader<PersonResponse>();
         await csvWriter.NextRecordAsync();
 
-        var persons = await GetAllPersons();
+        persons ??= await GetAllPersons();
 
         await csvWriter.WriteRecordsAsync(persons);
 
