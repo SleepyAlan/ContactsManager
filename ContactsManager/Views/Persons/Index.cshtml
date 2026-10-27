@@ -8,6 +8,11 @@
     Value = x.Key,
     Text = x.Value
   });
+  var exportRoute = new Dictionary<string, string>();
+  if (!string.IsNullOrEmpty(Model.SelectedSearchField)) exportRoute["searchField"] = Model.SelectedSearchField;
+  if (!string.IsNullOrEmpty(Model.SearchString)) exportRoute["searchString"] = Model.SearchString;
+  if (!string.IsNullOrEmpty(Model.SortColumn)) exportRoute["sortBy"] = Model.SortColumn;
+  if (!string.IsNullOrEmpty(Model.SortDirection)) exportRoute["sortDirection"] = Model.SortDirection;
 }
 <form id="persons-filter" method="get" asp-controller="Persons" asp-action="Index" class="container container-big stack section">
   <div class=" min-w-zero">
@@ -27,6 +32,25 @@
           </div>
           <div>
             <a asp-controller="Persons" asp-action="Index" class="btn" data-clear>Clear all</a>
+          </div>
+          <div>
+            <details class="menu">
+              <summary class="btn btn-secondary">Export</summary>
+              <ul class="menu-list">
+                <li>
+                  <a asp-controller="Persons" asp-action="PersonsPDF" asp-all-route-data="exportRoute"
+                     data-export target="_blank" rel="noopener">PDF <span class="menu-hint">.pdf</span></a>
+                </li>
+                <li>
+                  <a asp-controller="Persons" asp-action="PersonsExcel" asp-all-route-data="exportRoute"
+                     data-export>Excel <span class="menu-hint">.xlsx</span></a>
+                </li>
+                <li>
+                  <a asp-controller="Persons" asp-action="PersonsCSV" asp-all-route-data="exportRoute"
+                     data-export>CSV <span class="menu-hint">.csv</span></a>
+                </li>
+              </ul>
+            </details>
           </div>
           <div>
             <a class="btn btn-secondary"
@@ -56,4 +80,8 @@
 
 @section Scripts {
   <script src="~/Views/Persons/Index.cshtml.js" asp-append-version="true" defer></script>
+}
+
+@section Styles {
+  <link rel="stylesheet" href="~/css/dropdown-menu.css" asp-append-version="true" />
 }
