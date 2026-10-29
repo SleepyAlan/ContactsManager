@@ -41,6 +41,7 @@ public class ContactsManagerDbContext : DbContext
         modelBuilder.Entity<Person>().HasData(persons);
     }
 
+    [Obsolete("This method is for demonstration purposes only. Use LINQ queries instead.")]
     public async Task<List<Person>> sp_GetAllPersons()
     {
         return await Persons.FromSqlRaw("EXECUTE [dbo].[GetAllPersons]").ToListAsync();
