@@ -17,13 +17,12 @@ public class CountryServiceTests
 
     public CountryServiceTests()
     {
-        var countries = new List<Country>();
-
-
-        var dbContext = new ApplicationDbContext(
+        var mockDbContext = new DbContextMock<ApplicationDbContext>(
             new DbContextOptionsBuilder<ApplicationDbContext>().Options);
 
-        
+        var dbContext = mockDbContext.Object;
+        var countries = new List<Country>();
+        mockDbContext.CreateDbSetMock(db => db.Countries, countries);
 
         _sut = new CountryService(dbContext);
     }
