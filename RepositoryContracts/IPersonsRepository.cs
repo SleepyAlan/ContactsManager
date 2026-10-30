@@ -39,13 +39,6 @@ public interface IPersonsRepository
     Task<Person?> GetPerson(Guid personId);
 
     /// <summary>
-    /// Gets a person by its name.
-    /// </summary>
-    /// <param name="personName">The name of the person.</param>
-    /// <returns>A task that result is the person with the specified name, or null if not found.</returns>
-    Task<Person?> GetPerson(string personName);
-
-    /// <summary>
     /// Gets all persons from the data store.
     /// </summary>
     /// <returns>A task that result is a list of all persons.</returns>
@@ -57,13 +50,6 @@ public interface IPersonsRepository
     /// <param name="personId">The unique identifier of the person.</param>
     /// <returns>A task that result is true if the person exists, or false if not found.</returns>
     Task<bool> PersonExists(Guid personId);
-
-    /// <summary>
-    /// Checks if a person exists in the data store. Ignores case sensitivity when comparing the person name.
-    /// </summary>
-    /// <param name="personName">The name of the person.</param>
-    /// <returns>A task that result is true if the person exists, or false if not found.</returns>
-    Task<bool> PersonExists(string personName);
 
     /// <summary>
     /// Gets all persons from the data store that belong to a specific country.
