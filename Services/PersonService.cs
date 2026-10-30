@@ -37,9 +37,13 @@ public class PersonService : IPersonService
         if (person.CountryId.HasValue)
         {
             // Loading navigational property
-            await entityEntry
-                .Reference(p => p.Country)
-                .LoadAsync();
+            var entry = entityEntry ?? _db.Entry(person);
+            if (entry != null)
+            {
+                await entry
+                    .Reference(p => p.Country)
+                    .LoadAsync();
+            }
         }
         return person.ToPersonResponse();
     }
