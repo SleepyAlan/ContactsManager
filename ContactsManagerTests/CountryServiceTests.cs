@@ -25,7 +25,7 @@ public class CountryServiceTests
         var countries = new List<Country>();
         mockDbContext.CreateDbSetMock(db => db.Countries, countries);
 
-        _sut = new CountryService(dbContext);
+        _sut = new CountryService(null);
     }
 
     #region AddCountry Tests

@@ -33,7 +33,7 @@ public class PersonServiceTests
 
         _fixture = new Fixture();
         _testOutputHelper = testOutputHelper;
-        _countryService = new CountryService(dbContext);
+        _countryService = new CountryService(null);
         _sut = new PersonService(dbContext);
     }
 
