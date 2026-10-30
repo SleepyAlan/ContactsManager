@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RepositoryContracts;
 using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
@@ -19,6 +20,14 @@ public class PersonsRepository : IPersonsRepository
     {
         var personAdded = _db.Persons.Add(person);
         await _db.SaveChangesAsync();
+
+        if (personAdded.Entity.CountryId.HasValue)
+        {
+            // Loading navigational property
+                await personAdded
+                    .Reference(p => p.Country)
+                    .LoadAsync();
+        }
         return personAdded.Entity;
     }
 
