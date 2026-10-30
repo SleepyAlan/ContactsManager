@@ -1,4 +1,6 @@
 ﻿using Entities;
+using EntityFrameworkCoreMock;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
@@ -6,6 +8,7 @@ using ServiceContracts.Extensions;
 using Services;
 using System.ComponentModel;
 using Xunit.Abstractions;
+using AutoFixture;
 
 namespace Services.Tests;
 
@@ -14,14 +17,24 @@ public class PersonServiceTests
     private readonly IPersonService _sut;
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly ICountryService _countryService;
+    private readonly IFixture _fixture;
 
     public PersonServiceTests(
-        ITestOutputHelper testOutputHelper,
-        ApplicationDbContext db)
-    {// TODO: Fix all tests. migrated to database.
+        ITestOutputHelper testOutputHelper)
+    {
+        var mockDb = new DbContextMock<ApplicationDbContext>(
+            new DbContextOptionsBuilder<ApplicationDbContext>().Options);
+
+        var persons = new List<Person>();
+        var countries = new List<Country>();
+        var dbContext = mockDb.Object;
+        mockDb.CreateDbSetMock(db => db.Persons, persons);
+        mockDb.CreateDbSetMock(db => db.Countries, countries);
+
+        _fixture = new Fixture();
         _testOutputHelper = testOutputHelper;
-        _countryService = new CountryService(db);
-        _sut = new PersonService(db);
+        _countryService = new CountryService(dbContext);
+        _sut = new PersonService(dbContext);
     }
 
     #region AddPerson() Tests
@@ -76,16 +89,11 @@ public class PersonServiceTests
     public async Task AddPerson_ValidPersonAddRequest_ReturnsPersonResponse()
     {
         // Arrange
-        PersonAddRequest personAddRequest = new PersonAddRequest()
-        {
-            PersonName = "test",
-            Email = "test@example.com",
-            Address = "sample address",
-            CountryId = Guid.NewGuid(),
-            Gender = GenderOptions.Male,
-            DateOfBirth = DateTime.Now,
-            ReceiveNewsLetters = true,
-        };
+        PersonAddRequest personAddRequest = _fixture
+            .Build<PersonAddRequest>()
+            .With(temp => temp.Email, "example@example.com")
+            .Create();
+
         // Act
         PersonResponse actualPersonResponse = await _sut.AddPerson(personAddRequest);
 
@@ -98,16 +106,10 @@ public class PersonServiceTests
     public async Task AddPerson_ValidPersonAddRequest_VerifyItPersistsViaGetAllPersons()
     {
         // Arrange
-        PersonAddRequest personAddRequest = new PersonAddRequest()
-        {
-            PersonName = "test",
-            Email = "test@example.com",
-            Address = "sample address",
-            CountryId = Guid.NewGuid(),
-            Gender = GenderOptions.Male,
-            DateOfBirth = DateTime.UtcNow,
-            ReceiveNewsLetters = true,
-        };
+        PersonAddRequest personAddRequest = _fixture
+            .Build<PersonAddRequest>()
+            .With(temp => temp.Email, "example@example.com")
+            .Create();
 
         // Act
         PersonResponse expectedPersonResponse = await _sut.AddPerson(personAddRequest);
@@ -195,16 +197,11 @@ public class PersonServiceTests
     public async Task GetPersonById_ValidPersonId_ReturnsPersonResponse()
     {
         // Arrange
-        PersonAddRequest personAddRequest = new PersonAddRequest()
-        {
-            PersonName = "test",
-            Email = "test@example.com",
-            Address = "sample address",
-            CountryId = Guid.NewGuid(),
-            Gender = GenderOptions.Male,
-            DateOfBirth = DateTime.Now,
-            ReceiveNewsLetters = true,
-        };
+        PersonAddRequest personAddRequest = _fixture
+            .Build<PersonAddRequest>()
+            .With(temp => temp.Email, "example@example.com")
+            .Create();
+
         PersonResponse expectedPersonResponse = await _sut.AddPerson(personAddRequest);
 
         // Act
@@ -272,7 +269,7 @@ public class PersonServiceTests
         string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
 
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByName);
@@ -289,9 +286,9 @@ public class PersonServiceTests
     [InlineData("zzz")]
     public async Task GetFilteredPersons_ByCountry_ReturnsMatchedCaseInsensitiveSubstring(
         string search, params string[] expected)
-    {
+    { // Fails as CountryName is null as Moq does not support navigation properties. Need to fix AddSamplePersons to fix CountryName for each person. For now, this test is disabled.
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
 
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByCountry);
@@ -310,7 +307,7 @@ public class PersonServiceTests
         string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
 
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByEmail);
@@ -330,7 +327,7 @@ public class PersonServiceTests
         string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
 
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByAddress);
@@ -351,7 +348,7 @@ public class PersonServiceTests
         string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByDateOfBirth);
         // Assert
@@ -375,7 +372,7 @@ public class PersonServiceTests
         string search)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.GreaterThanAge);
         // Assert
@@ -397,7 +394,7 @@ public class PersonServiceTests
         string search)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.LessThanAge);
         // Assert
@@ -453,7 +450,7 @@ public class PersonServiceTests
         string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByGender);
         // Assert
@@ -469,7 +466,7 @@ public class PersonServiceTests
     public async Task GetFilteredPersons_ByGender_WhenSearchIsNotEnumName_FallsBackToSubstring(string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByGender);
         // Assert
@@ -486,7 +483,7 @@ public class PersonServiceTests
     public async Task GetFilteredPersons_ByReceiveNewsLetters_FiltersOnBoolean(string search, params string[] expected)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
         // Act
         List<PersonResponse> actualPersonResponses = await _sut.GetFilteredPersons(search, SearchOptions.ByReceiveNewsLetters);
         // Assert
@@ -502,7 +499,7 @@ public class PersonServiceTests
     public async Task GetFilteredPersons_ByReceiveNewsLetters_AnythingOtherThanTrueIsTreatedAsFalse(string search)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
 
         // Act
         var responses = await _sut.GetFilteredPersons(search, SearchOptions.ByReceiveNewsLetters);
@@ -521,7 +518,7 @@ public class PersonServiceTests
     public async Task GetFilteredPersons_UnknownEnumValue_ThrowsArgumentOutOfRangeException(SearchOptions searchOption)
     {
         // Arrange
-        AddSamplePersons();
+        await AddSamplePersons();
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
@@ -872,7 +869,7 @@ public class PersonServiceTests
     }
 
     private async Task<List<PersonResponse>> AddSamplePersons(bool addMore = false)
-    {
+    {//TODO: Convert to AutoFixture
         CountryResponse countryUSA =  await _countryService.AddCountry(new CountryAddRequest() { CountryName = "USA" });
         CountryResponse countryCanada = await _countryService.AddCountry(new CountryAddRequest() { CountryName = "Canada" });
 
