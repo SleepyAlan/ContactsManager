@@ -21,8 +21,8 @@ public interface IPersonsRepository
     /// Updates a person in the data store. Ignores case sensitivity when comparing the person name.
     /// </summary>
     /// <param name="person">The person to update.</param>
-    /// <returns>A task that result is the updated person.</returns>
-    Task<Person> UpdatePerson(Person person);
+    /// <returns>A task that result is the updated person. Returns null if the person was not found.</returns>
+    Task<Person?> UpdatePerson(Person person);
 
     /// <summary>
     /// Deletes a person from the data store.

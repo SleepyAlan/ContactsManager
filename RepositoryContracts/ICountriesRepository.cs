@@ -20,8 +20,8 @@ public interface ICountriesRepository
     /// Updates a country in the data store. Ignores case sensitivity when comparing the country name.
     /// </summary>
     /// <param name="country">The country to update.</param>
-    /// <returns>A task that result is the updated country.</returns>
-    Task<Country> UpdateCountry(Country country);
+    /// <returns>A task that result is the updated country. Returns null if the country was not found.</returns>
+    Task<Country?> UpdateCountry(Country country);
 
     /// <summary>
     /// Deletes a country from the data store.
