@@ -1,11 +1,12 @@
-﻿using ServiceContracts;
-using ServiceContracts.DTOs;
-using Entities;
-using ServiceContracts.Extensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using RepositoryContracts;
+using ServiceContracts;
+using ServiceContracts.DTOs;
+using ServiceContracts.Extensions;
+using Services.Helpers;
 
 namespace Services;
 
@@ -47,6 +48,43 @@ public class CountryService : ICountryService
         var addedCountry = await _countriesRepository.AddCountry(country);
 
         return addedCountry.ToCountryResponse();
+    }
+
+    public async Task<CountryResponse> UpdateCountry(CountryUpdateRequest? countryUpdateRequest)
+    {
+        ArgumentNullException.ThrowIfNull(
+            countryUpdateRequest, nameof(countryUpdateRequest));
+
+        ModelValidationHelper.Validate(countryUpdateRequest);
+
+        var countryExists = await _countriesRepository
+            .CountryExists(countryUpdateRequest.CountryId);
+
+        if (!countryExists)
+        {
+            throw new ArgumentException(
+                $"Country with CountryId {countryUpdateRequest.CountryId} does not exist.",
+                nameof(countryUpdateRequest.CountryId));
+        }
+
+        var countryToUpdate = countryUpdateRequest.ToCountry();
+
+        var country = await _countriesRepository.UpdateCountry(countryToUpdate);
+
+        if (country is null)
+        {
+            throw new Exception(
+                $"Country with CountryId {countryUpdateRequest.CountryId} not found. Failed to update.");
+        }
+
+        return country.ToCountryResponse();
+    }
+
+    public async Task<bool> DeleteCountry(Guid? countryId)
+    {
+        ArgumentNullException.ThrowIfNull(countryId, nameof(countryId));
+
+        return await _countriesRepository.DeleteCountry(countryId.Value);
     }
 
     public async Task<List<CountryResponse>> GetAllCountries()
