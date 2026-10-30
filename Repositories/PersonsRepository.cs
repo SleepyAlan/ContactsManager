@@ -6,11 +6,11 @@ using System.Linq.Expressions;
 
 namespace Repositories;
 
-public class PersonRepositories : IPersonsRepository
+public class PersonsRepository : IPersonsRepository
 {
     private readonly ApplicationDbContext _db;
 
-    public PersonRepositories(ApplicationDbContext db)
+    public PersonsRepository(ApplicationDbContext db)
     {
         _db = db;
     }
