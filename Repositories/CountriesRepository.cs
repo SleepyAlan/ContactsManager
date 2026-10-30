@@ -60,10 +60,16 @@ public class CountriesRepository : ICountriesRepository
             .FirstOrDefaultAsync(c => c.CountryName == countryName);
     }
 
-    public async Task<Country> UpdateCountry(Country country)
+    public async Task<Country?> UpdateCountry(Country country)
     {
-        var updatedCountry = _db.Countries.Update(country);
+        var countryToUpdate = await _db.Countries
+            .FirstOrDefaultAsync(c => c.CountryId == country.CountryId);
+
+        if (countryToUpdate is null) return null;
+
+        countryToUpdate.CountryName = country.CountryName;
+
         await _db.SaveChangesAsync();
-        return updatedCountry.Entity;
+        return countryToUpdate;
     }
 }
