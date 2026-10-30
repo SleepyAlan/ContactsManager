@@ -5,16 +5,17 @@ using ServiceContracts.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
+using RepositoryContracts;
 
 namespace Services;
 
 public class CountryService : ICountryService
 {
-    private readonly ApplicationDbContext _db;
+    private readonly ICountriesRepository _countriesRepository;
 
-    public CountryService(ApplicationDbContext dbContext)
+    public CountryService(ICountriesRepository countriesRepository)
     {
-        _db = dbContext;
+        _countriesRepository = countriesRepository;
     }
 
     public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
@@ -30,10 +31,8 @@ public class CountryService : ICountryService
                 nameof(countryAddRequest.CountryName));
         }
 
-        bool countryExists = await _db.Countries
-            .AnyAsync(country => 
-                country.CountryName != null &&
-                country.CountryName == countryAddRequest.CountryName);
+        bool countryExists = await _countriesRepository
+            .CountryExists(countryAddRequest.CountryName);
 
         if (countryExists)
         {
@@ -45,25 +44,24 @@ public class CountryService : ICountryService
         Country country = countryAddRequest.ToCountry();
         country.CountryId = Guid.NewGuid();
 
-        _db.Countries.Add(country);
-        await _db.SaveChangesAsync();
+        var addedCountry = await _countriesRepository.AddCountry(country);
 
-        return country.ToCountryResponse();
+        return addedCountry.ToCountryResponse();
     }
 
     public async Task<List<CountryResponse>> GetAllCountries()
     {
-        return await _db.Countries
+        var countries = await _countriesRepository.GetAllCountries();
+        return countries
             .Select(country => country.ToCountryResponse())
-            .ToListAsync();
+            .ToList();
     }
 
     public async Task<CountryResponse?> GetCountryById(Guid? countryId)
     {
         if (countryId is null) return null;
 
-        Country? country = await _db.Countries
-            .FirstOrDefaultAsync(country => country.CountryId == countryId);
+        Country? country = await _countriesRepository.GetCountry(countryId.Value);
 
         return country?.ToCountryResponse();
     }
