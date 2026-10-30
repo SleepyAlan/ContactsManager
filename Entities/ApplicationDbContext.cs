@@ -3,12 +3,12 @@ using System.Text.Json;
 
 namespace Entities;
 
-public class ContactsManagerDbContext : DbContext
+public class ApplicationDbContext : DbContext
 {
     public DbSet<Country> Countries { get; set; }
     public DbSet<Person> Persons { get; set; }
 
-    public ContactsManagerDbContext(DbContextOptions options) : base(options) { }
+    public ApplicationDbContext(DbContextOptions options) : base(options) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

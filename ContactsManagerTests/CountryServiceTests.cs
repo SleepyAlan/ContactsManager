@@ -2,6 +2,9 @@
 using Entities;
 using ServiceContracts.DTOs;
 using Services;
+using Microsoft.EntityFrameworkCore;
+using EntityFrameworkCoreMock;
+using Moq;
 
 namespace Services.Tests;
 
@@ -12,9 +15,17 @@ public class CountryServiceTests
     /// </summary>
     private readonly ICountryService _sut;
 
-    public CountryServiceTests(ContactsManagerDbContext db)
-    { //TODO: Fix all tests. Migrated to database.
-        _sut = new CountryService(db);
+    public CountryServiceTests()
+    {
+        var countries = new List<Country>();
+
+
+        var dbContext = new ApplicationDbContext(
+            new DbContextOptionsBuilder<ApplicationDbContext>().Options);
+
+        
+
+        _sut = new CountryService(dbContext);
     }
 
     #region AddCountry Tests

@@ -17,7 +17,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services
     .AddScoped<ICountryService, CountryService>()
     .AddScoped<IPersonService, PersonService>()
-    .AddDbContext<ContactsManagerDbContext>(options =>
+    .AddDbContext<ApplicationDbContext>(options =>
     {
         options.UseSqlServer(
             builder.Configuration.GetConnectionString("DefaultConnection"));

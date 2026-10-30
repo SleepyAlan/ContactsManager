@@ -17,7 +17,7 @@ public class PersonServiceTests
 
     public PersonServiceTests(
         ITestOutputHelper testOutputHelper,
-        ContactsManagerDbContext db)
+        ApplicationDbContext db)
     {// TODO: Fix all tests. migrated to database.
         _testOutputHelper = testOutputHelper;
         _countryService = new CountryService(db);

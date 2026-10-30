@@ -14,10 +14,10 @@ namespace Services;
 
 public class PersonService : IPersonService
 {
-    private readonly ContactsManagerDbContext _db;
+    private readonly ApplicationDbContext _db;
 
     public PersonService(
-        ContactsManagerDbContext dbContext)
+        ApplicationDbContext dbContext)
     {
         _db = dbContext;
     }

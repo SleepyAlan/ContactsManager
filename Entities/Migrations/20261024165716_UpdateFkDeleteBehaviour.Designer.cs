@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
-    [DbContext(typeof(ContactsManagerDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20261024165716_UpdateFkDeleteBehaviour")]
     partial class UpdateFkDeleteBehaviour
     {
