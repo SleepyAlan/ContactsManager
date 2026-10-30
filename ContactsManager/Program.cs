@@ -1,6 +1,8 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using Repositories;
+using RepositoryContracts;
 using Rotativa.AspNetCore;
 using ServiceContracts;
 using Services;
@@ -17,6 +19,8 @@ if (builder.Environment.IsDevelopment())
 builder.Services
     .AddScoped<ICountryService, CountryService>()
     .AddScoped<IPersonService, PersonService>()
+    .AddScoped<ICountriesRepository, CountriesRepository>()
+    .AddScoped<IPersonsRepository, PersonsRepository>()
     .AddDbContext<ApplicationDbContext>(options =>
     {
         options.UseSqlServer(
