@@ -224,7 +224,7 @@ public class PersonService : IPersonService
             SearchOptions.GreaterThanAge => BuildAgePredicate(searchString, (x, y) => x > y),
             SearchOptions.LessThanAge => BuildAgePredicate(searchString, (x, y) => x < y),
             SearchOptions.EqualToAge => BuildAgePredicate(searchString, (x, y) => x == y),
-            SearchOptions.ByReceiveNewsLetters => BuildNewsLetterPredicate(searchString),
+            SearchOptions.ByReceiveNewsLetters => p => ContainsSubstring(p.ReceiveNewsLetters.ToString(), searchString),
             _ => throw new ArgumentOutOfRangeException(
                     nameof(option), option, "Unsupported search option.")
         };
@@ -258,12 +258,6 @@ public class PersonService : IPersonService
         return personResponse =>
             personResponse.Age.HasValue &&
             compare(personResponse.Age.Value, searchAsInt);
-    }
-
-    private static Func<PersonResponse, bool> BuildNewsLetterPredicate(string search)
-    {
-        bool result = search.Equals("true", StringComparison.OrdinalIgnoreCase);
-        return personResponse => personResponse.ReceiveNewsLetters == result;
     }
     #endregion
 }
