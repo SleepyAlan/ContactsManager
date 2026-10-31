@@ -72,7 +72,7 @@ public class CountryService : ICountryService
         var country = await _countriesRepository.UpdateCountry(countryToUpdate);
 
         if (country is null)
-        {
+        { // Fallback in case the repository returns null, which shouldn't happen if the country exists.
             throw new Exception(
                 $"Country with CountryId {countryUpdateRequest.CountryId} not found. Failed to update.");
         }

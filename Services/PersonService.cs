@@ -2,6 +2,7 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using RepositoryContracts;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
@@ -14,12 +15,12 @@ namespace Services;
 
 public class PersonService : IPersonService
 {
-    private readonly ApplicationDbContext _db;
+    private readonly IPersonsRepository _personsRepository;
 
     public PersonService(
-        ApplicationDbContext dbContext)
+        IPersonsRepository personsRepository)
     {
-        _db = dbContext;
+        _personsRepository = personsRepository;
     }
 
     public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
@@ -31,21 +32,9 @@ public class PersonService : IPersonService
         Person person = personAddRequest.ToPerson();
         person.PersonId = Guid.NewGuid();
 
-        var entityEntry = _db.Persons.Add(person);
-        await _db.SaveChangesAsync();
+        var personAdded = await _personsRepository.AddPerson(person);
 
-        if (person.CountryId.HasValue)
-        {
-            // Loading navigational property
-            var entry = entityEntry ?? _db.Entry(person);
-            if (entry != null)
-            {
-                await entry
-                    .Reference(p => p.Country)
-                    .LoadAsync();
-            }
-        }
-        return person.ToPersonResponse();
+        return personAdded.ToPersonResponse();
     }
 
     public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest)
@@ -55,58 +44,47 @@ public class PersonService : IPersonService
 
         ModelValidationHelper.Validate(personUpdateRequest);
 
-        Person? personToUpdate = await _db.Persons
-            .Include(p => p.Country)
-            .FirstOrDefaultAsync(p => p.PersonId == personUpdateRequest.PersonId) 
-            ?? throw new ArgumentException(
-                $"Person with PersonId {personUpdateRequest.PersonId} not found.",
+        var personExists = await _personsRepository
+            .PersonExists(personUpdateRequest.PersonId);
+
+        if (!personExists)
+        {
+            throw new ArgumentException(
+                $"Person with PersonId {personUpdateRequest.PersonId} does not exist.",
                 nameof(personUpdateRequest.PersonId));
+        }
+        var personToUpdate = personUpdateRequest.ToPerson();
+        var person = await _personsRepository.UpdatePerson(personToUpdate);
 
-        // Update all values except person id 
-        personToUpdate.PersonName = personUpdateRequest.PersonName;
-        personToUpdate.Email = personUpdateRequest.Email;
-        personToUpdate.DateOfBirth = personUpdateRequest.DateOfBirth;
-        personToUpdate.Gender = personUpdateRequest.Gender?.ToString();
-        personToUpdate.CountryId = personUpdateRequest.CountryId;
-        personToUpdate.Address = personUpdateRequest.Address;
-        personToUpdate.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
+        if (person is null)
+        {   // Fallback in case the repository returns null, which shouldn't happen if the person exists.
+            throw new Exception(
+                $"Person with PersonId {personUpdateRequest.PersonId} not found. Failed to update.");
+        }
 
-        await _db.SaveChangesAsync();
-
-        return personToUpdate.ToPersonResponse();
+        return person.ToPersonResponse();
     }
 
     public async Task<bool> DeletePerson(Guid? personId)
     {
         ArgumentNullException.ThrowIfNull(personId, nameof(personId));
 
-        Person? person = await _db.Persons
-            .FirstOrDefaultAsync(person => person.PersonId == personId);
-
-        if (person == null) return false;
-
-        _db.Persons.Remove(person);
-        await _db.SaveChangesAsync();
-
-        return true;
+        return await _personsRepository.DeletePerson(personId.Value);
     }
 
     public async Task<List<PersonResponse>> GetAllPersons()
     {
-        return await _db.Persons
-            .Include(p => p.Country)
-            .Select(p => p.ToPersonResponse())
-            .ToListAsync();
+        var allPersons = await _personsRepository.GetAllPersons();
+        return allPersons
+            .Select(person => person.ToPersonResponse())
+            .ToList();
     }
 
     public async Task<PersonResponse?> GetPersonById(Guid? personId)
     {
         if (personId == null) return null;
 
-        Person? person = await _db.Persons
-            .Include(p => p.Country)
-            .FirstOrDefaultAsync(
-                person => person.PersonId == personId);
+        var person = await _personsRepository.GetPerson(personId.Value);
 
         return person is null ? null : person.ToPersonResponse();
     }

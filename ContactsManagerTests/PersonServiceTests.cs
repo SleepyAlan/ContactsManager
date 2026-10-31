@@ -34,7 +34,7 @@ public class PersonServiceTests
         _fixture = new Fixture();
         _testOutputHelper = testOutputHelper;
         _countryService = new CountryService(null);
-        _sut = new PersonService(dbContext);
+        _sut = new PersonService(null);
     }
 
     #region AddPerson() Tests
