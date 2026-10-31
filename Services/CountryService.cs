@@ -1,6 +1,5 @@
 ﻿using Entities;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using RepositoryContracts;
 using ServiceContracts;
