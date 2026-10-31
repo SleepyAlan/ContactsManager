@@ -25,6 +25,10 @@ public class PersonsController : Controller
         { SearchOptions.ByGender.ToString(), "Gender" },
         { SearchOptions.ByCountry.ToString(), "Country" },
         { SearchOptions.ByAddress.ToString(), "Address" },
+        { SearchOptions.GreaterThanAge.ToString(), "Greater Than Age" },
+        { SearchOptions.EqualToAge.ToString(), "Equal To Age" },
+        { SearchOptions.LessThanAge.ToString(), "Less Than Age" },
+        { SearchOptions.ByReceiveNewsLetters.ToString(), "Receives News Letters" },
     };
 
     private readonly List<ValueTuple<string, string>> _sortFields = new List<ValueTuple<string, string>>()
