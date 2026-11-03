@@ -1,4 +1,5 @@
 using Entities;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using Repositories;
@@ -6,39 +7,63 @@ using RepositoryContracts;
 using Rotativa.AspNetCore;
 using ServiceContracts;
 using Services;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-var mvcBuilder = builder.Services.AddControllersWithViews();
-
-if (builder.Environment.IsDevelopment())
+try
 {
-    mvcBuilder.AddRazorRuntimeCompilation();
-}
+    Log.Information("Starting web application...");
 
-builder.Services
-    .AddScoped<ICountryService, CountryService>()
-    .AddScoped<IPersonService, PersonService>()
-    .AddScoped<ICountriesRepository, CountriesRepository>()
-    .AddScoped<IPersonsRepository, PersonsRepository>()
-    .AddDbContext<ApplicationDbContext>(options =>
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Services.AddSerilog((services, configuration) => configuration
+        .ReadFrom.Configuration(builder.Configuration)
+        .ReadFrom.Services(services));
+
+    var mvcBuilder = builder.Services.AddControllersWithViews();
+
+    if (builder.Environment.IsDevelopment())
     {
-        options.UseSqlServer(
-            builder.Configuration.GetConnectionString("DefaultConnection"));
-    });
+        mvcBuilder.AddRazorRuntimeCompilation();
+    }
 
-var app = builder.Build();
+    builder.Services
+        .AddScoped<ICountryService, CountryService>()
+        .AddScoped<IPersonService, PersonService>()
+        .AddScoped<ICountriesRepository, CountriesRepository>()
+        .AddScoped<IPersonsRepository, PersonsRepository>()
+        .AddDbContext<ApplicationDbContext>(options =>
+        {
+            options.UseSqlServer(
+                builder.Configuration.GetConnectionString("DefaultConnection"));
+        });
 
-if (builder.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
+    var app = builder.Build();
+
+    if (builder.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+
+    app.UseSerilogRequestLogging();
+
+    app.UseStaticFiles();
+    app.UseRouting();
+    app.MapControllers();
+
+    app.UseRotativa();
+    ExcelPackage.License.SetNonCommercialPersonal("Alan S");
+
+    app.Run();
 }
-
-app.UseStaticFiles();
-app.UseRouting();
-app.MapControllers();
-
-app.UseRotativa();
-ExcelPackage.License.SetNonCommercialPersonal("Alan S");
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly.");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
