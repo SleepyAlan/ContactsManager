@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 using AutoFixture;
 using RepositoryContracts;
 using Moq;
+using Serilog;
 
 namespace Services.Tests;
 
@@ -16,6 +17,7 @@ public class PersonServiceTests
     private readonly IPersonService _sut;
     private readonly IPersonsRepository _personsRepository;
     private readonly Mock<IPersonsRepository> _mockPersonsRepository;
+    private readonly Mock<IDiagnosticContext> _mockDiagnosticContext;
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly IFixture _fixture;
 
@@ -24,10 +26,11 @@ public class PersonServiceTests
     {
         _mockPersonsRepository = new Mock<IPersonsRepository>();
         _personsRepository = _mockPersonsRepository.Object;
-
+        var nullLogger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<PersonService>();
+        _mockDiagnosticContext = new Mock<IDiagnosticContext>();
         _fixture = new Fixture();
         _testOutputHelper = testOutputHelper;
-        _sut = new PersonService(_personsRepository);
+        _sut = new PersonService(_personsRepository, nullLogger, _mockDiagnosticContext.Object);
     }
 
     #region AddPerson() Tests

@@ -10,6 +10,7 @@ using Rotativa.AspNetCore.Options;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
+using Services;
 using System.ComponentModel;
 using System.Text;
 
@@ -27,9 +28,10 @@ public class PersonsControllerTests
         _fixture = new Fixture();
         _personServiceMock = new Mock<IPersonService>();
         _countryServiceMock = new Mock<ICountryService>();
-        
+        var nullLogger = new Microsoft.Extensions.Logging.Abstractions
+                             .NullLogger<PersonsController>();
         _sut = new PersonsController(
-            _countryServiceMock.Object, _personServiceMock.Object);
+            _countryServiceMock.Object, _personServiceMock.Object, nullLogger);
     }
 
     #region Index Tests

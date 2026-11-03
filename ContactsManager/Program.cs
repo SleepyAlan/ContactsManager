@@ -9,15 +9,19 @@ using ServiceContracts;
 using Services;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
+var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.EnvironmentName != "Testing")
+{
+    // Crashes unit tests if Serilog is configured in unit tests, so configure it only when not running unit tests
+    Log.Logger = new LoggerConfiguration()
+        .WriteTo.Console()
+        .CreateBootstrapLogger();
+}
+
 
 try
 {
     Log.Information("Starting web application...");
-
-    var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSerilog((services, configuration) => configuration
         .ReadFrom.Configuration(builder.Configuration)
