@@ -1,7 +1,9 @@
 ﻿using CsvHelper;
 using Entities;
+using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using RepositoryContracts;
+using Serilog;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
@@ -15,11 +17,17 @@ namespace Services;
 public class PersonService : IPersonService
 {
     private readonly IPersonsRepository _personsRepository;
+    private readonly ILogger<PersonService> _logger;
+    private readonly IDiagnosticContext _diagnosticContext;
 
     public PersonService(
-        IPersonsRepository personsRepository)
+        IPersonsRepository personsRepository,
+        ILogger<PersonService> logger,
+        IDiagnosticContext diagnosticContext)
     {
         _personsRepository = personsRepository;
+        _logger = logger;
+        _diagnosticContext = diagnosticContext;
     }
 
     public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
