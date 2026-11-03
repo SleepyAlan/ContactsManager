@@ -17,6 +17,7 @@ public class PersonsController : Controller
 {
     private readonly ICountryService _countryService;
     private readonly IPersonService _personService;
+    private readonly ILogger<PersonsController> _logger;
     private readonly Dictionary<string, string> _searchFields = new Dictionary<string, string>()
     {
         { SearchOptions.ByName.ToString(), "Name" },
@@ -44,10 +45,13 @@ public class PersonsController : Controller
     };
 
     public PersonsController(
-            ICountryService countryService, IPersonService personService)
+            ICountryService countryService,
+            IPersonService personService,
+            ILogger<PersonsController> logger)
     {
         _countryService = countryService;
         _personService = personService;
+        _logger = logger;
     }
 
     [HttpGet("[action]")]
@@ -97,6 +101,7 @@ public class PersonsController : Controller
         catch (Exception e) when
             (e is ArgumentNullException or ArgumentException)
         {
+            _logger.LogWarning(e, "Error occurred while getting person by ID. Id: {PersonId}", personId);
             return RedirectToAction("Index", "Persons");
         }
 
@@ -123,6 +128,7 @@ public class PersonsController : Controller
         }
         catch (Exception e) when (e is ArgumentNullException or ArgumentException)
         {
+            _logger.LogWarning(e, "Error occurred while updating person. PersonUpdateRequest: {@PersonUpdateRequest}", personUpdateRequest);
             return BadRequest();
         }
 
@@ -145,6 +151,7 @@ public class PersonsController : Controller
         }
         catch (Exception e) when (e is ArgumentNullException or ArgumentException)
         {
+            _logger.LogWarning(e, "Error occurred while getting person details. PersonId: {PersonId}", personId);
             return NotFound();
         }
 
