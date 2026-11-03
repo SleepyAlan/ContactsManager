@@ -40,7 +40,7 @@ public class PersonService : IPersonService
         person.PersonId = Guid.NewGuid();
 
         var personAdded = await _personsRepository.AddPerson(person);
-
+        _diagnosticContext.Set("PersonAdded", personAdded.PersonId);
         return personAdded.ToPersonResponse();
     }
 
@@ -63,6 +63,8 @@ public class PersonService : IPersonService
         var personToUpdate = personUpdateRequest.ToPerson();
         var person = await _personsRepository.UpdatePerson(personToUpdate);
 
+        _diagnosticContext.Set("PersonUpdated", person?.PersonId);
+
         if (person is null)
         {   // Fallback in case the repository returns null, which shouldn't happen if the person exists.
             throw new Exception(
@@ -75,6 +77,8 @@ public class PersonService : IPersonService
     public async Task<bool> DeletePerson(Guid? personId)
     {
         ArgumentNullException.ThrowIfNull(personId, nameof(personId));
+        
+        _diagnosticContext.Set("PersonDeleted", personId.Value);
 
         return await _personsRepository.DeletePerson(personId.Value);
     }
