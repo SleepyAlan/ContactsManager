@@ -1,5 +1,4 @@
 using Entities;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using Repositories;
@@ -12,7 +11,8 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.EnvironmentName != "Testing")
 {
-    // Crashes unit tests if Serilog is configured in unit tests, so configure it only when not running unit tests
+    // Crashes unit tests if Serilog is configured in unit tests,
+    // so configure it only when not running unit tests
     Log.Logger = new LoggerConfiguration()
         .WriteTo.Console()
         .CreateBootstrapLogger();
@@ -53,7 +53,6 @@ try
     }
 
     app.UseSerilogRequestLogging();
-
     app.UseStaticFiles();
     app.UseRouting();
     app.MapControllers();
