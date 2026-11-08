@@ -1,4 +1,5 @@
-﻿using ContactsManager.Models;
+﻿using ContactsManager.Filters.ActionFilters;
+using ContactsManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
@@ -56,6 +57,7 @@ public class PersonsController : Controller
 
     [HttpGet("[action]")]
     [HttpGet("/")]
+    [TypeFilter(typeof(PersonsListActionFilter))]
     public async Task<IActionResult> Index(
         SearchOptions? searchField,
         string? searchString,
