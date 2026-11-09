@@ -1,4 +1,5 @@
 ﻿using ContactsManager.Filters.ActionFilters;
+using ContactsManager.Filters.ExceptionFilters;
 using ContactsManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,7 @@ using System.Globalization;
 namespace ContactsManager.Controllers;
 
 [Route("[controller]")]
+[TypeFilter(typeof(UnhandledExceptionFilter))]
 public class PersonsController : Controller
 {
     private readonly ICountryService _countryService;
