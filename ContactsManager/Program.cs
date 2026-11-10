@@ -1,12 +1,7 @@
-using Entities;
-using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
-using Repositories;
-using RepositoryContracts;
 using Rotativa.AspNetCore;
-using ServiceContracts;
-using Services;
 using Serilog;
+using ContactsManager.StartupExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.EnvironmentName != "Testing")
@@ -23,27 +18,8 @@ try
 {
     Log.Information("Starting web application...");
 
-    builder.Services.AddSerilog((services, configuration) => configuration
-        .ReadFrom.Configuration(builder.Configuration)
-        .ReadFrom.Services(services));
-
-    var mvcBuilder = builder.Services.AddControllersWithViews();
-
-    if (builder.Environment.IsDevelopment())
-    {
-        mvcBuilder.AddRazorRuntimeCompilation();
-    }
-
-    builder.Services
-        .AddScoped<ICountryService, CountryService>()
-        .AddScoped<IPersonService, PersonService>()
-        .AddScoped<ICountriesRepository, CountriesRepository>()
-        .AddScoped<IPersonsRepository, PersonsRepository>()
-        .AddDbContext<ApplicationDbContext>(options =>
-        {
-            options.UseSqlServer(
-                builder.Configuration.GetConnectionString("DefaultConnection"));
-        });
+    builder.Services.ConfigureServices(
+        builder.Configuration, builder.Environment);
 
     var app = builder.Build();
 
