@@ -81,6 +81,8 @@ public class PersonsController : Controller
     }
 
     [HttpPost("[action]")]
+    [ValidateAntiForgeryToken]
+    [TypeFilter(typeof(PersonCreateUpdateValidationFilter))]
     public async Task<IActionResult> Create(PersonAddRequest? personAddRequest)
     {
         if (ModelState.IsValid)
@@ -120,6 +122,8 @@ public class PersonsController : Controller
     }
 
     [HttpPost("[action]/{personId:guid}")]
+    [ValidateAntiForgeryToken]
+    [TypeFilter(typeof(PersonCreateUpdateValidationFilter))]
     public async Task<IActionResult> Update(PersonUpdateRequest? personUpdateRequest)
     {
         try
