@@ -2,6 +2,7 @@ using OfficeOpenXml;
 using Rotativa.AspNetCore;
 using Serilog;
 using ContactsManager.StartupExtensions;
+using ContactsManager.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.EnvironmentName != "Testing")
@@ -26,6 +27,10 @@ try
     if (builder.Environment.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();
+    }
+    else
+    {
+        app.UseExceptionHandlingMiddleware();
     }
 
     app.UseSerilogRequestLogging();
