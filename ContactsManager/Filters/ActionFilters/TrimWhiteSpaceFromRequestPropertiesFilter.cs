@@ -6,11 +6,11 @@ using System.Reflection;
 
 namespace ContactsManager.Filters.ActionFilters;
 
-public class PersonCreateUpdateValidationFilter : IActionFilter
+public class TrimWhiteSpaceFromRequestPropertiesFilter : IActionFilter
 {
-    private readonly ILogger<PersonCreateUpdateValidationFilter> _logger;
+    private readonly ILogger<TrimWhiteSpaceFromRequestPropertiesFilter> _logger;
 
-    public PersonCreateUpdateValidationFilter(ILogger<PersonCreateUpdateValidationFilter> logger)
+    public TrimWhiteSpaceFromRequestPropertiesFilter(ILogger<TrimWhiteSpaceFromRequestPropertiesFilter> logger)
     {
         _logger = logger;
     }
@@ -32,6 +32,14 @@ public class PersonCreateUpdateValidationFilter : IActionFilter
             SanitizeStringProperties(personUpdateRequest);
             return;
         }
+
+        var countryAddRequest = context.ActionArguments.Values
+            .FirstOrDefault(temp => temp is CountryAddRequest) as CountryAddRequest;
+        if (countryAddRequest != null)
+        {
+            SanitizeStringProperties(countryAddRequest);
+            return;
+        }
     }
 
     public void OnActionExecuted(ActionExecutedContext context) { }
@@ -50,22 +58,29 @@ public class PersonCreateUpdateValidationFilter : IActionFilter
         SanitizeProperties(properties, personRequest);
     }
 
-    private void SanitizeProperties(PropertyInfo[] properties, object personRequest)
+    private void SanitizeStringProperties(CountryAddRequest countryRequest)
+    {
+        var properties = countryRequest.GetType()
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        SanitizeProperties(properties, countryRequest);
+    }
+
+    private void SanitizeProperties(PropertyInfo[] properties, object request)
     {
         foreach (var property in properties)
         {
             if (property.PropertyType == typeof(string) && property.CanWrite)
             {
-                var value = (string?)property.GetValue(personRequest);
+                var value = (string?)property.GetValue(request);
                 if (value != null)
                 {
-                    property.SetValue(personRequest, value.Trim());
+                    property.SetValue(request, value.Trim());
                 }
             }
         }
 
         _logger.LogInformation(
             "String properties sanitized for {RequestType}",
-            personRequest.GetType().Name);
+            request.GetType().Name);
     }
 }

@@ -8,9 +8,7 @@ using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.Enums;
 using ServiceContracts.Extensions;
-using Services;
 using System.ComponentModel;
-using System.Globalization;
 
 namespace ContactsManager.Controllers;
 
@@ -82,7 +80,7 @@ public class PersonsController : Controller
 
     [HttpPost("[action]")]
     [ValidateAntiForgeryToken]
-    [TypeFilter(typeof(PersonCreateUpdateValidationFilter))]
+    [TypeFilter(typeof(TrimWhiteSpaceFromRequestPropertiesFilter))]
     public async Task<IActionResult> Create(PersonAddRequest? personAddRequest)
     {
         if (ModelState.IsValid)
@@ -123,7 +121,7 @@ public class PersonsController : Controller
 
     [HttpPost("[action]/{personId:guid}")]
     [ValidateAntiForgeryToken]
-    [TypeFilter(typeof(PersonCreateUpdateValidationFilter))]
+    [TypeFilter(typeof(TrimWhiteSpaceFromRequestPropertiesFilter))]
     public async Task<IActionResult> Update(PersonUpdateRequest? personUpdateRequest)
     {
         try
