@@ -56,10 +56,16 @@ public class PersonsControllerIntegrationTest
     public async Task Create_HttpPostRequestWithValidData_ReturnsRedirectToActionResult()
     {
         // Arrange
+        var createFormResponse = await _client.GetAsync("/Persons/Create");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var formData = new Dictionary<string, string>
         {
             { "PersonName", "John Doe" },
-            { "Email", "johndoe@example.com" }
+            { "Email", "johndoe@example.com" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
 
         var content = new FormUrlEncodedContent(formData);
@@ -76,10 +82,16 @@ public class PersonsControllerIntegrationTest
     public async Task Create_HttpPostRequestWithInvalidData_ReturnsViewResultWithModelErrors()
     {
         // Arrange
+        var createFormResponse = await _client.GetAsync("/Persons/Create");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var formData = new Dictionary<string, string>
         {
             { "PersonName", "" }, // Invalid: Name is required
-            { "Email", "invalid-email" } // Invalid: Not a valid email format
+            { "Email", "invalid-email" }, // Invalid: Not a valid email format
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var content = new FormUrlEncodedContent(formData);
 
@@ -107,10 +119,16 @@ public class PersonsControllerIntegrationTest
     public async Task Update_HttpGetRequestWithValidPersonId_ReturnsViewResult()
     {
         // Arrange - Create a person first
+        var createFormResponse = await _client.GetAsync("/Persons/Create");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var createFormData = new Dictionary<string, string>
         {
             { "PersonName", "Jane Smith" },
-            { "Email", "jane@example.com" }
+            { "Email", "jane@example.com" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var createContent = new FormUrlEncodedContent(createFormData);
 
@@ -164,10 +182,16 @@ public class PersonsControllerIntegrationTest
     public async Task Update_HttpPostRequestWithValidData_ReturnsRedirectToIndex()
     {
         // Arrange - Create a person first
+        var createFormResponse = await _client.GetAsync("/Persons/Create");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var createFormData = new Dictionary<string, string>
         {
             { "PersonName", "Bob Johnson" },
-            { "Email", "bob@example.com" }
+            { "Email", "bob@example.com" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var createContent = new FormUrlEncodedContent(createFormData);
         await _client.PostAsync("/Persons/Create", createContent);
@@ -182,7 +206,8 @@ public class PersonsControllerIntegrationTest
         {
             { "PersonId", personId },
             { "PersonName", "Bob Johnson Updated" },
-            { "Email", "bob.updated@example.com" }
+            { "Email", "bob.updated@example.com" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var updateContent = new FormUrlEncodedContent(updateFormData);
 
@@ -198,10 +223,16 @@ public class PersonsControllerIntegrationTest
     public async Task Update_HttpPostRequestWithInvalidData_ReturnsViewResultWithModelErrors()
     {
         // Arrange - Create a person first
+        var createFormResponse = await _client.GetAsync("/Persons/Create");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var createFormData = new Dictionary<string, string>
         {
             { "PersonName", "Alice Brown" },
-            { "Email", "alice@example.com" }
+            { "Email", "alice@example.com" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var createContent = new FormUrlEncodedContent(createFormData);
         await _client.PostAsync("/Persons/Create", createContent);
@@ -216,7 +247,8 @@ public class PersonsControllerIntegrationTest
         {
             { "PersonId", personId },
             { "PersonName", "" }, // Invalid: Name is required
-            { "Email", "invalid-email" } // Invalid: Not a valid email format
+            { "Email", "invalid-email" }, // Invalid: Not a valid email format
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var updateContent = new FormUrlEncodedContent(updateFormData);
 
@@ -243,10 +275,16 @@ public class PersonsControllerIntegrationTest
     public async Task Details_HttpGetRequestWithValidPersonId_ReturnsViewResult()
     {
         // Arrange - Create a person first
+        var createFormResponse = await _client.GetAsync("/Persons/Create");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var createFormData = new Dictionary<string, string>
         {
             { "PersonName", "Charlie Davis" },
-            { "Email", "charlie@example.com" }
+            { "Email", "charlie@example.com" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var createContent = new FormUrlEncodedContent(createFormData);
         await _client.PostAsync("/Persons/Create", createContent);
@@ -404,6 +442,13 @@ public class PersonsControllerIntegrationTest
         var personIdMatch = Regex.Match(href ?? "", @"Details/([a-f0-9\-]+)");
         Assert.True(personIdMatch.Success);
         return personIdMatch.Groups[1].Value;
+    }
+
+    private static string? ExtractAntiForgeryToken(IHtmlDocument document)
+    {
+        return document
+            .QuerySelector("input[name='__RequestVerificationToken']")
+            ?.GetAttribute("value");
     }
 
     #endregion

@@ -41,9 +41,15 @@ public class CountriesControllerIntegrationTests
     public async Task AddCountry_HttpPostRequestWithValidCountryName_ReturnsViewResultWithSuccessMessage()
     {
         // Arrange
+        var createFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var formData = new Dictionary<string, string>
         {
-            { "CountryName", "TestCountry123" }
+            { "CountryName", "TestCountry123" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var content = new FormUrlEncodedContent(formData);
 
@@ -58,16 +64,22 @@ public class CountriesControllerIntegrationTests
         var messageElement = document.QuerySelector("h6");
         Assert.NotNull(messageElement);
         Assert.Contains("has been added successfully", messageElement.TextContent);
-        Assert.Contains("TestCountry123", messageElement.TextContent);
+        Assert.Contains("Testcountry123", messageElement.TextContent); // Title case applied.
     }
 
     [Fact]
     public async Task AddCountry_HttpPostRequestWithEmptyCountryName_ReturnsViewResultWithValidationError()
     {
         // Arrange
+        var createFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var formData = new Dictionary<string, string>
         {
-            { "CountryName", "" }
+            { "CountryName", "" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var content = new FormUrlEncodedContent(formData);
 
@@ -88,9 +100,15 @@ public class CountriesControllerIntegrationTests
     public async Task AddCountry_HttpPostRequestWithWhitespaceCountryName_ReturnsViewResultWithSuccessMessage()
     {
         // Arrange
+        var createFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var formData = new Dictionary<string, string>
         {
-            { "CountryName", "  TestCountryWithSpaces  " }
+            { "CountryName", "  TestCountryWithSpaces  " },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var content = new FormUrlEncodedContent(formData);
 
@@ -111,9 +129,15 @@ public class CountriesControllerIntegrationTests
     public async Task AddCountry_HttpPostRequestWithDuplicateCountryName_ReturnsViewResultWithError()
     {
         // Arrange - Add first country
+        var createFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var createFormDocument = await createFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(createFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var formData1 = new Dictionary<string, string>
         {
-            { "CountryName", "UniqueCountry" }
+            { "CountryName", "UniqueCountry" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var content1 = new FormUrlEncodedContent(formData1);
         await _client.PostAsync("/Countries/AddCountry", content1);
@@ -121,7 +145,8 @@ public class CountriesControllerIntegrationTests
         // Try to add duplicate country
         var formData2 = new Dictionary<string, string>
         {
-            { "CountryName", "UniqueCountry" }
+            { "CountryName", "UniqueCountry" },
+            { "__RequestVerificationToken", antiForgeryToken }
         };
         var content2 = new FormUrlEncodedContent(formData2);
 
@@ -157,6 +182,11 @@ public class CountriesControllerIntegrationTests
     public async Task UploadCountriesFromExcel_HttpPostRequestWithValidExcelFile_ReturnsViewResultWithSuccessMessage()
     {
         // Arrange
+        var uploadFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var uploadFormDocument = await uploadFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(uploadFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         var filePath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,
             "..", "..", "..",
@@ -171,6 +201,7 @@ public class CountriesControllerIntegrationTests
         using var fileStream = File.OpenRead(filePath);
         using var streamContent = new StreamContent(fileStream);
         content.Add(streamContent, "excelFile", "CountriesUpload.xlsx");
+        content.Add(new StringContent(antiForgeryToken), "__RequestVerificationToken");
 
         // Act
         var response = await _client.PostAsync("/Countries/UploadCountriesFromExcel", content);
@@ -191,7 +222,13 @@ public class CountriesControllerIntegrationTests
     public async Task UploadCountriesFromExcel_HttpPostRequestWithNullFile_ReturnsViewResultWithValidationError()
     {
         // Arrange
+        var uploadFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var uploadFormDocument = await uploadFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(uploadFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         using var content = new MultipartFormDataContent();
+        content.Add(new StringContent(antiForgeryToken), "__RequestVerificationToken");
 
         // Act
         var response = await _client.PostAsync("/Countries/UploadCountriesFromExcel", content);
@@ -211,10 +248,16 @@ public class CountriesControllerIntegrationTests
     public async Task UploadCountriesFromExcel_HttpPostRequestWithInvalidFileType_ReturnsViewResultWithValidationError()
     {
         // Arrange
+        var uploadFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var uploadFormDocument = await uploadFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(uploadFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         using var content = new MultipartFormDataContent();
         using var stream = new MemoryStream([1, 2, 3, 4]);
         using var streamContent = new StreamContent(stream);
         content.Add(streamContent, "excelFile", "invalid.txt");
+        content.Add(new StringContent(antiForgeryToken), "__RequestVerificationToken");
 
         // Act
         var response = await _client.PostAsync("/Countries/UploadCountriesFromExcel", content);
@@ -234,10 +277,16 @@ public class CountriesControllerIntegrationTests
     public async Task UploadCountriesFromExcel_HttpPostRequestWithEmptyFile_ReturnsViewResultWithValidationError()
     {
         // Arrange
+        var uploadFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var uploadFormDocument = await uploadFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(uploadFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         using var content = new MultipartFormDataContent();
         using var stream = new MemoryStream([]);
         using var streamContent = new StreamContent(stream);
         content.Add(streamContent, "excelFile", "empty.xlsx");
+        content.Add(new StringContent(antiForgeryToken), "__RequestVerificationToken");
 
         // Act
         var response = await _client.PostAsync("/Countries/UploadCountriesFromExcel", content);
@@ -256,12 +305,18 @@ public class CountriesControllerIntegrationTests
     [Fact]
     public async Task UploadCountriesFromExcel_HttpPostRequestWithPdfFile_ReturnsViewResultWithValidationError()
     {
+        var uploadFormResponse = await _client.GetAsync("/Countries/AddCountry");
+        var uploadFormDocument = await uploadFormResponse.GetDocumentAsync();
+        var antiForgeryToken = ExtractAntiForgeryToken(uploadFormDocument);
+        Assert.NotNull(antiForgeryToken);
+
         // Arrange - PDF file header bytes
         var pdfHeader = new byte[] { 0x25, 0x50, 0x44, 0x46 }; // %PDF
         using var content = new MultipartFormDataContent();
         using var stream = new MemoryStream(pdfHeader);
         using var streamContent = new StreamContent(stream);
         content.Add(streamContent, "excelFile", "document.pdf");
+        content.Add(new StringContent(antiForgeryToken), "__RequestVerificationToken");
 
         // Act
         var response = await _client.PostAsync("/Countries/UploadCountriesFromExcel", content);
@@ -275,6 +330,17 @@ public class CountriesControllerIntegrationTests
         Assert.NotEmpty(errorSpans);
         var hasValidationMessage = errorSpans.Any(e => e.TextContent.Contains("valid Excel file"));
         Assert.True(hasValidationMessage);
+    }
+
+    #endregion
+
+    #region Helpers
+
+    private static string? ExtractAntiForgeryToken(IHtmlDocument document)
+    {
+        return document
+            .QuerySelector("input[name='__RequestVerificationToken']")
+            ?.GetAttribute("value");
     }
 
     #endregion
