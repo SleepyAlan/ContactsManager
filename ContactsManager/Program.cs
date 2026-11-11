@@ -30,6 +30,7 @@ try
     }
     else
     {
+        app.UseExceptionHandler("/Home/Error");
         app.UseExceptionHandlingMiddleware();
     }
 

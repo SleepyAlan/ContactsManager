@@ -1,0 +1,12 @@
+﻿@{
+  ViewBag.Title = "Error";
+}
+
+<div class="center text-center">
+  <h1 class="text-primary mt-1">Oops! Something went wrong.</h1>
+  <p class="text-danger mt-2">@ViewBag.ErrorMessage</p>
+  <img src="~/icons/error.svg" style="
+  margin-top:20px;
+  width: clamp(120px, 25vw, 400px);
+  height: auto;" />
+</div>

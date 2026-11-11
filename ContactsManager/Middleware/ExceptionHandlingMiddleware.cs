@@ -29,17 +29,10 @@ public class ExceptionHandlingMiddleware
         {
             _logger.LogError(ex.InnerException ?? ex, "An unhandled exception occurred.");
 
-            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            httpContext.Response.ContentType = "application/json";
-
             _diagnosticContext.Set("Exception", ex);
 
-            var errorResponse = new
-            {
-                Message = "An unexpected error occurred. Please try again later."
-            };
-
-            await httpContext.Response.WriteAsJsonAsync(errorResponse);
+            throw; // Re-throw the exception to let the default exception
+                   // handler handle it (e.g., redirect to error page)
         }
     }
 }
