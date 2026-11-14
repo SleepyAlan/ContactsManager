@@ -43,7 +43,9 @@
         </div>
       </fieldset>
       <div class="flex-column flex-center">
+        @Html.ValidationMessage("RegisterError", new { @class = "text-xs text-danger" })
         <button class="btn" type="submit">Create</button>
+        <span asp-validation-summary="" class="text-xs text-danger"></span>
       </div>
     </form>
   </div>
