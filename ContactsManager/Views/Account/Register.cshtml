@@ -42,9 +42,9 @@
           <span asp-validation-for="ConfirmPassword" class="text-xs text-danger"></span>
         </div>
       </fieldset>
-      <div class="flex-center flex-between">
-        <button class="btn btn-secondary" type="reset">Reset Form</button>
+      <div class="flex-column flex-center">
         <button class="btn" type="submit">Create</button>
+        <div asp-validation-summary="All" class="text-xs text-danger"></div>
       </div>
     </form>
   </div>
