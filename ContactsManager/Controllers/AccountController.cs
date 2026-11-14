@@ -7,9 +7,19 @@ using ServiceContracts.DTOs;
 namespace ContactsManager.Controllers;
 
 [Route("[controller]")]
-public class AccountController(UserManager<ApplicationUser> userManager)
-    : Controller
+public class AccountController : Controller
 {
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+
+    public AccountController(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager)
+    {
+        _userManager = userManager;
+        _signInManager = signInManager;
+    }
+
     [HttpGet("[action]")]
     public IActionResult Register()
     {
@@ -23,7 +33,7 @@ public class AccountController(UserManager<ApplicationUser> userManager)
         {
             return View(registerDTO);
         }
-        ApplicationUser user = new ApplicationUser()
+        var user = new ApplicationUser()
         {
             DisplayName = registerDTO.DisplayName,
             UserName = registerDTO.Email,
@@ -31,7 +41,8 @@ public class AccountController(UserManager<ApplicationUser> userManager)
             PhoneNumber = registerDTO.Phone
         };
 
-        IdentityResult result = await userManager.CreateAsync(user);
+        //TODO: password null and matching confirm password validation
+        IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
 
         if (!result.Succeeded)
         {
@@ -52,13 +63,21 @@ public class AccountController(UserManager<ApplicationUser> userManager)
     }
 
     [HttpPost("[action]")]
-    public IActionResult Login(LoginRequestViewModel loginRequest)
+    public async Task<IActionResult> Login(LoginRequestViewModel loginRequest)
     {
         if (!ModelState.IsValid)
         {
             return View(loginRequest);
         }
+        
+        ApplicationUser user = await _userManager.FindByEmailAsync(loginRequest.Email);
+        if (user == null)
+        {
+            ModelState.AddModelError("LoginError", "Invalid login attempt.");
+            return View(loginRequest);
+        }
 
+        await _signInManager.SignInAsync(user, isPersistent: true);
         return RedirectToAction(nameof(PersonsController.Index), "Person");
     }
 }
