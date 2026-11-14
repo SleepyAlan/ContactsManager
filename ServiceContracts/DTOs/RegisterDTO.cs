@@ -22,5 +22,6 @@ public class RegisterDTO
 
     [Required(ErrorMessage = "Confirm Password is required.")]
     [DataType(DataType.Password)]
+    [Compare("Password", ErrorMessage = "Passwords do not match.")]
     public string? ConfirmPassword { get; set; }
 }
