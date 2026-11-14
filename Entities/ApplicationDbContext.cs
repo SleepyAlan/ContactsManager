@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Entities.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace Entities;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : 
+    IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
     public virtual DbSet<Country> Countries { get; set; }
     public virtual DbSet<Person> Persons { get; set; }
