@@ -7,6 +7,9 @@
     return title == navItem ? "font-bold" : "";
   }
 }
+@{
+  var validUser = User.Identity is not null && User.Identity.IsAuthenticated;
+}
 <html>
 <head>
   <meta charset="UTF-8">
@@ -41,16 +44,36 @@
               </g>
             </g>
           </svg>
-          <h2 class="title">Contacts Manager</h2>
-          <p>@User.Identity?.Name</p>
+          <h2 class="title">
+            Contacts Manager
+            @if (validUser)
+            {
+              <span class="text-lg p-2 text-muted">Welcome, @User.Identity?.Name</span>
+            }
+          </h2>
         </div>
-        <nav class="p-2">
-          <a class="p-2 @SetCurrentNavAsBold("Contacts")" style="white-space: nowrap;" asp-controller="Persons" asp-action="Index">Contacts</a>
-          <a class="p-2 @SetCurrentNavAsBold("Create Contact")" style="white-space: nowrap;" asp-controller="Persons" asp-action="Create">Create Contact</a>
-          <a class="p-2 @SetCurrentNavAsBold("Add Country")" style="white-space: nowrap;" asp-controller="Countries" asp-action="AddCountry">Add Countries</a>
-          <a class="btn" asp-controller="Account" asp-action="Logout">Logout</a>
-          <a class="btn" asp-controller="Account" asp-action="Register">Login/Register</a>
-        </nav>
+        @if (validUser)
+        {
+          @* <div class="stack" style="--stack-gap: 0px;">
+            <nav class="p-2 flex justify-end align-center">
+              <p class="p-2 text-primary">Welcome, @User.Identity?.Name</p> *@
+          @* </nav> *@
+          <nav class="p-2">
+            <a class="p-2 @SetCurrentNavAsBold("Contacts")" style="white-space: nowrap;" asp-controller="Persons" asp-action="Index">Contacts</a>
+            <a class="p-2 @SetCurrentNavAsBold("Create Contact")" style="white-space: nowrap;" asp-controller="Persons" asp-action="Create">Create Contact</a>
+            <a class="p-2 @SetCurrentNavAsBold("Add Country")" style="white-space: nowrap;" asp-controller="Countries" asp-action="AddCountry">Add Countries</a>
+            <a class="btn" asp-controller="Account" asp-action="Logout">Logout</a>
+          </nav>
+          @* </div> *@
+        }
+        else
+        {
+          <div>
+            <a class="btn" asp-controller="Account" asp-action="Register">Register</a>
+            <a class="btn" asp-controller="Account" asp-action="Login">Login</a>
+          </div>
+        }
+
       </div>
     </div>
   </header>

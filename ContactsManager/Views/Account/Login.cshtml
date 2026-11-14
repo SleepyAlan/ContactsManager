@@ -1,0 +1,45 @@
+﻿@model LoginRequestViewModel
+@{
+  ViewBag.Title = "Login";
+  ViewBag.Description = "Login to your account";
+}
+
+<div class="container container-big stack section">
+  <div class="card container container-narrow">
+    <div class="center">
+      <h4 class="text-primary">Login to your account</h4>
+      <p>
+        Don't have an account?
+        <a asp-controller="Account" asp-action="Register">Register here</a>
+      </p>
+    </div>
+    <form class="stack" asp-controller="Account" asp-action="Login" method="post">
+      <fieldset class="bg-surface">
+        <legend>Required Information</legend>
+        <div>
+          <label asp-for="Email">Email Address</label>
+          <input required type="email" asp-for="Email" />
+          <span asp-validation-for="Email" class="text-xs text-danger"></span>
+        </div>
+        <div>
+          <label asp-for="Password">Password</label>
+          <input required type="password" asp-for="Password" />
+          <span asp-validation-for="Password" class="text-xs text-danger"></span>
+        </div>
+        <div class="flex flex-center">
+          <label class="p-2" asp-for="RememberMe">Stay signed in</label>
+          <input class="p-2" asp-for="RememberMe" />
+          <span asp-validation-for="RememberMe" class="text-xs text-danger"></span>
+        </div>
+      </fieldset>
+      <div class="flex-column flex-center">
+        @Html.ValidationMessage("LoginError", new { @class = "text-xs text-danger" })
+        <button class="btn mt-1" type="submit">Login</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

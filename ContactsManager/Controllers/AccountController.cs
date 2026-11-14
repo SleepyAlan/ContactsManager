@@ -70,14 +70,29 @@ public class AccountController : Controller
             return View(loginRequest);
         }
         
-        ApplicationUser user = await _userManager.FindByEmailAsync(loginRequest.Email);
-        if (user == null)
+        var result = await _signInManager.PasswordSignInAsync(
+            userName: loginRequest.Email ?? "",
+            password: loginRequest.Password ?? "",
+            isPersistent: loginRequest.RememberMe,
+            lockoutOnFailure: false);
+
+        if (result.Succeeded)
         {
-            ModelState.AddModelError("LoginError", "Invalid login attempt.");
-            return View(loginRequest);
+            return RedirectToAction(nameof(PersonsController.Index), "Persons");
         }
 
-        await _signInManager.SignInAsync(user, isPersistent: true);
-        return RedirectToAction(nameof(PersonsController.Index), "Person");
+        if (result.IsLockedOut)
+        {
+            ModelState.AddModelError("LoginError", "Your account is locked out. Please try again later.");
+        }
+        else if (result.IsNotAllowed)
+        {
+            ModelState.AddModelError("LoginError", "You are not allowed to log in. Please contact support.");
+        }
+        else
+        {
+            ModelState.AddModelError("LoginError", "Invalid login attempt.");
+        }
+        return View(loginRequest);
     }
 }
