@@ -1,0 +1,55 @@
+﻿@model RegisterDTO
+@{
+  ViewBag.Title = "Register";
+  ViewBag.Description = "Register a new user";
+}
+
+<div class="container container-big stack section">
+  <div class="card container container-narrow">
+    <div class="center">
+      <h4 class="text-primary">Create an account</h4>
+      <h6>
+        Already registered?
+        <a asp-controller="Account" asp-action="Login">Login here</a>
+      </h6>
+    </div>
+    <form class="stack" asp-controller="Account" asp-action="Register" method="post">
+      <fieldset class="bg-surface">
+        <legend>Required Information</legend>
+        <div>
+          <label asp-for="DisplayName">Full Name / Display Name</label>
+          <input required type="text" asp-for="DisplayName" />
+          <span asp-validation-for="DisplayName" class="text-xs text-danger"></span>
+        </div>
+        <div>
+          <label asp-for="Email">Email</label>
+          <input required type="email" asp-for="Email" />
+          <span asp-validation-for="Email" class="text-xs text-danger"></span>
+        </div>
+        <div>
+          <label asp-for="Phone">Phone Number</label>
+          <input required type="tel" asp-for="Phone" />
+          <span asp-validation-for="Phone" class="text-xs text-danger"></span>
+        </div>
+        <div>
+          <label asp-for="Password">Password</label>
+          <input required type="password" asp-for="Password" />
+          <span asp-validation-for="Password" class="text-xs text-danger"></span>
+        </div>
+        <div>
+          <label asp-for="ConfirmPassword">Confirm Password</label>
+          <input required type="password" asp-for="ConfirmPassword" />
+          <span asp-validation-for="ConfirmPassword" class="text-xs text-danger"></span>
+        </div>
+      </fieldset>
+      <div class="flex-center flex-between">
+        <button class="btn btn-secondary" type="reset">Reset Form</button>
+        <button class="btn" type="submit">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}
