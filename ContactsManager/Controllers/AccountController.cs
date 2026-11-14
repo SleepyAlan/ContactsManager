@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ContactsManager.Models;
+using Microsoft.AspNetCore.Mvc;
 using ServiceContracts.DTOs;
 
 namespace ContactsManager.Controllers;
@@ -20,6 +21,23 @@ public class AccountController : Controller
             return View(registerDTO);
         }
 
-        return RedirectToAction(nameof(PersonsController.Index), "Persons");
+        return RedirectToAction(nameof(AccountController.Login), "Account");
+    }
+
+    [HttpGet("[action]")]
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    [HttpPost("[action]")]
+    public IActionResult Login(LoginRequestViewModel loginRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(loginRequest);
+        }
+
+        return RedirectToAction(nameof(PersonsController.Index), "Person");
     }
 }

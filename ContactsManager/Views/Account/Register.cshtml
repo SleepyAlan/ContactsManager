@@ -8,10 +8,10 @@
   <div class="card container container-narrow">
     <div class="center">
       <h4 class="text-primary">Create an account</h4>
-      <h6>
+      <p>
         Already registered?
         <a asp-controller="Account" asp-action="Login">Login here</a>
-      </h6>
+      </p>
     </div>
     <form class="stack" asp-controller="Account" asp-action="Register" method="post">
       <fieldset class="bg-surface">
@@ -44,7 +44,6 @@
       </fieldset>
       <div class="flex-column flex-center">
         <button class="btn" type="submit">Create</button>
-        <div asp-validation-summary="All" class="text-xs text-danger"></div>
       </div>
     </form>
   </div>
