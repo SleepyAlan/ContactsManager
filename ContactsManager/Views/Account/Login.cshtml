@@ -1,4 +1,4 @@
-﻿@model LoginRequestViewModel
+﻿@model LoginDTO
 @{
   ViewBag.Title = "Login";
   ViewBag.Description = "Login to your account";
@@ -14,8 +14,8 @@
       </p>
     </div>
     <form class="stack" asp-controller="Account" asp-action="Login" method="post">
-      <fieldset class="bg-surface">
-        <legend>Required Information</legend>
+      @* <fieldset class="bg-surface">
+        <legend>Required Information</legend> *@
         <div>
           <label asp-for="Email">Email Address</label>
           <input required type="email" asp-for="Email" />
@@ -31,7 +31,7 @@
           <input class="p-2" asp-for="RememberMe" />
           <span asp-validation-for="RememberMe" class="text-xs text-danger"></span>
         </div>
-      </fieldset>
+      @* </fieldset> *@
       <div class="flex-column flex-center">
         @Html.ValidationMessage("LoginError", new { @class = "text-sm text-danger" })
         <button class="btn mt-1" type="submit">Login</button>

@@ -11,13 +11,16 @@ public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ILogger<AccountController> _logger;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager,
+        ILogger<AccountController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _logger = logger;
     }
 
     [HttpGet("[action]")]
@@ -41,8 +44,22 @@ public class AccountController : Controller
             PhoneNumber = registerDTO.Phone
         };
 
-        //TODO: password null and matching confirm password validation
-        IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
+        IdentityResult? result = null;
+        // Should not be null due to model validation,
+        // but checking to avoid potential null reference
+        if (registerDTO.Password is not null) 
+        {
+            result = await _userManager.CreateAsync(
+                user, registerDTO.Password);
+        }
+
+        if (result is null)
+        {
+            _logger.LogError(
+                "User creation due to an unexpected error: {RegisterDTO}", registerDTO);
+            ModelState.AddModelError("RegisterError", "An unexpected error occurred during registration.");
+            return View(registerDTO);
+        }
 
         if (!result.Succeeded)
         {
@@ -63,7 +80,7 @@ public class AccountController : Controller
     }
 
     [HttpPost("[action]")]
-    public async Task<IActionResult> Login(LoginRequestViewModel loginRequest)
+    public async Task<IActionResult> Login(LoginDTO loginRequest)
     {
         if (!ModelState.IsValid)
         {
@@ -91,8 +108,15 @@ public class AccountController : Controller
         }
         else
         {
-            ModelState.AddModelError("LoginError", "Invalid login attempt.");
+            ModelState.AddModelError("LoginError", "Invalid email address or password.");
         }
         return View(loginRequest);
+    }
+
+    [HttpPost("[action]")]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction(nameof(Login), "Account");
     }
 }
