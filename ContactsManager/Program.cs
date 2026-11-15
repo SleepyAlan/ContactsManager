@@ -14,7 +14,6 @@ if (builder.Environment.EnvironmentName != "Testing")
         .CreateBootstrapLogger();
 }
 
-
 try
 {
     Log.Information("Starting web application...");
@@ -24,6 +23,8 @@ try
 
     var app = builder.Build();
 
+    // Configure the HTTP request pipeline middleware.
+    // Exception handler
     if (builder.Environment.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();
@@ -33,15 +34,28 @@ try
         app.UseExceptionHandler("/Home/Error");
         app.UseExceptionHandlingMiddleware();
     }
-
-    app.UseSerilogRequestLogging();
+    // Https redirection
+    //app.UseHttpsRedirection();
+    // Static files
     app.UseStaticFiles();
-    app.UseAuthentication();
-    //app.UseAuthorization();
+
+    // Logging
+    app.UseSerilogRequestLogging();
+
+    // Routing
+    // CORS
+    // Authentication
+    // Authorization
     app.UseRouting();
+    //app.UseCors();
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    // Custom middleware
+    // Map controllers
     app.MapControllers();
 
-    app.UseRotativa();
+    app.UseRotativa(); // Rotativa setup. Not apart of the middleware pipeline.
     ExcelPackage.License.SetNonCommercialPersonal("Alan S");
 
     app.Run();
