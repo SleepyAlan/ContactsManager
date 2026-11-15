@@ -54,17 +54,14 @@
         </div>
         @if (validUser)
         {
-          @* <div class="stack" style="--stack-gap: 0px;">
-            <nav class="p-2 flex justify-end align-center">
-              <p class="p-2 text-primary">Welcome, @User.Identity?.Name</p> *@
-          @* </nav> *@
-          <nav class="p-2">
+          <nav class="p-2 flex">
             <a class="p-2 @SetCurrentNavAsBold("Contacts")" style="white-space: nowrap;" asp-controller="Persons" asp-action="Index">Contacts</a>
             <a class="p-2 @SetCurrentNavAsBold("Create Contact")" style="white-space: nowrap;" asp-controller="Persons" asp-action="Create">Create Contact</a>
             <a class="p-2 @SetCurrentNavAsBold("Add Country")" style="white-space: nowrap;" asp-controller="Countries" asp-action="AddCountry">Add Countries</a>
-            <a class="btn" asp-controller="Account" asp-action="Logout">Logout</a>
+            <form asp-controller="Account" asp-action="Logout" method="post">
+              <button type="submit" class="btn">Logout</button>
+            </form>
           </nav>
-          @* </div> *@
         }
         else
         {
