@@ -1,5 +1,5 @@
-﻿using ContactsManager.Models;
-using Entities.Identity;
+﻿using Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ServiceContracts.DTOs;
@@ -7,6 +7,7 @@ using ServiceContracts.DTOs;
 namespace ContactsManager.Controllers;
 
 [Route("[controller]")]
+[AllowAnonymous]
 public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -80,7 +81,8 @@ public class AccountController : Controller
     }
 
     [HttpPost("[action]")]
-    public async Task<IActionResult> Login(LoginDTO loginRequest)
+    public async Task<IActionResult> Login(
+        LoginDTO loginRequest, string? returnUrl)
     {
         if (!ModelState.IsValid)
         {
@@ -95,6 +97,10 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return LocalRedirect(returnUrl);
+            }
             return RedirectToAction(nameof(PersonsController.Index), "Persons");
         }
 
@@ -118,5 +124,12 @@ public class AccountController : Controller
     {
         await _signInManager.SignOutAsync();
         return RedirectToAction(nameof(Login), "Account");
+    }
+
+    [AcceptVerbs("GET", "POST")]
+    public async Task<IActionResult> IsEmailAvailable(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        return Json(user == null);
     }
 }

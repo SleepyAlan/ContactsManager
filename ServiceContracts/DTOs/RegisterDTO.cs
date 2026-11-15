@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace ServiceContracts.DTOs;
 
@@ -9,6 +10,7 @@ public class RegisterDTO
 
     [Required(ErrorMessage = "Email is required.")]
     [EmailAddress(ErrorMessage = "Invalid Email Address.")]
+    [Remote(action: "IsEmailAvailable", controller: "Account", ErrorMessage = "Email is already in use.")]
     public string? Email { get; set; }
 
     [Required(ErrorMessage = "Phone is required.")]

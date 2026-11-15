@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ public static class ConfigureServiceExtension
                     configuration.GetConnectionString("DefaultConnection"));
             });
 
+        // Authentication
         services
             .AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
@@ -56,6 +58,19 @@ public static class ConfigureServiceExtension
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
             .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+
+        // Authorization
+        services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+        });
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Account/Login";
+        });
+
         return services;
     }
 }

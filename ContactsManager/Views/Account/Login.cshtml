@@ -13,7 +13,8 @@
         <a asp-controller="Account" asp-action="Register">Register here</a>
       </p>
     </div>
-    <form class="stack" asp-controller="Account" asp-action="Login" method="post">
+    <form class="stack" asp-controller="Account" asp-action="Login"
+        method="post" asp-route-ReturnUrl="@Context.Request.Query["ReturnUrl"]">
       <div>
         <label asp-for="Email">Email Address</label>
         <input required type="email" asp-for="Email" />
