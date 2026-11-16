@@ -1,6 +1,5 @@
 using AngleSharp.Html.Dom;
 using ContactsManager.Tests.Extensions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsManager.Tests;
 
@@ -15,27 +14,27 @@ public class CountriesControllerIntegrationTests
 
     #region AddCountry
 
-    [Fact]
-    public async Task AddCountry_HttpGetRequest_ReturnsViewResult()
-    {
-        // Act
-        var response = await _client.GetAsync("/Countries/AddCountry");
+     [Fact]
+     public async Task AddCountry_HttpGetRequest_ReturnsViewResult()
+     {
+         // Act
+         var response = await _client.GetAsync("/Countries/AddCountry");
 
-        // Assert
-        response.EnsureSuccessStatusCode();
-        IHtmlDocument document = await response.GetDocumentAsync();
+         // Assert
+         response.EnsureSuccessStatusCode();
+         IHtmlDocument document = await response.GetDocumentAsync();
 
-        // Verify title exists
-        var title = document.QuerySelector("h4.text-primary");
-        Assert.NotNull(title);
-        Assert.Contains("Add a new Country", title.TextContent);
+         // Verify title exists
+         var title = document.QuerySelector("h4.text-primary");
+         Assert.NotNull(title);
+         Assert.Contains("Add a new Country", title.TextContent);
 
-        // Verify input fields exists
-        var countryNameInput = document.GetElementById("CountryName");
-        Assert.NotNull(countryNameInput);
-        var fileInput = document.GetElementById("excelFile");
-        Assert.NotNull(fileInput);
-    }
+         // Verify input fields exists
+         var countryNameInput = document.GetElementById("CountryName");
+         Assert.NotNull(countryNameInput);
+         var fileInput = document.GetElementById("excelFile");
+         Assert.NotNull(fileInput);
+     }
 
     [Fact]
     public async Task AddCountry_HttpPostRequestWithValidCountryName_ReturnsViewResultWithSuccessMessage()

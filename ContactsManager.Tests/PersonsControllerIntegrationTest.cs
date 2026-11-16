@@ -1,6 +1,5 @@
 ﻿using AngleSharp.Html.Dom;
 using ContactsManager.Tests.Extensions;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
 namespace ContactsManager.Tests;

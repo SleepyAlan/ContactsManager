@@ -25,7 +25,7 @@ public static class ConfigureServiceExtension
 
         var mvcBuilder = services.AddControllersWithViews();
 
-        if (hostEnvironment.IsDevelopment())
+        if (hostEnvironment.IsDevelopment() || hostEnvironment.EnvironmentName == "Testing")
         {
             mvcBuilder.AddRazorRuntimeCompilation();
         }
@@ -41,23 +41,31 @@ public static class ConfigureServiceExtension
                     configuration.GetConnectionString("DefaultConnection"));
             });
 
-        // Authentication
-        services
-            .AddIdentity<ApplicationUser, ApplicationRole>(options =>
+        // Authentication - Skip in Testing environment, will be configured in test factory
+        if (hostEnvironment.EnvironmentName != "Testing")
+        {
+            services
+                .AddIdentity<ApplicationUser, ApplicationRole>(options =>
+                {
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequiredUniqueChars = 3;
+                    options.User.RequireUniqueEmail = true;
+                    options.SignIn.RequireConfirmedEmail = false;
+                })
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
+                .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+
+            services.ConfigureApplicationCookie(options =>
             {
-                options.Password.RequiredLength = 8;
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequiredUniqueChars = 3;
-                options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = false;
-            })
-            .AddDefaultTokenProviders()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
-            .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+                options.LoginPath = "/Account/Login";
+            });
+        }
 
         // Authorization
         services.AddAuthorization(options =>
@@ -65,10 +73,6 @@ public static class ConfigureServiceExtension
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
-        });
-        services.ConfigureApplicationCookie(options =>
-        {
-            options.LoginPath = "/Account/Login";
         });
 
         return services;

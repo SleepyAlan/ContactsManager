@@ -25,7 +25,7 @@ try
 
     // Configure the HTTP request pipeline middleware.
     // Exception handler
-    if (builder.Environment.IsDevelopment())
+    if (builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Testing")
     {
         app.UseDeveloperExceptionPage();
     }
