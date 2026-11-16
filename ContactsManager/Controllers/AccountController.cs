@@ -1,4 +1,5 @@
-﻿using Entities.Identity;
+﻿using ContactsManager.Filters.ActionFilters;
+using Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ public class AccountController : Controller
     }
 
     [HttpGet("[action]")]
+    [RedirectIfAuthenticated]
     public IActionResult Register()
     {
         return View();
@@ -89,6 +91,7 @@ public class AccountController : Controller
     }
 
     [HttpGet("[action]")]
+    [RedirectIfAuthenticated]
     public IActionResult Login()
     {
         return View();
