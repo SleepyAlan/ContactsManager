@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Entities.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+<!DOCTYPE html>
 @functions {
   public string SetCurrentNavAsBold(string navItem)
   {
@@ -9,6 +12,8 @@
 }
 @{
   var validUser = User.Identity is not null && User.Identity.IsAuthenticated;
+  var user = await UserManager.GetUserAsync(User);
+  var displayName = user?.DisplayName;
 }
 <html>
 <head>
@@ -48,7 +53,7 @@
             Contacts Manager
             @if (validUser)
             {
-              <span class="text-lg p-2 text-muted">Welcome, @User.Identity?.Name</span>
+              <span class="text-lg p-2 text-muted">Welcome, @displayName</span>
             }
           </h2>
         </div>
