@@ -37,6 +37,7 @@ public class AccountController : Controller
     }
 
     [HttpPost("[action]")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterDTO registerDTO)
     {
         if (!ModelState.IsValid)
@@ -98,6 +99,7 @@ public class AccountController : Controller
     }
 
     [HttpPost("[action]")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(
         LoginDTO loginRequest, string? returnUrl)
     {
@@ -137,6 +139,7 @@ public class AccountController : Controller
     }
 
     [HttpPost("[action]")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
