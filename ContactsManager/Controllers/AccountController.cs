@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ServiceContracts.DTOs;
+using ServiceContracts.Enums;
 
 namespace ContactsManager.Controllers;
 
@@ -12,15 +13,18 @@ public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ILogger<AccountController> _logger;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
+        RoleManager<ApplicationRole> roleManager,
         ILogger<AccountController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
         _logger = logger;
     }
 
@@ -70,6 +74,16 @@ public class AccountController : Controller
             }
             return View(registerDTO);
         }
+
+        // Safeguard: Ensure the "User" role exists before assigning it
+        if (!await _roleManager.RoleExistsAsync(
+            UserTypeOptions.User.ToString()))
+        {
+            await _roleManager.CreateAsync(new ApplicationRole(UserTypeOptions.User.ToString()));
+        }
+
+        await _userManager.AddToRoleAsync(
+            user, UserTypeOptions.User.ToString());
 
         return RedirectToAction(nameof(Login), "Account");
     }
