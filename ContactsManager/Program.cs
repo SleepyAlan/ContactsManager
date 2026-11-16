@@ -35,17 +35,16 @@ try
         app.UseExceptionHandlingMiddleware();
     }
     // Https redirection
-    //app.UseHttpsRedirection();
+    app.UseHsts();
+    app.UseHttpsRedirection();
+
     // Static files
     app.UseStaticFiles();
 
     // Logging
     app.UseSerilogRequestLogging();
 
-    // Routing
-    // CORS
-    // Authentication
-    // Authorization
+    // Routing / CORS / Authentication / Authorization
     app.UseRouting();
     //app.UseCors();
     app.UseAuthentication();
