@@ -2,7 +2,7 @@
 
 A production-style **ASP.NET Core (.NET 10)** contacts management application built with a layered architecture, authentication/authorization, robust validation, logging, and automated testing.
 
-This project demonstrates practical full-stack CRUD website.
+This project demonstrates a practical full-stack CRUD website.
 
 ## Project Summary
 
@@ -101,7 +101,7 @@ This is intentional for simpler demo/reviewer walkthroughs.
 
 ### How to make data per-account (concise plan)
 
-1. Add `UserId` (`Guid`) and Navigational Property to `Person` and `Country` entities.
+1. Add `UserId` (`Guid`) and navigational properties to `Person` and `Country` entities.
 2. Add FK relationships to `ApplicationUser` in `ApplicationDbContext`.
 3. Create and apply an EF migration (`dotnet ef migrations add AddOwnershipToPersonCountry ...`, then `dotnet ef database update ...`).
 4. In create/update/read/delete flows, use the logged-in user id (`UserManager.GetUserId(User)`) and filter queries by `OwnerUserId`.
@@ -165,7 +165,7 @@ Default launch profile URLs:
 
 ## Test Execution
 
-Run all tests:
+Run all tests via the IDE (recommended) or via the terminal:
 
 ```powershell
 dotnet test
@@ -189,7 +189,7 @@ dotnet test ContactsManager.Tests/ContactsManager.Tests.csproj
 
 ## Potential Next Improvements
 
-- Add per-user data ownership for contacts and countries
-- Add unit tests for repository layer
-- Utilize TestContainers with Docker to test against real database
-- Add update/delete CRUD UI/action-method for country 
+- Add per-user data ownership for contacts and countries.
+- Add unit tests for the repository layer.
+- Utilize TestContainers with Docker to test against a real database.
+- Add update/delete CRUD UI/action-method for countries.
