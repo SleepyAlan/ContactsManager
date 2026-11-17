@@ -171,13 +171,6 @@ Run all tests via the IDE (recommended) or via the terminal:
 dotnet test
 ```
 
-You can also run test projects independently:
-
-```powershell
-dotnet test ContactsManagerTests/Services.Tests.csproj
-dotnet test ContactsManager.Tests/ContactsManager.Tests.csproj
-```
-
 ---
 
 ## Notes
