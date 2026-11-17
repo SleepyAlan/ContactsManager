@@ -112,7 +112,7 @@ This is intentional for simpler demo/reviewer walkthroughs.
 
 ## Local Setup (After Pulling the Repository)
 
-## 1) Prerequisites
+### 1) Prerequisites
 
 Install:
 
@@ -120,20 +120,20 @@ Install:
 - SQL Server LocalDB (or SQL Server instance)
 - Visual Studio 2026+ (recommended)
 
-## 2) Clone
+### 2) Clone
 
 ```powershell
 git clone https://github.com/SleepyAlan/ContactsManager.git
 cd ContactsManager
 ```
 
-## 3) Restore dependencies
+### 3) Restore dependencies
 
 ```powershell
 dotnet restore
 ```
 
-## 4) Configure connection string (if needed)
+### 4) Configure connection string (if needed)
 
 Default connection strings are in:
 
@@ -144,13 +144,46 @@ By default, the app uses LocalDB. If you use another SQL Server instance, update
 - `ConnectionStrings:DefaultConnection`
 - (Optional) Serilog MSSqlServer sink connection string
 
-## 5) Apply EF Core migrations
+### 5) Apply EF Core migrations
+
+**Option A: Package Manager Console (Visual Studio)**
+
+Open **Package Manager Console** in Visual Studio:
+- Menu: `Tools` → `NuGet Package Manager` → `Package Manager Console`
+
+Then run:
+
+```powershell
+Update-Database
+```
+
+This applies all pending migrations to the database.
+
+**To create a new migration:**
+
+```powershell
+Add-Migration MigrationNameHere -Project Entities
+```
+
+**To revert to a previous state:**
+
+```powershell
+Update-Database -Migration MigrationNameHere
+```
+
+**Option B: .NET CLI (Command Line)**
 
 ```powershell
 dotnet ef database update --project Entities/Entities.csproj --startup-project ContactsManager/ContactsManager.csproj
 ```
 
-## 6) Run the web app
+To create a new migration:
+
+```powershell
+dotnet ef migrations add MigrationNameHere --project Entities/Entities.csproj --startup-project ContactsManager/ContactsManager.csproj
+```
+
+### 6) Run the web app
 
 ```powershell
 dotnet run --project ContactsManager/ContactsManager.csproj
